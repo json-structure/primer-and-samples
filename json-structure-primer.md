@@ -35,7 +35,7 @@ object-oriented programming.
     - [3.1. Example: Declaring a simple object type](#31-example-declaring-a-simple-object-type)
     - [3.2. Example: Declaring Primitive and Extended Types](#32-example-declaring-primitive-and-extended-types)
   - [4. Example: Declaring inline compound types](#4-example-declaring-inline-compound-types)
-    - [4.1. Example: Declaring reusable types in `$defs`](#41-example-declaring-reusable-types-in-defs)
+    - [4.1. Example: Declaring reusable types in `definitions`](#41-example-declaring-reusable-types-in-defs)
     - [4.2. Example: Structuring types with namespaces](#42-example-structuring-types-with-namespaces)
     - [4.3. Example: Using an Array Type](#43-example-using-an-array-type)
     - [4.4. Example: Declaring Maps](#44-example-declaring-maps)
@@ -234,7 +234,7 @@ Example:
 ```json
 {
     "$schema": "https://json-structure.github.io/meta/core/v0/#",
-    "$defs" : {
+    "definitions" : {
       "AddressBase": {
         "abstract": true,
         "type": "object",
@@ -246,21 +246,21 @@ Example:
       },
       "StreetAddress": {
         "type": "object",
-        "$extends": "#/$defs/AddressBase",
+        "$extends": "#/definitions/AddressBase",
         "properties": {
             "street": { "type": "string" }
         }
       },
       "PostOfficeBoxAddress": {
         "type": "object",
-        "$extends": "#/$defs/AddressBase",
+        "$extends": "#/definitions/AddressBase",
         "properties": {
             "poBox": { "type": "string" }
         }
       },
       "Address": {
         "type": "object",
-        "$extends": "#/$defs/AddressBase"
+        "$extends": "#/definitions/AddressBase"
       }
     }
 }
@@ -287,11 +287,11 @@ applied to any _StreetAddress_ types in a document:
 {
     "$schema": "https://json-structure.github.io/meta/core/v0/#",
     "$id": "https://schemas.vasters.com/Addresses",
-    "$root": "#/$defs/StreetAddress",
+    "$root": "#/definitions/StreetAddress",
     "$offers": {
-        "DeliveryInstructions": "#/$defs/DeliveryInstructions"
+        "DeliveryInstructions": "#/definitions/DeliveryInstructions"
     },
-    "$defs" : {
+    "definitions" : {
       "StreetAddress": {
         "type": "object",
         "properties": {
@@ -304,7 +304,7 @@ applied to any _StreetAddress_ types in a document:
       "DeliveryInstructions": {
         "abstract": true,
         "type": "object",
-        "$extends": "#/$defs/StreetAddress",
+        "$extends": "#/definitions/StreetAddress",
         "properties": {
             "instructions": { "type": "string" }
         }
@@ -501,9 +501,9 @@ type cannot be referenced from other types in the schema.
 }
 ```
 
-### 4.1. Example: Declaring reusable types in `$defs`
+### 4.1. Example: Declaring reusable types in `definitions`
 
-To define reusable types, you can use the `$defs` keyword to define types that
+To define reusable types, you can use the `definitions` keyword to define types that
 can be referenced by other types in the same document. Here is an example:
 
 ```json
@@ -518,10 +518,10 @@ can be referenced by other types in the same document. Here is an example:
         "score": { "type": "int64" },
         "balance": { "type": "decimal", "precision": 20, "scale": 2 },
         "isActive": { "type": "boolean" },
-        "address": { "type" : { "$ref": "#/$defs/Address" } }
+        "address": { "type" : { "$ref": "#/definitions/Address" } }
     },
     "required": ["username", "birthdate"],
-    "$defs": {
+    "definitions": {
         "Address": {
             "type": "object",
             "properties": {
@@ -536,9 +536,9 @@ can be referenced by other types in the same document. Here is an example:
 }
 ```
 
-In this example, the `Address` type is declared in the `$defs` section and can be
+In this example, the `Address` type is declared in the `definitions` section and can be
 referenced by other types in the same document using the `$ref` keyword. Mind
-that the `$ref` keyword can now only reference types declared in the `$defs`
+that the `$ref` keyword can now only reference types declared in the `definitions`
 section of the same document. The keyword can only be used where a type is
 expected.
 
@@ -555,11 +555,11 @@ namespaces to structure your types, with two differing `Address` types:
     "properties": {
         "username": { "type": "string" },
         "dateOfBirth": { "type": "date" },
-        "networkAddress": { "type" : { "$ref": "#/$defs/Network/Address" } },
-        "physicalAddress": { "type": { "$ref": "#/$defs/Physical/Address" } }
+        "networkAddress": { "type" : { "$ref": "#/definitions/Network/Address" } },
+        "physicalAddress": { "type": { "$ref": "#/definitions/Physical/Address" } }
     },
     "required": ["username", "birthdate"],
-    "$defs": {
+    "definitions": {
         "Network": {
             "Address": {
                 "type": "object",
@@ -623,8 +623,8 @@ To declare an array of a reusable type, you can use the `$ref` keyword:
 {
     "$schema": "https://json-structure.github.io/meta/core/v0/#",
     "type": "array",
-    "items": { "type" : { "$ref": "#/$defs/Person" } },
-    "$defs": {
+    "items": { "type" : { "$ref": "#/definitions/Person" } },
+    "definitions": {
         "Person": {
             "type": "object",
             "name": "Person",
@@ -647,8 +647,8 @@ This example shows how to declare a map of strings to `Color` objects:
 {
     "$schema": "https://json-structure.github.io/meta/core/v0/#",
     "type": "map",
-    "values": { "type": { "$ref": "#/$defs/Color" } },
-    "$defs": {
+    "values": { "type": { "$ref": "#/definitions/Color" } },
+    "definitions": {
         "Color": {
             "type": "object",
             "name": "Color",

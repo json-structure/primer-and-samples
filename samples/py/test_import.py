@@ -27,8 +27,8 @@ def test_import_with_temp_files(tmp_path):
     external_schema_address = {
         "$schema": "https://json-structure.github.io/meta/core/v0/#",
         "$id": "https://example.com/schema/address",
-        "$root": "#/$defs/Address",
-        "$defs": {
+        "$root": "#/definitions/Address",
+        "definitions": {
             "Address": {
                 "name": "Address",
                 "type": "object",
@@ -53,13 +53,13 @@ def test_import_with_temp_files(tmp_path):
         "type": "object",
         "properties": {
             "person": {
-                "type": { "$ref": "#/$defs/People/Person" }
+                "type": { "$ref": "#/definitions/People/Person" }
             },
             "address": {
-                "type": { "$ref": "#/$defs/Addresses/Address" }
+                "type": { "$ref": "#/definitions/Addresses/Address" }
             }
         },
-        "$defs": {
+        "definitions": {
             "People": {
                 "$import": "https://example.com/schema/person"
             },

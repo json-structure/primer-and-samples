@@ -634,11 +634,11 @@ class JSONStructureInstanceValidator:
                         imported_defs = {}
                         if "type" in external and "name" in external:
                             imported_defs[external["name"]] = external
-                        if "$defs" in external and isinstance(external["$defs"], dict):
-                            imported_defs.update(external["$defs"])
+                        if "definitions" in external and isinstance(external["definitions"], dict):
+                            imported_defs.update(external["definitions"])
                     else:  # $importdefs
-                        if "$defs" in external and isinstance(external["$defs"], dict):
-                            imported_defs = external["$defs"]
+                        if "definitions" in external and isinstance(external["definitions"], dict):
+                            imported_defs = external["definitions"]
                         else:
                             imported_defs = {}
                     for k, v in imported_defs.items():
@@ -676,7 +676,7 @@ class JSONStructureInstanceValidator:
                     "lastName": {"type": "string"},
                     "address": {"$ref": "#/Address"}
                 },
-                "$defs": {
+                "definitions": {
                     "Address": {
                         "name": "Address",
                         "type": "object",
@@ -690,7 +690,7 @@ class JSONStructureInstanceValidator:
             "https://example.com/importdefs.json": {
                 "$schema": "https://json-structure.github.io/meta/core/v0/#",
                 "$id": "https://example.com/importdefs.json",
-                "$defs": {
+                "definitions": {
                     "LibraryType": {
                         "name": "LibraryType",
                         "type": "string"

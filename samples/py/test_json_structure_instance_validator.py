@@ -41,7 +41,7 @@ DERIVED_SCHEMA_VALID = {
     "$id": "https://example.com/schemas/derived",
     "name": "DerivedObject",
     "type": "object",
-    "$extends": "#/$defs/BaseObject",
+    "$extends": "#/definitions/BaseObject",
     "properties": {}  # Derived does not redefine inherited properties.
 }
 
@@ -645,7 +645,7 @@ def test_enum_invalid():
     assert any("not in enum" in err for err in errors)
 
 # -------------------------------------------------------------------
-# $ref Resolution Tests (using $defs)
+# $ref Resolution Tests (using definitions)
 # -------------------------------------------------------------------
 
 
@@ -656,9 +656,9 @@ def test_ref_resolution_valid():
         "name": "refSchema",
         "type": "object",
         "properties": {
-            "value": {"type": {"$ref": "#/$defs/RefType"}}
+            "value": {"type": {"$ref": "#/definitions/RefType"}}
         },
-        "$defs": {
+        "definitions": {
             "RefType": {"name": "RefType", "type": "string"}
         }
     }
@@ -674,9 +674,9 @@ def test_ref_resolution_invalid():
         "$id": "dummy",
         "name": "refSchema",
         "properties": {
-            "value": {"type": {"$ref": "#/$defs/NonExistent"}}
+            "value": {"type": {"$ref": "#/definitions/NonExistent"}}
         },
-        "$defs": {}
+        "definitions": {}
     }
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance({"value": "test"})
@@ -694,7 +694,7 @@ def test_extends_valid():
         "$id": "dummy",
         "name": "Root",
         "properties": {"child": DERIVED_SCHEMA_VALID},
-        "$defs": {"BaseObject": BASE_OBJECT_SCHEMA}
+        "definitions": {"BaseObject": BASE_OBJECT_SCHEMA}
     }
     instance = {"child": {"baseProp": "hello"}}
     validator = JSONStructureInstanceValidator(root_schema)
@@ -708,7 +708,7 @@ def test_extends_conflict():
         "$id": "dummy",
         "name": "DerivedConflict",
         "type": "object",
-        "$extends": "#/$defs/BaseObject",
+        "$extends": "#/definitions/BaseObject",
         "properties": {"baseProp": {"type": "number"}}
     }
     root_schema = {
@@ -717,7 +717,7 @@ def test_extends_conflict():
         "$id": "dummy",
         "name": "Root",
         "properties": {"child": derived_conflict},
-        "$defs": {"BaseObject": BASE_OBJECT_SCHEMA}
+        "definitions": {"BaseObject": BASE_OBJECT_SCHEMA}
     }
     instance = {"child": {"baseProp": "should be string"}}
     validator = JSONStructureInstanceValidator(root_schema)
@@ -784,7 +784,7 @@ def test_import_and_importdefs(tmp_path):
     external_importdefs = {
         "$schema": "https://json-structure.github.io/meta/core/v0/#",
         "$id": "https://example.com/importdefs.json",
-        "$defs": {
+        "definitions": {
             "LibraryType": {"name": "LibraryType", "type": "string"}
         }
     }

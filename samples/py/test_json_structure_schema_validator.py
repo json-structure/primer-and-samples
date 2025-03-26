@@ -37,13 +37,13 @@ VALID_OBJECT = {
     "required": ["name"]
 }
 
-# Case 3: Valid schema using $ref to a type declared in $defs.
+# Case 3: Valid schema using $ref to a type declared in definitions.
 VALID_REF = {
     "$schema": "https://json-structure.github.io/meta/core/v0/#",
     "$id": "https://example.com/schema/ref",
     "name": "RefSchema",
-    "type": {"$ref": "#/$defs/SomeType"},
-    "$defs": {
+    "type": {"$ref": "#/definitions/SomeType"},
+    "definitions": {
         "SomeType": {
             "name": "SomeType",
             "type": "string"
@@ -56,8 +56,8 @@ VALID_UNION = {
     "$schema": "https://json-structure.github.io/meta/core/v0/#",
     "$id": "https://example.com/schema/union",
     "name": "UnionSchema",
-    "type": ["string", {"$ref": "#/$defs/OtherType"}],
-    "$defs": {
+    "type": ["string", {"$ref": "#/definitions/OtherType"}],
+    "definitions": {
         "OtherType": {
             "name": "OtherType",
             "type": "int32"
@@ -71,8 +71,8 @@ VALID_EXTENDS = {
     "$id": "https://example.com/schema/extends",
     "name": "ExtendedSchema",
     "type": "object",
-    "$extends": "#/$defs/BaseType",
-    "$defs": {
+    "$extends": "#/definitions/BaseType",
+    "definitions": {
         "BaseType": {
             "name": "BaseType",
             "type": "object",
@@ -133,7 +133,7 @@ INVALID_MISSING_ID = {
 INVALID_BOTH_TYPE_AND_ROOT = {
     "$schema": "https://json-structure.github.io/meta/core/v0/#",
     "$id": "https://example.com/schema/both",
-    "$root": "#/$defs/SomeRoot",
+    "$root": "#/definitions/SomeRoot",
     "type": "any"
 }
 
@@ -169,14 +169,14 @@ INVALID_BAD_REF = {
     "$schema": "https://json-structure.github.io/meta/core/v0/#",
     "$id": "https://example.com/schema/bad_ref",
     "name": "BadRef",
-    "type": {"$ref": "#/$defs/NonExistent"}
+    "type": {"$ref": "#/definitions/NonExistent"}
 }
 
-# Case 8: $defs is not an object.
+# Case 8: definitions is not an object.
 INVALID_DEFS_NOT_OBJECT = {
     "$schema": "https://json-structure.github.io/meta/core/v0/#",
     "$id": "https://example.com/schema/defs_not_object",
-    "$defs": "not an object"
+    "definitions": "not an object"
 }
 
 # Case 9: 'required' keyword used in a non-object type.
@@ -266,8 +266,8 @@ INVALID_OFFERS_KEY_NOT_STRING = {
     "$id": "https://example.com/schema/offers_key_not_str",
     "name": "OffersKeyNotStr",
     "type": "any",
-    "$offers": {123: "#/$defs/SomeType"},
-    "$defs": {
+    "$offers": {123: "#/definitions/SomeType"},
+    "definitions": {
         "SomeType": {
             "name": "SomeType",
             "type": "string"
@@ -281,8 +281,8 @@ INVALID_OFFERS_VALUE_LIST_NONSTRING = {
     "$id": "https://example.com/schema/offers_value_list_nonstr",
     "name": "OffersValueListNonStr",
     "type": "any",
-    "$offers": {"OfferKey": ["#/$defs/SomeType", 123]},
-    "$defs": {
+    "$offers": {"OfferKey": ["#/definitions/SomeType", 123]},
+    "definitions": {
         "SomeType": {
             "name": "SomeType",
             "type": "string"
@@ -298,22 +298,22 @@ INVALID_REF_POINTER_NO_HASH = {
     "type": {"$ref": "invalid_pointer"}
 }
 
-# Case 21: Invalid $defs section without a top-level map
+# Case 21: Invalid definitions section without a top-level map
 INVALID_DEFS_NO_MAP = {
     "$schema": "https://json-structure.github.io/meta/core/v0/#",
     "$id": "https://example.com/schema/defs_no_map",
     "name": "DefsNoMap",
     "type": "object",
-    "$defs": "not a map"
+    "definitions": "not a map"
 }
 
-#Case 22: Invalid $defs section with a type definition at the root of $defs
+#Case 22: Invalid definitions section with a type definition at the root of definitions
 INVALID_DEFS_ROOT_TYPE = {
     "$schema": "https://json-structure.github.io/meta/core/v0/#",
     "$id": "https://example.com/schema/defs_root_type",
     "name": "DefsRootType",
     "type": "object",
-    "$defs": {
+    "definitions": {
         "name": "RootType",
         "type": "string"
     }
@@ -408,9 +408,9 @@ def test_valid_offers():
         "name": "OffersValid",
         "type": "any",
         "$offers": {
-            "CustomOffer": "#/$defs/OfferType"
+            "CustomOffer": "#/definitions/OfferType"
         },
-        "$defs": {
+        "definitions": {
             "OfferType": {
                 "name": "OfferType",
                 "type": "string"

@@ -32,7 +32,7 @@ class JSONStructureSchemaCoreValidator:
     ABSOLUTE_URI_REGEX = re.compile(r'^[a-zA-Z][a-zA-Z0-9+\-.]*://')
     MAP_KEY_REGEX = re.compile(r'^[A-Za-z0-9._-]+$')
     RESERVED_KEYWORDS = {
-        "$defs", "$extends", "$id", "$ref", "$root", "$schema", "$uses",
+        "definitions", "$extends", "$id", "$ref", "$root", "$schema", "$uses",
         "$offers", "abstract", "additionalProperties", "const", "default",
         "description", "enum", "examples", "format", "items", "maxLength",
         "name", "precision", "properties", "required", "scale", "type",
@@ -92,11 +92,11 @@ class JSONStructureSchemaCoreValidator:
             self._validate_schema(doc, is_root=True, path="#", name_in_namespace=None)
         if "$root" in doc:
             self._check_json_pointer(doc["$root"], self.doc, "$root")
-        if "$defs" in doc:
-            if not isinstance(doc["$defs"], dict):
-                self._err("$defs must be an object.", "#/$defs")
+        if "definitions" in doc:
+            if not isinstance(doc["definitions"], dict):
+                self._err("definitions must be an object.", "#/definitions")
             else:
-                self._validate_namespace(doc["$defs"], "#/$defs")
+                self._validate_namespace(doc["definitions"], "#/definitions")
         if "$offers" in doc:
             self._check_offers(doc["$offers"], "#/$offers")
         return self.errors
@@ -150,12 +150,12 @@ class JSONStructureSchemaCoreValidator:
                         # JSONStructureImport root type if available.
                         if "type" in external and "name" in external:
                             imported_defs[external["name"]] = external
-                        # Also import definitions from $defs if available.
-                        if "$defs" in external and isinstance(external["$defs"], dict):
-                            imported_defs.update(external["$defs"])
+                        # Also import definitions from definitions if available.
+                        if "definitions" in external and isinstance(external["definitions"], dict):
+                            imported_defs.update(external["definitions"])
                     else:  # $importdefs
-                        if "$defs" in external and isinstance(external["$defs"], dict):
-                            imported_defs = external["$defs"]
+                        if "definitions" in external and isinstance(external["definitions"], dict):
+                            imported_defs = external["definitions"]
                         else:
                             imported_defs = {}
                     # Merge imported definitions directly into the current object.
@@ -203,9 +203,9 @@ class JSONStructureSchemaCoreValidator:
                 "properties": {
                     "firstName": {"type": "string"},
                     "lastName": {"type": "string"},
-                    "address": {"$ref": "#/$defs/Address"}
+                    "address": {"$ref": "#/definitions/Address"}
                 },
-                "$defs": {
+                "definitions": {
                     "Address": {
                         "name": "Address",
                         "type": "object",
@@ -231,7 +231,7 @@ class JSONStructureSchemaCoreValidator:
 
     def _validate_namespace(self, obj, path):
         """
-        Recursively validates objects in $defs as either a namespace or a schema.
+        Recursively validates objects in definitions as either a namespace or a schema.
         """
         if not isinstance(obj, dict):
             self._err(f"{path} must be an object.", path)
