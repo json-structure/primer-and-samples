@@ -707,11 +707,11 @@ the `$uses` attribute to activate the companion specification for the schema
 document.
 
 The feature identifiers for the companion specifications are:
-- `Altnames`: Alternate names and descriptions for properties and types.
-- `Units`: Symbols, scientific units, and currencies for numeric properties.
-- `Conditionals`: Conditional composition and validation rules.
-- `Imports`: Importing types from other schema documents.
-- `Validation`: Validation rules for JSON data.
+- `JSONStructureAlternateNames`: Alternate names and descriptions for properties and types.
+- `JSONStructureUnits`: Symbols, scientific units, and currencies for numeric properties.
+- `JSONStructureImports`: Importing types from other schema documents.
+- `JSONStructureValidation`: Validation rules for JSON data.
+- `JSONStructureConditionalComposition`: Conditional composition and validation rules.
 
 ### 5.1. Example: Using the `altnames` Keyword
 
@@ -725,7 +725,7 @@ Here is an example of how to use the `altnames` keyword:
 ```json
 {
     "$schema": "https://json-structure.github.io/meta/extended/v0/#",
-    "$uses": ["Altnames"],
+    "$uses": ["JSONStructureAlternateNames"],
     "Person": {
         "type": "object",
         "altnames": {
@@ -780,7 +780,7 @@ Here is an example of how to use the `altenums` keyword:
 ```json
 {
     "$schema": "https://json-structure.github.io/meta/extended/v0/#",
-    "$uses": ["Altnames"],
+    "$uses": ["JSONStructureAlternateNames"],
     "type": "object",
     "name": "Color",
     "properties": {
@@ -823,7 +823,7 @@ Here is an example of how to use the `unit` keyword:
 ```json
 {
     "$schema": "https://json-structure.github.io/meta/extended/v0/#",
-    "$uses": ["Units"],
+    "$uses": ["JSONStructureUnits"],
     "type": "object",
     "name": "Pressure",
     "properties": {
@@ -849,7 +849,7 @@ Here is an example of how to use the `currency` keyword:
 ```json
 {
     "$schema": "https://json-structure.github.io/meta/extended/v0/#",
-    "$uses": ["Units"],
+    "$uses": ["JSONStructureUnits"],
     "type": "object",
     "name": "Price",
     "properties": {
