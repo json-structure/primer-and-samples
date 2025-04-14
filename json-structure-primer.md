@@ -19,38 +19,7 @@ like `anyOf` or `allOf` is availble in JSON Structure quite similar to JSON
 Schema, has been split out into optional extensions, allowing simple data
 definitions to remain lightweight and easy to understand.
 
-## Table of Contents
-
-- [JSON Structure Primer](#json-structure-primer)
-  - [Table of Contents](#table-of-contents)
-  - [1. Wait. What? Why?](#1-wait-what-why)
-  - [2. Key Concepts](#2-key-concepts)
-    - [2.1. Differences to JSON Schema Drafts](#21-differences-to-json-schema-drafts)
-    - [2.2. Extensibility Model](#22-extensibility-model)
-      - [2.2.1. Extensible Types](#221-extensible-types)
-      - [2.2.2. Add-in Types](#222-add-in-types)
-    - [2.3. Reusing Types across different Schema Documents](#23-reusing-types-across-different-schema-documents)
-    - [2.4. Core and Companion Specifications](#24-core-and-companion-specifications)
-    - [2.5. Meta-Schemas](#25-meta-schemas)
-  - [3. Using Structure Core](#3-using-structure-core)
-    - [3.1. Example: Declaring a simple object type](#31-example-declaring-a-simple-object-type)
-    - [3.2. Example: Declaring Primitive and Extended Types](#32-example-declaring-primitive-and-extended-types)
-  - [4. Example: Declaring inline compound types](#4-example-declaring-inline-compound-types)
-    - [4.1. Example: Declaring reusable types in `definitions`](#41-example-declaring-reusable-types-in-definitions)
-    - [4.2. Example: Structuring types with namespaces](#42-example-structuring-types-with-namespaces)
-    - [4.3. Example: Using an Array Type](#43-example-using-an-array-type)
-    - [4.4. Example: Declaring Maps](#44-example-declaring-maps)
-    - [4.5. Example: Declaring Sets](#45-example-declaring-sets)
-  - [5. Using Companion Specifications](#5-using-companion-specifications)
-    - [5.1. Example: Using the `altnames` Keyword](#51-example-using-the-altnames-keyword)
-    - [5.2. Example: Using the `altenums` Keyword](#52-example-using-the-altenums-keyword)
-    - [5.3. Example: Using the `unit` Keyword](#53-example-using-the-unit-keyword)
-    - [5.4. Example: Using the `currency` Keyword](#54-example-using-the-currency-keyword)
-  - [6. Using Validation](#6-using-validation)
-    - [6.1. Example: Using Conditional Composition](#61-example-using-conditional-composition)
-    - [6.2. Example: Using Validation Rules](#62-example-using-validation-rules)
-
-## 1. Wait. What? Why?
+## 1. Introduction
 
 JSON Schema has been in development since ca. 2009 and has gone through several
 iterations. The industry has largely standardized on "Draft 7" of JSON Schema,
