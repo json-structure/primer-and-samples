@@ -12,7 +12,7 @@ the corresponding conditional composition and validation addin constraints are e
 Extensions such as "JSONStructureAlternateNames" or "JSONStructureUnits" are generally ignored for validation.
 
 Furthermore, when the root schema’s "$schema" equals 
-    "https://json-structure.github.io/meta/extended/v0/#"
+    "https://json-structure.org/meta/extended/v0/#"
 all addins (i.e. all keys offered in "$offers") are automatically enabled.
 
 This implementation also supports extended validation keywords as defined in the 
@@ -80,7 +80,7 @@ class JSONStructureInstanceValidator:
             schema = self.root_schema
 
         # --- Automatically enable all addins if using extended metaschema ---
-        if self.root_schema.get("$schema") == "https://json-structure.github.io/meta/extended/v0/#":
+        if self.root_schema.get("$schema") == "https://json-structure.org/meta/extended/v0/#":
             # Automatically enable all addins offered in the root schema.
             all_addins = ["JSONStructureConditionalComposition", "JSONStructureValidation", "JSONStructureUnits", "JSONStructureAlternateNames"]
             schema.setdefault("$uses", [])
@@ -89,7 +89,7 @@ class JSONStructureInstanceValidator:
                     schema["$uses"].append(addin)
             # [Metaschema: Extended metaschema automatically enables all addins]
 
-        if isinstance(instance, dict) and "$uses" in instance and self.root_schema.get("$schema") == "https://json-structure.github.io/meta/validation/v0/#":
+        if isinstance(instance, dict) and "$uses" in instance and self.root_schema.get("$schema") == "https://json-structure.org/meta/validation/v0/#":
             # Automatically enable the JSONStructureValidation addin.
             schema.setdefault("$uses", [])
             if "JSONStructureValidation" in instance["$uses"] and not "JSONStructureValidation" in schema["$uses"]:
@@ -98,9 +98,9 @@ class JSONStructureInstanceValidator:
                 schema["$uses"].append("JSONStructureConditionalComposition")
             # [Metaschema: JSONStructureValidation metaschema automatically enables JSONStructureValidation addin]
 
-        # the core schema https://json-structure.github.io/meta/validation/v0/# has no JSONStructureConditionalComposition or JSONStructureValidation addins
+        # the core schema https://json-structure.org/meta/validation/v0/# has no JSONStructureConditionalComposition or JSONStructureValidation addins
         # an instance referencing these addins will be rejected
-        if isinstance(instance, dict) and "$uses" in instance and self.root_schema.get("$schema") == "https://json-structure.github.io/meta/core/v0/#":
+        if isinstance(instance, dict) and "$uses" in instance and self.root_schema.get("$schema") == "https://json-structure.org/meta/core/v0/#":
             if "JSONStructureValidation" in instance["$uses"] or "JSONStructureConditionalComposition" in instance["$uses"]:
                 self.errors.append(
                     f"Instance at {path} references JSONStructureConditionalComposition or JSONStructureValidation addins but the schema does not support them")
@@ -667,7 +667,7 @@ class JSONStructureInstanceValidator:
                 return None
         SIMULATED_SCHEMAS = {
             "https://example.com/people.json": {
-                "$schema": "https://json-structure.github.io/meta/core/v0/#",
+                "$schema": "https://json-structure.org/meta/core/v0/#",
                 "$id": "https://example.com/people.json",
                 "name": "Person",
                 "type": "object",
@@ -688,7 +688,7 @@ class JSONStructureInstanceValidator:
                 }
             },
             "https://example.com/importdefs.json": {
-                "$schema": "https://json-structure.github.io/meta/core/v0/#",
+                "$schema": "https://json-structure.org/meta/core/v0/#",
                 "$id": "https://example.com/importdefs.json",
                 "definitions": {
                     "LibraryType": {

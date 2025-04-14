@@ -27,7 +27,7 @@ from json_structure_instance_validator import JSONStructureInstanceValidator
 # -------------------------------------------------------------------
 
 BASE_OBJECT_SCHEMA = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schemas/base",
     "name": "BaseObject",
     "type": "object",
@@ -37,7 +37,7 @@ BASE_OBJECT_SCHEMA = {
 }
 
 DERIVED_SCHEMA_VALID = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schemas/derived",
     "name": "DerivedObject",
     "type": "object",
@@ -46,7 +46,7 @@ DERIVED_SCHEMA_VALID = {
 }
 
 ABSTRACT_SCHEMA = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schemas/abstract",
     "name": "AbstractType",
     "type": "object",
@@ -63,7 +63,7 @@ ADDIN_SCHEMA = {
 }
 
 ROOT_OFFERS_SCHEMA = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schemas/root",
     "name": "RootSchema",
     "type": "object",
@@ -81,7 +81,7 @@ ROOT_OFFERS_SCHEMA = {
 
 
 def test_string_valid():
-    schema = {"type": "string", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "string", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "strSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("hello")
@@ -89,7 +89,7 @@ def test_string_valid():
 
 
 def test_string_invalid():
-    schema = {"type": "string", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "string", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "strSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(123)
@@ -97,7 +97,7 @@ def test_string_invalid():
 
 
 def test_number_valid():
-    schema = {"type": "number", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "number", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "numSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(3.14)
@@ -105,7 +105,7 @@ def test_number_valid():
 
 
 def test_number_invalid():
-    schema = {"type": "number", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "number", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "numSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("3.14")
@@ -113,7 +113,7 @@ def test_number_invalid():
 
 
 def test_boolean_valid():
-    schema = {"type": "boolean", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "boolean", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "boolSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(True)
@@ -121,7 +121,7 @@ def test_boolean_valid():
 
 
 def test_boolean_invalid():
-    schema = {"type": "boolean", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "boolean", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "boolSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("true")
@@ -129,7 +129,7 @@ def test_boolean_invalid():
 
 
 def test_null_valid():
-    schema = {"type": "null", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "null", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "nullSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(None)
@@ -137,7 +137,7 @@ def test_null_valid():
 
 
 def test_null_invalid():
-    schema = {"type": "null", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "null", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "nullSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(0)
@@ -149,7 +149,7 @@ def test_null_invalid():
 
 
 def test_int32_valid():
-    schema = {"type": "int32", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "int32", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "int32Schema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(123)
@@ -157,7 +157,7 @@ def test_int32_valid():
 
 
 def test_int32_out_of_range():
-    schema = {"type": "int32", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "int32", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "int32Schema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(2**31)
@@ -165,7 +165,7 @@ def test_int32_out_of_range():
 
 
 def test_uint32_valid():
-    schema = {"type": "uint32", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "uint32", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "uint32Schema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(123)
@@ -173,7 +173,7 @@ def test_uint32_valid():
 
 
 def test_uint32_negative():
-    schema = {"type": "uint32", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "uint32", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "uint32Schema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(-1)
@@ -181,7 +181,7 @@ def test_uint32_negative():
 
 
 def test_int64_valid():
-    schema = {"type": "int64", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "int64", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "int64Schema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("1234567890")
@@ -189,7 +189,7 @@ def test_int64_valid():
 
 
 def test_int64_invalid_format():
-    schema = {"type": "int64", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "int64", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "int64Schema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(1234567890)
@@ -197,7 +197,7 @@ def test_int64_invalid_format():
 
 
 def test_uint64_valid():
-    schema = {"type": "uint64", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "uint64", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "uint64Schema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("1234567890")
@@ -205,7 +205,7 @@ def test_uint64_valid():
 
 
 def test_uint64_invalid_format():
-    schema = {"type": "uint64", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "uint64", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "uint64Schema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(1234567890)
@@ -213,7 +213,7 @@ def test_uint64_invalid_format():
 
 
 def test_float_valid():
-    schema = {"type": "float", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "float", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "floatSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(1.23)
@@ -221,7 +221,7 @@ def test_float_valid():
 
 
 def test_float_invalid():
-    schema = {"type": "float", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "float", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "floatSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("1.23")
@@ -229,7 +229,7 @@ def test_float_invalid():
 
 
 def test_decimal_valid():
-    schema = {"type": "decimal", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "decimal", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "decimalSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("123.45")
@@ -237,7 +237,7 @@ def test_decimal_valid():
 
 
 def test_decimal_invalid():
-    schema = {"type": "decimal", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "decimal", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "decimalSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(123.45)
@@ -246,7 +246,7 @@ def test_decimal_invalid():
 
 def test_numeric_minimum_fail():
     schema = {"type": "number", "minimum": 10,
-              "$schema": "https://json-structure.github.io/meta/extended/v0/#", "$id": "dummy", "name": "numMin"}
+              "$schema": "https://json-structure.org/meta/extended/v0/#", "$id": "dummy", "name": "numMin"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(5)
     assert any("less than minimum" in err for err in errors)
@@ -254,7 +254,7 @@ def test_numeric_minimum_fail():
 
 def test_numeric_minimum_pass():
     schema = {"type": "number", "minimum": 10,
-              "$schema": "https://json-structure.github.io/meta/extended/v0/#", "$id": "dummy", "name": "numMin"}
+              "$schema": "https://json-structure.org/meta/extended/v0/#", "$id": "dummy", "name": "numMin"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(10)
     assert errors == []
@@ -262,7 +262,7 @@ def test_numeric_minimum_pass():
 
 def test_numeric_maximum_fail():
     schema = {"type": "number", "maximum": 100,
-              "$schema": "https://json-structure.github.io/meta/extended/v0/#", "$id": "dummy", "name": "numMax"}
+              "$schema": "https://json-structure.org/meta/extended/v0/#", "$id": "dummy", "name": "numMax"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(150)
     assert any("greater than maximum" in err for err in errors)
@@ -270,7 +270,7 @@ def test_numeric_maximum_fail():
 
 def test_numeric_exclusiveMinimum_fail():
     schema = {"type": "number", "minimum": 10, "exclusiveMinimum": True,
-              "$schema": "https://json-structure.github.io/meta/extended/v0/#", "$id": "dummy", "name": "numExMin"}
+              "$schema": "https://json-structure.org/meta/extended/v0/#", "$id": "dummy", "name": "numExMin"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(10)
     assert any("not greater than exclusive minimum" in err for err in errors)
@@ -278,7 +278,7 @@ def test_numeric_exclusiveMinimum_fail():
 
 def test_numeric_exclusiveMaximum_fail():
     schema = {"type": "number", "maximum": 100, "exclusiveMaximum": True,
-              "$schema": "https://json-structure.github.io/meta/extended/v0/#", "$id": "dummy", "name": "numExMax"}
+              "$schema": "https://json-structure.org/meta/extended/v0/#", "$id": "dummy", "name": "numExMax"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(100)
     assert any("not less than exclusive maximum" in err for err in errors)
@@ -286,7 +286,7 @@ def test_numeric_exclusiveMaximum_fail():
 
 def test_numeric_multipleOf_fail():
     schema = {"type": "number", "multipleOf": 5,
-              "$schema": "https://json-structure.github.io/meta/extended/v0/#", "$id": "dummy", "name": "numMult"}
+              "$schema": "https://json-structure.org/meta/extended/v0/#", "$id": "dummy", "name": "numMult"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(12)
     assert any("not a multiple of" in err for err in errors)
@@ -294,7 +294,7 @@ def test_numeric_multipleOf_fail():
 
 def test_numeric_multipleOf_pass():
     schema = {"type": "number", "multipleOf": 5,
-              "$schema": "https://json-structure.github.io/meta/extended/v0/#", "$id": "dummy", "name": "numMult"}
+              "$schema": "https://json-structure.org/meta/extended/v0/#", "$id": "dummy", "name": "numMult"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(15)
     assert errors == []
@@ -305,7 +305,7 @@ def test_numeric_multipleOf_pass():
 
 
 def test_date_valid():
-    schema = {"type": "date", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "date", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "dateSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("2025-03-05")
@@ -313,7 +313,7 @@ def test_date_valid():
 
 
 def test_date_invalid():
-    schema = {"type": "date", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "date", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "dateSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("03/05/2025")
@@ -321,7 +321,7 @@ def test_date_invalid():
 
 
 def test_datetime_valid():
-    schema = {"type": "datetime", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "datetime", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "datetimeSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("2025-03-05T12:34:56Z")
@@ -329,7 +329,7 @@ def test_datetime_valid():
 
 
 def test_datetime_invalid():
-    schema = {"type": "datetime", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "datetime", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "datetimeSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("2025-03-05 12:34:56")
@@ -337,7 +337,7 @@ def test_datetime_invalid():
 
 
 def test_time_valid():
-    schema = {"type": "time", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "time", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "timeSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("12:34:56")
@@ -345,7 +345,7 @@ def test_time_valid():
 
 
 def test_time_invalid():
-    schema = {"type": "time", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "time", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "timeSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("123456")
@@ -358,7 +358,7 @@ def test_time_invalid():
 
 def test_uuid_valid():
     valid_uuid = str(uuid.uuid4())
-    schema = {"type": "uuid", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "uuid", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "uuidSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(valid_uuid)
@@ -366,7 +366,7 @@ def test_uuid_valid():
 
 
 def test_uuid_invalid():
-    schema = {"type": "uuid", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "uuid", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "uuidSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("not-a-uuid")
@@ -374,7 +374,7 @@ def test_uuid_invalid():
 
 
 def test_uri_valid():
-    schema = {"type": "uri", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "uri", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "uriSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("https://example.com")
@@ -382,7 +382,7 @@ def test_uri_valid():
 
 
 def test_uri_invalid():
-    schema = {"type": "uri", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "uri", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "uriSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("example.com")
@@ -394,7 +394,7 @@ def test_uri_invalid():
 
 
 def test_binary_valid():
-    schema = {"type": "binary", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "binary", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "binarySchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("YWJjMTIz")  # base64 for 'abc123'
@@ -402,7 +402,7 @@ def test_binary_valid():
 
 
 def test_binary_invalid():
-    schema = {"type": "binary", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "binary", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "binarySchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(12345)
@@ -410,7 +410,7 @@ def test_binary_invalid():
 
 
 def test_jsonpointer_valid():
-    schema = {"type": "jsonpointer", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "jsonpointer", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "jpSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("#/a/b")
@@ -418,7 +418,7 @@ def test_jsonpointer_valid():
 
 
 def test_jsonpointer_invalid():
-    schema = {"type": "jsonpointer", "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    schema = {"type": "jsonpointer", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "jpSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("a/b")
@@ -432,7 +432,7 @@ def test_jsonpointer_invalid():
 def test_object_valid():
     schema = {
         "type": "object",
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "objSchema",
         "properties": {
@@ -450,7 +450,7 @@ def test_object_valid():
 def test_object_missing_required():
     schema = {
         "type": "object",
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "objSchema",
         "properties": {"a": {"type": "string"}},
@@ -465,7 +465,7 @@ def test_object_missing_required():
 def test_object_additional_properties_false():
     schema = {
         "type": "object",
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "objSchema",
         "properties": {"a": {"type": "string"}},
@@ -480,7 +480,7 @@ def test_object_additional_properties_false():
 def test_array_valid():
     schema = {
         "type": "array",
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "arraySchema",
         "items": {"type": "string"}
@@ -494,7 +494,7 @@ def test_array_valid():
 def test_array_invalid():
     schema = {
         "type": "array",
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "arraySchema",
         "items": {"type": "number"}
@@ -508,7 +508,7 @@ def test_array_invalid():
 def test_set_valid():
     schema = {
         "type": "set",
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "setSchema",
         "items": {"type": "string"}
@@ -522,7 +522,7 @@ def test_set_valid():
 def test_set_duplicate():
     schema = {
         "type": "set",
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "setSchema",
         "items": {"type": "string"}
@@ -536,7 +536,7 @@ def test_set_duplicate():
 def test_map_valid():
     schema = {
         "type": "map",
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "mapSchema",
         "values": {"type": "number"}
@@ -550,7 +550,7 @@ def test_map_valid():
 def test_tuple_valid():
     schema = {
         "type": "tuple",
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "tupleSchema",
         "properties": {
@@ -567,7 +567,7 @@ def test_tuple_valid():
 def test_tuple_wrong_length():
     schema = {
         "type": "tuple",
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "tupleSchema",
         "properties": {
@@ -588,7 +588,7 @@ def test_tuple_wrong_length():
 def test_union_valid():
     schema = {
         "type": ["string", "number"],
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "unionSchema"
     }
@@ -600,7 +600,7 @@ def test_union_valid():
 def test_union_invalid():
     schema = {
         "type": ["string", "number"],
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "unionSchema"
     }
@@ -615,7 +615,7 @@ def test_union_invalid():
 
 def test_const_valid():
     schema = {"type": "number", "const": 3.14,
-              "$schema": "https://json-structure.github.io/meta/core/v0/#", "$id": "dummy", "name": "constSchema"}
+              "$schema": "https://json-structure.org/meta/core/v0/#", "$id": "dummy", "name": "constSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(3.14)
     assert errors == []
@@ -623,7 +623,7 @@ def test_const_valid():
 
 def test_const_invalid():
     schema = {"type": "number", "const": 3.14,
-              "$schema": "https://json-structure.github.io/meta/core/v0/#", "$id": "dummy", "name": "constSchema"}
+              "$schema": "https://json-structure.org/meta/core/v0/#", "$id": "dummy", "name": "constSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(2.71)
     assert any("does not equal const" in err for err in errors)
@@ -631,7 +631,7 @@ def test_const_invalid():
 
 def test_enum_valid():
     schema = {"type": "string", "enum": [
-        "a", "b", "c"], "$schema": "https://json-structure.github.io/meta/core/v0/#", "$id": "dummy", "name": "enumSchema"}
+        "a", "b", "c"], "$schema": "https://json-structure.org/meta/core/v0/#", "$id": "dummy", "name": "enumSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("b")
     assert errors == []
@@ -639,7 +639,7 @@ def test_enum_valid():
 
 def test_enum_invalid():
     schema = {"type": "string", "enum": [
-        "a", "b", "c"], "$schema": "https://json-structure.github.io/meta/core/v0/#", "$id": "dummy", "name": "enumSchema"}
+        "a", "b", "c"], "$schema": "https://json-structure.org/meta/core/v0/#", "$id": "dummy", "name": "enumSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("d")
     assert any("not in enum" in err for err in errors)
@@ -651,7 +651,7 @@ def test_enum_invalid():
 
 def test_ref_resolution_valid():
     schema = {
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "refSchema",
         "type": "object",
@@ -670,7 +670,7 @@ def test_ref_resolution_valid():
 def test_ref_resolution_invalid():
     schema = {
         "type": "object",
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "refSchema",
         "properties": {
@@ -690,7 +690,7 @@ def test_ref_resolution_invalid():
 def test_extends_valid():
     root_schema = {
         "type": "object",
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "Root",
         "properties": {"child": DERIVED_SCHEMA_VALID},
@@ -704,7 +704,7 @@ def test_extends_valid():
 
 def test_extends_conflict():
     derived_conflict = {
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "DerivedConflict",
         "type": "object",
@@ -713,7 +713,7 @@ def test_extends_conflict():
     }
     root_schema = {
         "type": "object",
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "Root",
         "properties": {"child": derived_conflict},
@@ -751,7 +751,7 @@ def test_uses_addin():
 
 def test_uses_addin_conflict():
     schema = {
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "dummy",
         "name": "ConflictSchema",
         "type": "object",
@@ -772,7 +772,7 @@ def test_uses_addin_conflict():
 
 def test_import_and_importdefs(tmp_path):
     external_person = {
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "https://example.com/people.json",
         "name": "Person",
         "type": "object",
@@ -782,7 +782,7 @@ def test_import_and_importdefs(tmp_path):
         }
     }
     external_importdefs = {
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "https://example.com/importdefs.json",
         "definitions": {
             "LibraryType": {"name": "LibraryType", "type": "string"}
@@ -794,7 +794,7 @@ def test_import_and_importdefs(tmp_path):
     importdefs_file.write_text(json.dumps(external_importdefs), encoding="utf-8")
 
     local_schema = {
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "https://example.com/schema/local",
         "name": "LocalSchema",
         "type": "object",
@@ -836,7 +836,7 @@ def test_validation_addins_numeric_fail():
     # Wrap the number in an object for $uses to be available
     schema_obj = {
         "type": "object", "properties": {"value": schema},
-        "$schema": "https://json-structure.github.io/meta/validation/v0/#", 
+        "$schema": "https://json-structure.org/meta/validation/v0/#", 
         "$id": "dummy", "name": "wrapper"}
     validator = JSONStructureInstanceValidator(schema_obj)
     errors = validator.validate_instance(instance_obj)
@@ -857,7 +857,7 @@ def test_validation_addins_string_fail():
     instance = "abc"
     instance_obj = {"value": instance, "$uses": ["JSONStructureValidation"]}
     schema_obj = {"type": "object", "properties": {"value": schema},
-                  "$schema": "https://json-structure.github.io/meta/validation/v0/#", "$id": "dummy", "name": "wrapper"}
+                  "$schema": "https://json-structure.org/meta/validation/v0/#", "$id": "dummy", "name": "wrapper"}
     validator = JSONStructureInstanceValidator(schema_obj)
     errors = validator.validate_instance(instance_obj)
     assert any("shorter than minLength" in err for err in errors)
@@ -878,7 +878,7 @@ def test_validation_addins_array_fail():
     instance = ["a", "b"]  # fewer than 3 items
     instance_obj = {"value": instance, "$uses": ["JSONStructureValidation"]}
     schema_obj = {"type": "object", "properties": {"value": schema},
-                  "$schema": "https://json-structure.github.io/meta/validation/v0/#", "$id": "dummy", "name": "wrapper"}
+                  "$schema": "https://json-structure.org/meta/validation/v0/#", "$id": "dummy", "name": "wrapper"}
     validator = JSONStructureInstanceValidator(schema_obj)
     errors = validator.validate_instance(instance_obj)
     assert any("fewer items than minItems" in err for err in errors)
@@ -900,7 +900,7 @@ def test_validation_addins_object_fail():
     instance = {"a": "1"}  # fewer than 2 properties
     instance_obj = {"value": instance, "$uses": ["JSONStructureValidation"]}
     schema_obj = {"type": "object", "properties": {"value": schema},
-                  "$schema": "https://json-structure.github.io/meta/validation/v0/#", "$id": "dummy", "name": "wrapper"}
+                  "$schema": "https://json-structure.org/meta/validation/v0/#", "$id": "dummy", "name": "wrapper"}
     validator = JSONStructureInstanceValidator(schema_obj)
     errors = validator.validate_instance(instance_obj)
     assert any("fewer properties than minProperties" in err for err in errors)
@@ -922,7 +922,7 @@ def test_validation_addins_object_dependencies():
     instance = {"credit_card": 123456}
     instance_obj = {"value": instance, "$uses": ["JSONStructureValidation"]}
     schema_obj = {"type": "object", "properties": {"value": schema},
-                  "$schema": "https://json-structure.github.io/meta/validation/v0/#", "$id": "dummy", "name": "wrapper"}
+                  "$schema": "https://json-structure.org/meta/validation/v0/#", "$id": "dummy", "name": "wrapper"}
     validator = JSONStructureInstanceValidator(schema_obj)
     errors = validator.validate_instance(instance_obj)
     assert any("requires dependent property" in err for err in errors)
@@ -937,7 +937,7 @@ def test_validation_addins_object_patternProperties():
     instance = {"Aprop": "hello", "bprop": "world"}
     instance_obj = {"value": instance, "$uses": ["JSONStructureValidation"]}
     schema_obj = {"type": "object", "properties": {"value": schema},
-                  "$schema": "https://json-structure.github.io/meta/validation/v0/#", "$id": "dummy", "name": "wrapper"}
+                  "$schema": "https://json-structure.org/meta/validation/v0/#", "$id": "dummy", "name": "wrapper"}
     validator = JSONStructureInstanceValidator(schema_obj)
     errors = validator.validate_instance(instance_obj)
     # bprop does not match the pattern, but patternProperties doesn't force an error on non-matching keys.
@@ -953,7 +953,7 @@ def test_validation_addins_object_propertyNames_fail():
     instance = {"Aprop": "hello", "bprop": "world"}
     instance_obj = {"value": instance, "$uses": ["JSONStructureValidation"]}
     schema_obj = {"type": "object", "properties": {"value": schema},
-                  "$schema": "https://json-structure.github.io/meta/validation/v0/#", "$id": "dummy", "name": "wrapper"}
+                  "$schema": "https://json-structure.org/meta/validation/v0/#", "$id": "dummy", "name": "wrapper"}
     validator = JSONStructureInstanceValidator(schema_obj)
     errors = validator.validate_instance(instance_obj)
     assert any("does not match pattern" in err for err in errors)
@@ -968,7 +968,7 @@ def test_validation_addins_object_has_fail():
     instance = {"a": "foo", "b": 123}
     instance_obj = {"value": instance, "$uses": ["JSONStructureValidation"]}
     schema_obj = {"type": "object", "properties": {"value": schema},
-                  "$schema": "https://json-structure.github.io/meta/validation/v0/#", "$id": "dummy", "name": "wrapper"}
+                  "$schema": "https://json-structure.org/meta/validation/v0/#", "$id": "dummy", "name": "wrapper"}
     validator = JSONStructureInstanceValidator(schema_obj)
     errors = validator.validate_instance(instance_obj)
     assert any("does not have any property" in err for err in errors)
@@ -983,7 +983,7 @@ def test_if_then_else_then():
         "if": {"type": "object", "properties": {"a": {"type": "string"}}, "required": ["a"]},
         "then": {"type": "object", "properties": {"b": {"type": "number"}}, "required": ["b"]},
         "else": {"type": "object", "properties": {"c": {"type": "boolean"}}, "required": ["c"]},
-        "$schema": "https://json-structure.github.io/meta/extended/v0/#",
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
         "$id": "dummy",
         "name": "ifThenElse"
     }
@@ -998,7 +998,7 @@ def test_if_then_else_else():
         "if": {"type": "object", "properties": {"a": {"type": "string"}}, "required": ["a"]},
         "then": {"type": "object", "properties": {"b": {"type": "number"}}, "required": ["b"]},
         "else": {"type": "object", "properties": {"c": {"type": "boolean"}}, "required": ["c"]},
-        "$schema": "https://json-structure.github.io/meta/extended/v0/#",
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
         "$id": "dummy",
         "name": "ifThenElse"
     }
@@ -1013,7 +1013,7 @@ def test_if_then_else_fail():
         "if": {"type": "object", "properties": {"a": {"type": "string"}}, "required": ["a"]},
         "then": {"type": "object", "properties": {"b": {"type": "number"}}, "required": ["b"]},
         "else": {"type": "object", "properties": {"c": {"type": "boolean"}}, "required": ["c"]},
-        "$schema": "https://json-structure.github.io/meta/extended/v0/#",
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
         "$id": "dummy",
         "name": "ifThenElse"
     }
@@ -1028,7 +1028,7 @@ def test_all_of():
             {"type": "object", "properties": {"a": {"type": "string"}}, "required": ["a"]},
             {"type": "object", "properties": {"b": {"type": "number"}}, "required": ["b"]}
         ],
-        "$schema": "https://json-structure.github.io/meta/extended/v0/#",
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
         "$id": "dummy",
         "name": "allOf"
     }
@@ -1043,7 +1043,7 @@ def test_all_of_fail():
             {"type": "object", "properties": {"a": {"type": "string"}}, "required": ["a"]},
             {"type": "object", "properties": {"b": {"type": "number"}}, "required": ["b"]}
         ],
-        "$schema": "https://json-structure.github.io/meta/extended/v0/#",
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
         "$id": "dummy",
         "name": "allOf"
     }
@@ -1058,7 +1058,7 @@ def test_any_of():
             {"type": "object", "properties": {"a": {"type": "string"}}, "required": ["a"]},
             {"type": "object", "properties": {"b": {"type": "number"}}, "required": ["b"]}
         ],
-        "$schema": "https://json-structure.github.io/meta/extended/v0/#",
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
         "$id": "dummy",
         "name": "anyOf"
     }
@@ -1073,7 +1073,7 @@ def test_any_of_fail():
             {"type": "object", "properties": {"a": {"type": "string"}}, "required": ["a"]},
             {"type": "object", "properties": {"b": {"type": "number"}}, "required": ["b"]}
         ],
-        "$schema": "https://json-structure.github.io/meta/extended/v0/#",
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
         "$id": "dummy",
         "name": "anyOf"
     }
@@ -1088,7 +1088,7 @@ def test_one_of():
             {"type": "object", "properties": {"a": {"type": "string"}}, "required": ["a"]},
             {"type": "object", "properties": {"b": {"type": "number"}}, "required": ["b"]}
         ],
-        "$schema": "https://json-structure.github.io/meta/extended/v0/#",
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
         "$id": "dummy",
         "name": "oneOf"
     }
@@ -1103,7 +1103,7 @@ def test_one_of_fail():
             {"type": "object", "properties": {"a": {"type": "string"}}, "required": ["a"]},
             {"type": "object", "properties": {"b": {"type": "number"}}, "required": ["b"]}
         ],
-        "$schema": "https://json-structure.github.io/meta/extended/v0/#",
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
         "$id": "dummy",
         "name": "oneOf"
     }
@@ -1115,7 +1115,7 @@ def test_one_of_fail():
 def test_not():
     schema = {
         "not": {"type": "object", "properties": {"a": {"type": "string"}}, "required": ["a"]},
-        "$schema": "https://json-structure.github.io/meta/extended/v0/#",
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
         "$id": "dummy",
         "name": "not"
     }
@@ -1127,7 +1127,7 @@ def test_not():
 def test_not_fail():
     schema = {
         "not": {"type": "object", "properties": {"a": {"type": "string"}}, "required": ["a"]},
-        "$schema": "https://json-structure.github.io/meta/extended/v0/#",
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
         "$id": "dummy",
         "name": "not"
     }

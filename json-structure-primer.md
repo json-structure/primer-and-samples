@@ -148,7 +148,7 @@ Example:
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "definitions" : {
       "AddressBase": {
         "abstract": true,
@@ -200,7 +200,7 @@ might be applied to any _StreetAddress_ types in a document:
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://schemas.vasters.com/Addresses",
     "$root": "#/definitions/StreetAddress",
     "$offers": {
@@ -310,13 +310,13 @@ shadowing definitions from the imported meta-schema.
 The ["core" meta-schema](./json-schema-core-metaschema-core.json) formally
 defines the elements described in the [JSON Structure Core][JSTRUCT-CORE]
 document. The "$id" of the core meta-schema is
-`https://json-structure.github.io/meta/core/v0`.
+`https://json-structure.org/meta/core/v0`.
 
 The ["extended" meta-schema](./json-schema-metaschema-extended.json) extends the
 core meta-schema with all additional features and capabilities provided by the
 companion specifications and offers those features to schema authors. The "$id"
 of the extended meta-schema is
-`https://json-structure.github.io/meta/extended/v0`.
+`https://json-structure.org/meta/extended/v0`.
 
 The ["validation" meta-schema](./json-schema-metaschema-validation.json) enables
 all add-ins defined in the extended meta-schema.
@@ -331,7 +331,7 @@ Here is an example of a simple object type definition:
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "type": "object",
     "name": "Person",
     "properties": {
@@ -361,7 +361,7 @@ extended types:
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "type": "object",
     "name": "UserProfile",
     "properties": {
@@ -390,7 +390,7 @@ type cannot be referenced from other types in the schema.
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "type": "object",
     "name": "UserProfile",
     "properties": {
@@ -423,7 +423,7 @@ that can be referenced by other types in the same document. Here is an example:
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "type": "object",
     "name": "UserProfile",
     "properties": {
@@ -464,7 +464,7 @@ namespaces to structure your types, with two differing `Address` types:
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "type": "object",
     "name": "UserProfile",
     "properties": {
@@ -507,7 +507,7 @@ different from defining an object:
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "type": "array",
     "items": { "type": "string" }
 }
@@ -518,7 +518,7 @@ not reference the type from elsewhere in the schema:
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "type": "array",
     "items": {
         "type": "object",
@@ -536,7 +536,7 @@ To declare an array of a reusable type, you can use the `$ref` keyword:
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "type": "array",
     "items": { "type" : { "$ref": "#/definitions/Person" } },
     "definitions": {
@@ -560,7 +560,7 @@ This example shows how to declare a map of strings to `Color` objects:
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "type": "map",
     "values": { "type": { "$ref": "#/definitions/Color" } },
     "definitions": {
@@ -597,7 +597,7 @@ This example shows how to declare a set of strings:
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "type": "set",
     "items": { "type": "string" }
 }
@@ -616,7 +616,7 @@ The JSON Structure Core specification is designed to be extensible through
 companion specifications that provide additional features and capabilities. 
 
 The extended schema that includes all companion specifications is identified by
-the `https://json-structure.github.io/meta/extended/v0` URI. Each companion
+the `https://json-structure.org/meta/extended/v0` URI. Each companion
 specification is identified by a unique identifier that can be used in the
 `$uses` attribute to activate the companion specification for the schema
 document.
@@ -642,7 +642,7 @@ Here is an example of how to use the `altnames` keyword:
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/extended/v0/#",
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
     "$uses": ["JSONStructureAlternateNames"],
     "Person": {
         "type": "object",
@@ -697,7 +697,7 @@ Here is an example of how to use the `altenums` keyword:
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/extended/v0/#",
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
     "$uses": ["JSONStructureAlternateNames"],
     "type": "object",
     "name": "Color",
@@ -740,7 +740,7 @@ Here is an example of how to use the `unit` keyword:
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/extended/v0/#",
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
     "$uses": ["JSONStructureUnits"],
     "type": "object",
     "name": "Pressure",
@@ -767,7 +767,7 @@ Here is an example of how to use the `currency` keyword:
 
 ```json
 {
-    "$schema": "https://json-structure.github.io/meta/extended/v0/#",
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
     "$uses": ["JSONStructureUnits"],
     "type": "object",
     "name": "Price",

@@ -18,7 +18,7 @@ from json_structure_schema_validator import validate_json_structure_schema_core
 
 # Case 1: Minimal valid schema with 'any' type.
 VALID_MINIMAL = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/minimal",
     "name": "MinimalSchema",
     "type": "any"
@@ -26,7 +26,7 @@ VALID_MINIMAL = {
 
 # Case 2: Valid object schema with properties and required field.
 VALID_OBJECT = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/object",
     "name": "Person",
     "type": "object",
@@ -39,7 +39,7 @@ VALID_OBJECT = {
 
 # Case 3: Valid schema using $ref to a type declared in definitions.
 VALID_REF = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/ref",
     "name": "RefSchema",
     "type": {"$ref": "#/definitions/SomeType"},
@@ -53,7 +53,7 @@ VALID_REF = {
 
 # Case 4: Valid union type combining a primitive and a $ref.
 VALID_UNION = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/union",
     "name": "UnionSchema",
     "type": ["string", {"$ref": "#/definitions/OtherType"}],
@@ -67,7 +67,7 @@ VALID_UNION = {
 
 # Case 5: Valid object type using $extends; properties are optional in extending type.
 VALID_EXTENDS = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/extends",
     "name": "ExtendedSchema",
     "type": "object",
@@ -85,7 +85,7 @@ VALID_EXTENDS = {
 
 # Case 6: Valid schema with property name containing '$', allowed with metaschema flag.
 VALID_ALLOW_DOLLAR = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/allow_dollar",
     "name": "AllowDollarSchema",
     "type": "object",
@@ -96,7 +96,7 @@ VALID_ALLOW_DOLLAR = {
 
 # Case 7: Valid empty namespace: no 'type' or '$ref' so it is a non-schema (namespace)
 VALID_NAMESPACE_EMPTY = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/empty_namespace",
     "name": "EmptyNamespace"
 }
@@ -124,14 +124,14 @@ INVALID_MISSING_SCHEMA = {
 
 # Case 2: Missing required '$id' keyword.
 INVALID_MISSING_ID = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "name": "MissingID",
     "type": "any"
 }
 
 # Case 3: Both 'type' and '$root' present at the root.
 INVALID_BOTH_TYPE_AND_ROOT = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/both",
     "$root": "#/definitions/SomeRoot",
     "type": "any"
@@ -139,7 +139,7 @@ INVALID_BOTH_TYPE_AND_ROOT = {
 
 # Case 4: Object type missing 'properties' and not using '$extends'.
 INVALID_NO_PROPERTIES = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/no_properties",
     "name": "NoPropsObject",
     "type": "object"
@@ -147,7 +147,7 @@ INVALID_NO_PROPERTIES = {
 
 # Case 5: Union with inline compound type (not allowed).
 INVALID_UNION_INLINE = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/invalid_union",
     "name": "InvalidUnion",
     "type": [
@@ -158,7 +158,7 @@ INVALID_UNION_INLINE = {
 
 # Case 6: $ref property is not a string.
 INVALID_REF_NOT_STRING = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/ref_not_string",
     "name": "RefNotString",
     "type": {"$ref": 123}
@@ -166,7 +166,7 @@ INVALID_REF_NOT_STRING = {
 
 # Case 7: $ref pointer does not resolve (non-existent).
 INVALID_BAD_REF = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/bad_ref",
     "name": "BadRef",
     "type": {"$ref": "#/definitions/NonExistent"}
@@ -174,14 +174,14 @@ INVALID_BAD_REF = {
 
 # Case 8: definitions is not an object.
 INVALID_DEFS_NOT_OBJECT = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/defs_not_object",
     "definitions": "not an object"
 }
 
 # Case 9: 'required' keyword used in a non-object type.
 INVALID_REQUIRED_NON_OBJECT = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/required_non_object",
     "name": "RequiredNonObject",
     "type": "string",
@@ -190,7 +190,7 @@ INVALID_REQUIRED_NON_OBJECT = {
 
 # Case 10: 'additionalProperties' used in a non-object type.
 INVALID_ADDITIONAL_NON_OBJECT = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/additional_non_object",
     "name": "AdditionalNonObject",
     "type": "int32",
@@ -199,7 +199,7 @@ INVALID_ADDITIONAL_NON_OBJECT = {
 
 # Case 11: 'abstract' keyword not boolean.
 INVALID_ABSTRACT_NOT_BOOL = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/abstract_not_bool",
     "name": "AbstractNotBool",
     "type": "string",
@@ -208,7 +208,7 @@ INVALID_ABSTRACT_NOT_BOOL = {
 
 # Case 12: $extends pointer does not resolve.
 INVALID_EXTENDS_BAD_POINTER = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/extends_bad",
     "name": "ExtendsBad",
     "type": "object",
@@ -217,7 +217,7 @@ INVALID_EXTENDS_BAD_POINTER = {
 
 # Case 13: 'properties' is not an object.
 INVALID_PROPERTIES_NOT_OBJECT = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/props_not_object",
     "name": "PropsNotObj",
     "type": "object",
@@ -226,7 +226,7 @@ INVALID_PROPERTIES_NOT_OBJECT = {
 
 # Case 14: 'enum' is not a list.
 INVALID_ENUM_NOT_LIST = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/enum_not_list",
     "name": "EnumNotList",
     "type": "string",
@@ -235,7 +235,7 @@ INVALID_ENUM_NOT_LIST = {
 
 # Case 15: 'enum' used with a compound type.
 INVALID_ENUM_COMPOUND = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/enum_compound",
     "name": "EnumCompound",
     "type": "object",
@@ -244,7 +244,7 @@ INVALID_ENUM_COMPOUND = {
 
 # Case 16: 'const' used with a compound type.
 INVALID_CONST_COMPOUND = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/const_compound",
     "name": "ConstCompound",
     "type": "object",
@@ -253,7 +253,7 @@ INVALID_CONST_COMPOUND = {
 
 # Case 17: $offers is not an object.
 INVALID_OFFERS_NOT_OBJECT = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/offers_not_obj",
     "name": "OffersNotObj",
     "type": "any",
@@ -262,7 +262,7 @@ INVALID_OFFERS_NOT_OBJECT = {
 
 # Case 18: $offers key is not a string.
 INVALID_OFFERS_KEY_NOT_STRING = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/offers_key_not_str",
     "name": "OffersKeyNotStr",
     "type": "any",
@@ -277,7 +277,7 @@ INVALID_OFFERS_KEY_NOT_STRING = {
 
 # Case 19: $offers value list contains a non-string.
 INVALID_OFFERS_VALUE_LIST_NONSTRING = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/offers_value_list_nonstr",
     "name": "OffersValueListNonStr",
     "type": "any",
@@ -292,7 +292,7 @@ INVALID_OFFERS_VALUE_LIST_NONSTRING = {
 
 # Case 20: $ref pointer that does not start with '#'
 INVALID_REF_POINTER_NO_HASH = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/ref_no_hash",
     "name": "RefNoHash",
     "type": {"$ref": "invalid_pointer"}
@@ -300,7 +300,7 @@ INVALID_REF_POINTER_NO_HASH = {
 
 # Case 21: Invalid definitions section without a top-level map
 INVALID_DEFS_NO_MAP = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/defs_no_map",
     "name": "DefsNoMap",
     "type": "object",
@@ -309,7 +309,7 @@ INVALID_DEFS_NO_MAP = {
 
 #Case 22: Invalid definitions section with a type definition at the root of definitions
 INVALID_DEFS_ROOT_TYPE = {
-    "$schema": "https://json-structure.github.io/meta/core/v0/#",
+    "$schema": "https://json-structure.org/meta/core/v0/#",
     "$id": "https://example.com/schema/defs_root_type",
     "name": "DefsRootType",
     "type": "object",
@@ -388,7 +388,7 @@ def test_invalid_schemas(schema):
 # Additional test: Check that property names with '$' are rejected when allow_dollar is False.
 def test_dollar_property_rejected():
     schema = {
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "https://example.com/schema/dollar_rejected",
         "name": "DollarRejected",
         "type": "object",
@@ -403,7 +403,7 @@ def test_dollar_property_rejected():
 # Additional test: Valid $offers structure.
 def test_valid_offers():
     schema = {
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "https://example.com/schema/offers_valid",
         "name": "OffersValid",
         "type": "any",

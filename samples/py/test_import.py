@@ -15,7 +15,7 @@ def test_import_with_temp_files(tmp_path):
     """
     # Define external schemas.
     external_schema_person = {
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "https://example.com/schema/person",
         "name": "Person",
         "type": "object",
@@ -25,7 +25,7 @@ def test_import_with_temp_files(tmp_path):
         }
     }
     external_schema_address = {
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "https://example.com/schema/address",
         "$root": "#/definitions/Address",
         "definitions": {
@@ -47,7 +47,7 @@ def test_import_with_temp_files(tmp_path):
     
     # Create a local schema that uses $import and $importdefs.
     local_schema = {
-        "$schema": "https://json-structure.github.io/meta/core/v0/#",
+        "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "https://example.com/schema/local",
         "name": "LocalSchema",
         "type": "object",

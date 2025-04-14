@@ -196,7 +196,7 @@ class JSONStructureSchemaCoreValidator:
         # Simulated external schemas for testing purposes.
         EXTERNAL_SCHEMAS = {
             "https://example.com/people.json": {
-                "$schema": "https://json-structure.github.io/meta/core/v0/#",
+                "$schema": "https://json-structure.org/meta/core/v0/#",
                 "$id": "https://example.com/people.json",
                 "name": "Person",
                 "type": "object",
@@ -217,7 +217,7 @@ class JSONStructureSchemaCoreValidator:
                 }
             },
             "https://example.com/address.json": {
-                "$schema": "https://json-structure.github.io/meta/core/v0/#",
+                "$schema": "https://json-structure.org/meta/core/v0/#",
                 "$id": "https://example.com/address.json",
                 "name": "Address",
                 "type": "object",
