@@ -21,10 +21,6 @@ definitions to remain lightweight and easy to understand.
 
 ## 1. Introduction
 
-JSON Schema has been in development since ca. 2009 and has gone through several
-iterations. The industry has largely standardized on "Draft 7" of JSON Schema,
-with subsequent releases seeing comparatively weak adoption.
-
 There are rapidly growing needs for a standardized (IETF RFC) schema language
 that can describe data types and structures and whose definitions map cleanly to
 programming language types and database constructs as well as into the popular
@@ -33,7 +29,14 @@ applications and it must allow rich annotations with semantic information that
 can be evaluated and understood by developers and by large language models
 (LLMs).
 
-JSON Structure aims to address these different use cases and priorities while
+JSON Schema has been in development since ca. 2009 and has gone through several
+iterations. The industry has largely settled on "Draft 7" of JSON Schema, with
+subsequent releases seeing comparatively weak adoption. There's substantial
+frustration that many developers have with JSON Schema because they try to use
+it for scenarios that it was not designed for. JSON Schema is a powerful
+document validation tool, but it is not a data definition language.
+
+_JSON Structure_ aims to address these different use cases and priorities while
 maintaining familiarity with JSON Schema's syntax. While JSON Schema focuses on
 and excels at document validation, JSON Structure focuses on being a strong data
 definition language.
