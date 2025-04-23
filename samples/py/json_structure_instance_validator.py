@@ -167,7 +167,7 @@ class JSONStructureInstanceValidator:
             return self.errors
 
         # Process $extends. [Metaschema: $extends in ObjectType/TupleType]
-        if "$extends" in schema:
+        if schema_type != "choice" and "$extends" in schema:
             base = self._resolve_ref(schema["$extends"])
             if base is None:
                 self.errors.append(f"Cannot resolve $extends {schema['$extends']} at {path}")
@@ -181,6 +181,7 @@ class JSONStructureInstanceValidator:
             merged = dict(base)
             merged.update(schema)
             merged.pop("$extends", None)
+            merged.pop("abstract", None)
             schema = merged
 
         # Reject abstract schemas. [Metaschema: abstract property]
@@ -359,6 +360,39 @@ class JSONStructureInstanceValidator:
                 else:
                     for (prop, prop_schema), item in zip(props.items(), instance):
                         self.validate_instance(item, prop_schema, f"{path}/{prop}")
+        elif schema_type == "choice":
+            if not isinstance(instance, dict):
+                self.errors.append(f"Expected choice object at {path}, got {type(instance).__name__}")
+            else:
+                choices = schema.get("choices", {})
+                extends = schema.get("$extends")
+                selector = schema.get("selector")
+                if extends is None:
+                    # Tagged union: exactly one property matching a choice key
+                    if len(instance) != 1:
+                        self.errors.append(f"Tagged union at {path} must have a single property")
+                    else:
+                        key, value = next(iter(instance.items()))
+                        if key not in choices:
+                            self.errors.append(f"Property '{key}' at {path} not one of choices {list(choices.keys())}")
+                        else:
+                            self.validate_instance(value, choices[key], f"{path}/{key}")
+                else:
+                    # Inline union: must have selector property
+                    if selector is None:
+                        self.errors.append(f"Inline union at {path} missing 'selector' in schema")
+                    else:
+                        sel_val = instance.get(selector)
+                        if not isinstance(sel_val, str):
+                            self.errors.append(f"Selector '{selector}' at {path} must be a string")
+                        elif sel_val not in choices:
+                            self.errors.append(f"Selector '{sel_val}' at {path} not one of choices {list(choices.keys())}")
+                        else:
+                            # validate remaining properties against chosen variant
+                            variant = choices[sel_val]
+                            inst_copy = dict(instance)
+                            inst_copy.pop(selector, None)
+                            self.validate_instance(inst_copy, variant, path)
         else:
             self.errors.append(f"Unsupported type '{schema_type}' at {path}")
 

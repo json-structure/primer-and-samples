@@ -1136,6 +1136,129 @@ def test_not_fail():
     errors = validator.validate_instance(instance)
     assert any("should not validate against 'not' schema" in err for err in errors)
 
+# -------------------------------------------------------------------
+# Choice Type Tests
+# -------------------------------------------------------------------
+
+def test_choice_tagged_valid():
+    schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "dummy",
+        "name": "MyChoice",
+        "type": "choice",
+        "choices": {
+            "a": {"type": "string"},
+            "b": {"type": "number"}
+        }
+    }
+    instance = {"a": "hello"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(instance)
+    assert errors == []
+
+
+def test_choice_tagged_invalid_multiple_properties():
+    schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "dummy",
+        "name": "MyChoice",
+        "type": "choice",
+        "choices": {
+            "a": {"type": "string"},
+            "b": {"type": "number"}
+        }
+    }
+    instance = {"a": "x", "b": 1}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(instance)
+    assert any("must have a single property" in err for err in errors)
+
+
+def test_choice_tagged_invalid_key():
+    schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "dummy",
+        "name": "MyChoice",
+        "type": "choice",
+        "choices": {
+            "a": {"type": "string"},
+            "b": {"type": "number"}
+        }
+    }
+    instance = {"c": "oops"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(instance)
+    assert any("not one of choices" in err for err in errors)
+
+
+def test_choice_inline_valid():
+    schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "dummy",
+        "name": "InlineChoice",
+        "type": "choice",
+        "$extends": "#/definitions/Base",
+        "selector": "type",
+        "choices": {
+            "X": {"$ref": "#/definitions/X"},
+            "Y": {"$ref": "#/definitions/Y"}
+        },
+        "definitions": {
+            "Base": {
+                "name": "Base",
+                "abstract": True,
+                "type": "object",
+                "properties": {"common": {"type": "string"}}
+            },
+            "X": {
+                "type": "object",
+                "$extends": "#/definitions/Base",
+                "properties": {"x": {"type": "number"}}
+            },
+            "Y": {
+                "type": "object",
+                "$extends": "#/definitions/Base",
+                "properties": {"y": {"type": "boolean"}}
+            }
+        }
+    }
+    instance = {"type": "X", "x": 123}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(instance)
+    assert errors == []
+
+
+def test_choice_inline_missing_selector():
+    schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "dummy",
+        "name": "InlineChoice",
+        "type": "choice",
+        "$extends": "#/definitions/Base",
+        "choices": {"A": {"type": "string"}},
+        "definitions": {"Base": {"name": "Base", "abstract": True, "type": "object", "properties": {}}}
+    }
+    instance = {"A": "value"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(instance)
+    assert any("missing 'selector'" in err for err in errors)
+
+
+def test_choice_inline_invalid_selector_value():
+    schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "dummy",
+        "name": "InlineChoice",
+        "type": "choice",
+        "$extends": "#/definitions/Base",
+        "selector": "kind",
+        "choices": {"A": {"type": "string"}},
+        "definitions": {"Base": {"name": "Base", "abstract": True, "type": "object", "properties": {}}}
+    }
+    instance = {"kind": "B", "B": "oops"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(instance)
+    assert any("not one of choices" in err for err in errors)
 
 # -------------------------------------------------------------------
 # End of tests.

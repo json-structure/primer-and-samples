@@ -44,7 +44,7 @@ class JSONStructureSchemaCoreValidator:
         "datetime", "time", "duration", "uuid", "uri", "binary", "jsonpointer",
         "any"
     }
-    COMPOUND_TYPES = {"object", "array", "set", "map", "tuple"}
+    COMPOUND_TYPES = {"object", "array", "set", "map", "tuple", "choice"}
 
     def __init__(self, allow_dollar=False, allow_import=False, import_map=None):
         """
@@ -318,6 +318,8 @@ class JSONStructureSchemaCoreValidator:
                             self._check_map_schema(schema_obj, path)
                         elif tval == "tuple":
                             self._check_tuple_schema(schema_obj, path)
+                        elif tval == "choice":
+                            self._check_choice_schema(schema_obj, path)
                         else:
                             self._check_primitive_schema(schema_obj, path)
         if "required" in schema_obj:
@@ -434,6 +436,27 @@ class JSONStructureSchemaCoreValidator:
                         self._validate_schema(prop_schema, is_root=False, path=f"{path}/properties/{prop_name}")
                     else:
                         self._err(f"Tuple property '{prop_name}' must be an object (a schema).", path + f"/properties/{prop_name}")
+
+    def _check_choice_schema(self, obj, path):
+        """
+        Checks constraints for a 'choice' type (tagged or inline union).
+        """
+        if "choices" not in obj:
+            self._err("Choice type must have 'choices'.", path + "/choices")
+        else:
+            choices = obj["choices"]
+            if not isinstance(choices, dict):
+                self._err("'choices' must be an object (map).", path + "/choices")
+            else:
+                for name, choice_schema in choices.items():
+                    if not isinstance(name, str):
+                        self._err(f"Choice key '{name}' must be a string.", path + f"/choices/{name}")
+                    if isinstance(choice_schema, dict):
+                        self._validate_schema(choice_schema, is_root=False, path=f"{path}/choices/{name}")
+                    else:
+                        self._err(f"Choice value for '{name}' must be an object (schema).", path + f"/choices/{name}")
+        if "selector" in obj and not isinstance(obj.get("selector"), str):
+            self._err("'selector' must be a string.", path + "/selector")
 
     def _check_primitive_schema(self, obj, path):
         """
