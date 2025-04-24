@@ -101,6 +101,19 @@ VALID_NAMESPACE_EMPTY = {
     "name": "EmptyNamespace"
 }
 
+# Case 8: Valid tuple type with implicit required properties and tuple order
+VALID_TUPLE = {
+    "$schema": "https://json-structure.org/meta/core/v0/#",
+    "$id": "https://example.com/schema/tuple",
+    "name": "PersonTuple",
+    "type": "tuple",
+    "properties": {
+        "name": {"type": "string"},
+        "age": {"type": "int32"}
+    },
+    "tuple": ["name", "age"]
+}
+
 VALID_SCHEMAS = [
     VALID_MINIMAL,
     VALID_OBJECT,
@@ -109,6 +122,7 @@ VALID_SCHEMAS = [
     VALID_EXTENDS,
     VALID_ALLOW_DOLLAR,  # must be validated with allow_dollar=True
     VALID_NAMESPACE_EMPTY,
+    VALID_TUPLE,
 ]
 
 # =============================================================================
@@ -332,6 +346,44 @@ INVALID_NOT_STRING = {
     "$schema": 123,
 }
 
+# Case 26: Tuple type missing 'tuple' keyword.
+INVALID_TUPLE_MISSING_KEYWORD = {
+    "$schema": "https://json-structure.org/meta/core/v0/#",
+    "$id": "https://example.com/schema/invalid_tuple_missing",
+    "name": "MissingTupleKeyword",
+    "type": "tuple",
+    "properties": {
+        "name": {"type": "string"},
+        "age": {"type": "int32"}
+    }
+}
+
+# Case 27: 'tuple' keyword is not an array of strings.
+INVALID_TUPLE_NOT_ARRAY = {
+    "$schema": "https://json-structure.org/meta/core/v0/#",
+    "$id": "https://example.com/schema/invalid_tuple_not_array",
+    "name": "TupleNotArray",
+    "type": "tuple",
+    "properties": {
+        "name": {"type": "string"},
+        "age": {"type": "int32"}
+    },
+    "tuple": "name,age"
+}
+
+# Case 28: 'tuple' contains non-string elements.
+INVALID_TUPLE_NONSTRING_ITEM = {
+    "$schema": "https://json-structure.org/meta/core/v0/#",
+    "$id": "https://example.com/schema/invalid_tuple_nonstring",
+    "name": "TupleNonString",
+    "type": "tuple",
+    "properties": {
+        "name": {"type": "string"},
+        "age": {"type": "int32"}
+    },
+    "tuple": ["name", 42]
+}
+
 INVALID_SCHEMAS = [
     INVALID_MISSING_SCHEMA,
     INVALID_MISSING_ID,
@@ -357,7 +409,10 @@ INVALID_SCHEMAS = [
     INVALID_DEFS_ROOT_TYPE,
     INVALID_NOT_OBJECT,
     INVALID_NOT_ABSOLUTE_URI,
-    INVALID_NOT_STRING
+    INVALID_NOT_STRING,
+    INVALID_TUPLE_MISSING_KEYWORD,
+    INVALID_TUPLE_NOT_ARRAY,
+    INVALID_TUPLE_NONSTRING_ITEM
 ]
 
 # =============================================================================

@@ -421,7 +421,17 @@ class JSONStructureSchemaCoreValidator:
     def _check_tuple_schema(self, obj, path):
         """
         Checks constraints for a 'tuple' type.
+        A valid tuple schema must:
+          - Include a 'name' attribute.
+          - Have a 'properties' object where each key is a valid identifier.
+          - Include a 'tuple' keyword that is an array of strings defining the order.
+          - Ensure that every element in the 'tuple' array corresponds to a property in 'properties'.
         """
+        # Check that 'name' is present.
+        if "name" not in obj:
+            self._err("Tuple type must include a 'name' attribute.", path + "/name")
+        
+        # Validate properties.
         if "properties" not in obj:
             self._err("Tuple type must have 'properties'.", path + "/properties")
         else:
@@ -436,6 +446,20 @@ class JSONStructureSchemaCoreValidator:
                         self._validate_schema(prop_schema, is_root=False, path=f"{path}/properties/{prop_name}")
                     else:
                         self._err(f"Tuple property '{prop_name}' must be an object (a schema).", path + f"/properties/{prop_name}")
+        
+        # Check that the 'tuple' keyword is present.
+        if "tuple" not in obj:
+            self._err("Tuple type must include the 'tuple' keyword defining the order of elements.", path + "/tuple")
+        else:
+            tuple_order = obj["tuple"]
+            if not isinstance(tuple_order, list):
+                self._err("'tuple' keyword must be an array of strings.", path + "/tuple")
+            else:
+                for idx, element in enumerate(tuple_order):
+                    if not isinstance(element, str):
+                        self._err(f"Element at index {idx} in 'tuple' array must be a string.", path + f"/tuple[{idx}]")
+                    elif "properties" in obj and isinstance(obj["properties"], dict) and element not in obj["properties"]:
+                        self._err(f"Element '{element}' in 'tuple' does not correspond to any property in 'properties'.", path + f"/tuple[{idx}]")
 
     def _check_choice_schema(self, obj, path):
         """

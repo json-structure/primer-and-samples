@@ -99,6 +99,10 @@ updated to conform to the new rules.
       declared type. It's a more compact alternative to objects where the
       property names are replaced by the position in the tuple. Arrays or maps
       of tuples are especially useful for time-series data.
+    - **Choice:** A discriminated union of types, where one of the types is
+      selected based on a discriminator property. The `choice` keyword is used
+      to define the union and the `selector` property is used to specify the
+      discriminator property.
 - **Namespaces:** Namespaces are a formal part of the schema language, allowing
   for more modular and deterministic schema definitions. Namespaces are used to
   scope type definitions.
@@ -608,6 +612,107 @@ elements. The schema above would match the following instance data:
 
 ```json
 ["apple", "banana", "cherry"]
+```
+
+### 4.6. Example: Declaring Tuples
+
+Tuples are fixed-length arrays with named elements, declared via the `tuple` keyword.
+
+```json
+{
+    "$schema": "https://json-structure.org/meta/core/v0/#",
+    "type": "tuple",
+    "name": "PersonTuple",
+    "properties": {
+        "firstName": { "type": "string" },
+        "age":       { "type": "int32" }
+    },
+    "tuple": ["firstName", "age"]
+}
+```
+
+An instance of this tuple type:
+
+```json
+["Alice", 30]
+```
+
+### 4.7. Example: Declaring Choice Types
+
+Choice types define discriminated unions via the `choice` keyword. Two forms are supported:
+
+#### Tagged Unions
+
+Tagged unions represent the selected type as a single-property object:
+
+```json
+{
+    "$schema": "https://json-structure.org/meta/core/v0/#",
+    "type": "choice",
+    "name": "StringOrNumber",
+    "choices": {
+        "string": { "type": "string" },
+        "int32":  { "type": "int32" }
+    }
+}
+```
+
+Valid instances:
+
+```json
+{ "string": "Hello" }
+{ "int32":  42 }
+```
+
+#### Inline Unions
+
+Inline unions extend a common abstract base type and use a selector property:
+
+```json
+{
+    "$schema": "https://json-structure.org/meta/core/v0/#",
+    "type": "choice",
+    "name": "AddressChoice",
+    "$extends": "#/definitions/Address",
+    "selector": "addressType",
+    "choices": {
+        "StreetAddress":     { "$ref": "#/definitions/StreetAddress" },
+        "PostOfficeBoxAddress": { "$ref": "#/definitions/PostOfficeBoxAddress" }
+    },
+    "definitions": {
+        "Address": {
+            "abstract": true,
+            "type": "object",
+            "properties": {
+                "city": { "type": "string" },
+                "state":{ "type": "string" },
+                "zip":  { "type": "string" }
+            }
+        },
+        "StreetAddress": {
+            "type": "object",
+            "$extends": "#/definitions/Address",
+            "properties": { "street": { "type": "string" } }
+        },
+        "PostOfficeBoxAddress": {
+            "type": "object",
+            "$extends": "#/definitions/Address",
+            "properties": { "poBox": { "type": "string" } }
+        }
+    }
+}
+```
+
+Instance of this inline union:
+
+```json
+{
+    "addressType": "StreetAddress",
+    "street":      "123 Main St",
+    "city":        "AnyCity",
+    "state":       "AS",
+    "zip":         "11111"
+}
 ```
 
 ## 5. Using Companion Specifications

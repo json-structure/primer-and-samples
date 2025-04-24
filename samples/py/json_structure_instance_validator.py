@@ -353,13 +353,25 @@ class JSONStructureInstanceValidator:
             if not isinstance(instance, list):
                 self.errors.append(f"Expected tuple (array) at {path}, got {type(instance).__name__}")
             else:
+                # Retrieve the tuple ordering
+                order = schema.get("tuple")
                 props = schema.get("properties", {})
-                expected_len = len(props)
-                if len(instance) != expected_len:
-                    self.errors.append(f"Tuple at {path} length {len(instance)} does not equal expected {expected_len}")
+                if order is None:
+                    self.errors.append(f"Tuple schema at {path} is missing the required 'tuple' keyword for ordering")
+                elif not isinstance(order, list):
+                    self.errors.append(f"'tuple' keyword at {path} must be an array of property names")
                 else:
-                    for (prop, prop_schema), item in zip(props.items(), instance):
-                        self.validate_instance(item, prop_schema, f"{path}/{prop}")
+                    # Verify each name in order exists in properties
+                    for prop_name in order:
+                        if prop_name not in props:
+                            self.errors.append(f"Tuple order key '{prop_name}' at {path} not defined in properties")
+                    expected_len = len(order)
+                    if len(instance) != expected_len:
+                        self.errors.append(f"Tuple at {path} length {len(instance)} does not equal expected {expected_len}")
+                    else:
+                        for idx, prop_name in enumerate(order):
+                            prop_schema = props[prop_name]
+                            self.validate_instance(instance[idx], prop_schema, f"{path}/{prop_name}")
         elif schema_type == "choice":
             if not isinstance(instance, dict):
                 self.errors.append(f"Expected choice object at {path}, got {type(instance).__name__}")

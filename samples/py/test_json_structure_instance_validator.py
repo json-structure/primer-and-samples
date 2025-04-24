@@ -556,7 +556,8 @@ def test_tuple_valid():
         "properties": {
             "first": {"type": "string"},
             "second": {"type": "number"}
-        }
+        },
+        "tuple": ["first", "second"]
     }
     instance = ["hello", 42]
     validator = JSONStructureInstanceValidator(schema)
@@ -573,7 +574,8 @@ def test_tuple_wrong_length():
         "properties": {
             "first": {"type": "string"},
             "second": {"type": "number"}
-        }
+        },
+        "tuple": ["first", "second"]
     }
     instance = ["only one"]
     validator = JSONStructureInstanceValidator(schema)
