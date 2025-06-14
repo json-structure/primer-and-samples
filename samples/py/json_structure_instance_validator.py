@@ -50,7 +50,7 @@ class JSONStructureInstanceValidator:
     """
     ABSOLUTE_URI_REGEX = re.compile(r'^[a-zA-Z][a-zA-Z0-9+\-.]*://')
 
-    def __init__(self, root_schema, allow_import=False, import_map=None):
+    def __init__(self, root_schema, allow_import=False, import_map=None, extended=False):
         """
         Initializes the validator.
         :param root_schema: The JSON Structure (as dict).
@@ -61,9 +61,22 @@ class JSONStructureInstanceValidator:
         self.errors = []
         self.allow_import = allow_import
         self.import_map = import_map if import_map is not None else {}
+        self.extended = extended
+        self.enabled_extensions = set()
         # Process $import and $importdefs if enabled. [Metaschema: JSONStructureImport extension constructs]
         if self.allow_import:
             self._process_imports(self.root_schema, "#")
+        self._detect_enabled_extensions()
+
+    def _detect_enabled_extensions(self):
+        schema_uri = self.root_schema.get("$schema", "")
+        uses = self.root_schema.get("$uses", [])
+        if "extended" in schema_uri or "validation" in schema_uri:
+            self.enabled_extensions.add("JSONStructureConditionalComposition")
+            self.enabled_extensions.add("JSONStructureValidation")
+        if isinstance(uses, list):
+            for ext in uses:
+                self.enabled_extensions.add(ext)
 
     def validate_instance(self, instance, schema=None, path="#", meta=None):
         """
@@ -80,14 +93,20 @@ class JSONStructureInstanceValidator:
             schema = self.root_schema
 
         # --- Automatically enable all addins if using extended metaschema ---
+        # Only do this if $uses is present; otherwise, do NOT auto-enable addins (per spec)
         if self.root_schema.get("$schema") == "https://json-structure.org/meta/extended/v0/#":
-            # Automatically enable all addins offered in the root schema.
-            all_addins = ["JSONStructureConditionalComposition", "JSONStructureValidation", "JSONStructureUnits", "JSONStructureAlternateNames"]
-            schema.setdefault("$uses", [])
-            for addin in all_addins:
-                if addin not in schema["$uses"]:
-                    schema["$uses"].append(addin)
-            # [Metaschema: Extended metaschema automatically enables all addins]
+            if "$uses" in schema:
+                all_addins = [
+                    "JSONStructureConditionalComposition",
+                    "JSONStructureValidation",
+                    "JSONStructureUnits",
+                    "JSONStructureAlternateNames"
+                ]
+                schema.setdefault("$uses", [])
+                for addin in all_addins:
+                    if addin not in schema["$uses"]:
+                        schema["$uses"].append(addin)
+            # If $uses is not present, do not auto-enable addins; enforcement is handled later
 
         if isinstance(instance, dict) and "$uses" in instance and self.root_schema.get("$schema") == "https://json-structure.org/meta/validation/v0/#":
             # Automatically enable the JSONStructureValidation addin.
@@ -117,14 +136,40 @@ class JSONStructureInstanceValidator:
         hasConditionals = False
         if "$uses" in self.root_schema:
             if "JSONStructureConditionalComposition" in self.root_schema["$uses"]:
-                hasConditionals = self._validate_conditionals(schema, instance, path)
-        
+                hasConditionals = self._validate_conditionals(schema, instance, path)        # Handle schemas that are only conditional composition at the root (no 'type')
+        conditional_keywords = ("allOf", "anyOf", "oneOf", "not", "if", "then", "else")
+        has_conditionals_at_root = any(k in schema for k in conditional_keywords)
+        if not schema.get("type") and has_conditionals_at_root:
+            schema_uri = self.root_schema.get("$schema", "")
+            is_validation = schema_uri.endswith("/validation/v0/#")
+            is_extended = schema_uri.endswith("/extended/v0/#")
+            
+            # Check extended metaschema enforcement first
+            if is_extended and not (isinstance(self.root_schema, dict) and "$uses" in self.root_schema and "JSONStructureConditionalComposition" in self.root_schema["$uses"]):
+                self.errors.append(
+                    "Conditional composition is not enabled: $uses must include 'JSONStructureConditionalComposition' for the extended metaschema")
+                return self.errors
+            
+            enable_conditional = (
+                self.extended or
+                is_validation or
+                (isinstance(self.root_schema, dict) and "$uses" in self.root_schema and (
+                    "JSONStructureConditionalComposition" in self.root_schema["$uses"] or "JSONStructureValidation" in self.root_schema["$uses"]
+                ))
+            )
+            
+            if enable_conditional:
+                self._validate_conditionals(schema, instance, path)
+                return self.errors
+            else:
+                self.errors.append(f"Conditional composition keywords present at {path} but not enabled")
+                return self.errors
+
         # Handle case where "type" is a dict with a $ref. [Metaschema: PrimitiveOrReference]
         schema_type = schema.get("type")
         if not schema_type:
-            if hasConditionals: # non-schema with conditionals
-                return self.errors
             self.errors.append(f"Schema at {path} has no 'type'")
+            return self.errors
             
         if isinstance(schema_type, dict):
             if "$ref" in schema_type:
@@ -408,10 +453,39 @@ class JSONStructureInstanceValidator:
         else:
             self.errors.append(f"Unsupported type '{schema_type}' at {path}")
 
-        # Conditionally validate conditionals if "JSONStructureConditionalComposition" addin is enabled.
-        if "$uses" in self.root_schema:
-            # Conditionally validate validation addins if "JSONStructureValidation" addin is enabled.
-            if "JSONStructureValidation" in self.root_schema["$uses"]:
+        # --- Enforce extended features if enabled ---
+        # Only enable conditional composition if explicitly enabled via $uses or the validation metaschema
+        schema_uri = self.root_schema.get("$schema", "")
+        is_validation = schema_uri.endswith("/validation/v0/#")
+        is_extended = schema_uri.endswith("/extended/v0/#")
+        # Only enable if:
+        # - self.extended is set (CLI override)
+        # - validation metaschema (enables both addins by default)
+        # - $uses in schema explicitly enables the addin
+        enable_conditional = (
+            self.extended or
+            is_validation or
+            (isinstance(schema, dict) and "$uses" in schema and (
+                "JSONStructureConditionalComposition" in schema["$uses"] or "JSONStructureValidation" in schema["$uses"]
+            ))
+        )
+        # If the schema is the extended metaschema and has any conditional composition keyword but does NOT have $uses, this is an error (per spec)
+        conditional_keywords = ("allOf", "anyOf", "oneOf", "not", "if", "then", "else")
+        if is_extended and any(k in schema for k in conditional_keywords):
+            if not (isinstance(schema, dict) and "$uses" in schema and "JSONStructureConditionalComposition" in schema["$uses"]):
+                self.errors.append(
+                    "Conditional composition is not enabled: $uses must include 'JSONStructureConditionalComposition' for the extended metaschema")
+                return self.errors
+        if enable_conditional:
+            # Conditional composition (allOf, anyOf, oneOf, not, if/then/else)
+            if ("JSONStructureConditionalComposition" in self.enabled_extensions or
+                is_validation or
+                (isinstance(schema, dict) and "$uses" in schema and "JSONStructureConditionalComposition" in schema["$uses"])):
+                self._validate_conditionals(schema, instance, path)
+            # Validation keywords (min/max, pattern, etc.)
+            if ("JSONStructureValidation" in self.enabled_extensions or
+                is_validation or
+                (isinstance(schema, dict) and "$uses" in schema and "JSONStructureValidation" in schema["$uses"])):
                 self._validate_validation_addins(schema, instance, path)
 
         if "const" in schema:
@@ -421,6 +495,63 @@ class JSONStructureInstanceValidator:
             if instance not in schema["enum"]:
                 self.errors.append(f"Value at {path} not in enum {schema['enum']}")
         return self.errors
+
+    def validate(self, instance, schema=None):
+        if schema is None:
+            schema = self.root_schema
+        errors = []
+        # Extended: conditional composition
+        if self.extended and "JSONStructureConditionalComposition" in self.enabled_extensions:
+            for key in ("allOf", "anyOf", "oneOf"):
+                if key in schema:
+                    subschemas = schema[key]
+                    if key == "allOf":
+                        for idx, subschema in enumerate(subschemas):
+                            errors += self.validate(instance, subschema)
+                    elif key == "anyOf":
+                        if not any(not self.validate(instance, subschema) for subschema in subschemas):
+                            errors.append(f"Instance does not match anyOf at {key}")
+                    elif key == "oneOf":
+                        matches = sum(1 for subschema in subschemas if not self.validate(instance, subschema))
+                        if matches != 1:
+                            errors.append(f"Instance does not match exactly one subschema in oneOf at {key}")
+            if "not" in schema:
+                if not self.validate(instance, schema["not"]):
+                    errors.append("Instance must not match 'not' subschema")
+            if "if" in schema:
+                if not self.validate(instance, schema["if"]):
+                    if "else" in schema:
+                        errors += self.validate(instance, schema["else"])
+                else:
+                    if "then" in schema:
+                        errors += self.validate(instance, schema["then"])
+        # Extended: validation keywords
+        if self.extended and "JSONStructureValidation" in self.enabled_extensions:
+            t = schema.get("type")
+            if t == "string":
+                if "minLength" in schema and isinstance(instance, str):
+                    if len(instance) < schema["minLength"]:
+                        errors.append(f"String shorter than minLength {schema['minLength']}")
+                if "pattern" in schema and isinstance(instance, str):
+                    import re
+                    if not re.match(schema["pattern"], instance):
+                        errors.append(f"String does not match pattern {schema['pattern']}")
+            if t == "number" or t == "int32" or t == "float" or t == "double":
+                if "minimum" in schema and instance < schema["minimum"]:
+                    errors.append(f"Number less than minimum {schema['minimum']}")
+                if "maximum" in schema and instance > schema["maximum"]:
+                    errors.append(f"Number greater than maximum {schema['maximum']}")
+                if "multipleOf" in schema and instance % schema["multipleOf"] != 0:
+                    errors.append(f"Number not a multiple of {schema['multipleOf']}")
+            if t == "array":
+                if "minItems" in schema and len(instance) < schema["minItems"]:
+                    errors.append(f"Array has fewer than minItems {schema['minItems']}")
+                if "maxItems" in schema and len(instance) > schema["maxItems"]:
+                    errors.append(f"Array has more than maxItems {schema['maxItems']}")
+                if "uniqueItems" in schema and schema["uniqueItems"]:
+                    if len(instance) != len(set(map(str, instance))):
+                        errors.append("Array items are not unique")
+        return errors
 
     def _validate_conditionals(self, schema, instance, path) -> bool:
         """
@@ -434,7 +565,17 @@ class JSONStructureInstanceValidator:
             subschemas = schema["allOf"]
             for idx, subschema in enumerate(subschemas):
                 backup = list(self.errors)
-                self.validate_instance(instance, subschema, f"{path}/allOf[{idx}]")
+                # Ensure subschema inherits validation context from parent
+                enhanced_subschema = dict(subschema)
+                if self.root_schema.get("$uses"):
+                    if "$uses" not in enhanced_subschema:
+                        enhanced_subschema["$uses"] = list(self.root_schema["$uses"])
+                    else:
+                        # Merge validation addins
+                        for addin in self.root_schema["$uses"]:
+                            if addin not in enhanced_subschema["$uses"]:
+                                enhanced_subschema["$uses"].append(addin)
+                self.validate_instance(instance, enhanced_subschema, f"{path}/allOf[{idx}]")
                 if self.errors:
                     self.errors = backup + self.errors
         if "anyOf" in schema:
@@ -445,7 +586,17 @@ class JSONStructureInstanceValidator:
             for idx, subschema in enumerate(subschemas):
                 backup = list(self.errors)
                 self.errors = []
-                self.validate_instance(instance, subschema, f"{path}/anyOf[{idx}]")
+                # Ensure subschema inherits validation context from parent
+                enhanced_subschema = dict(subschema)
+                if self.root_schema.get("$uses"):
+                    if "$uses" not in enhanced_subschema:
+                        enhanced_subschema["$uses"] = list(self.root_schema["$uses"])
+                    else:
+                        # Merge validation addins
+                        for addin in self.root_schema["$uses"]:
+                            if addin not in enhanced_subschema["$uses"]:
+                                enhanced_subschema["$uses"].append(addin)
+                self.validate_instance(instance, enhanced_subschema, f"{path}/anyOf[{idx}]")
                 if not self.errors:
                     valid = True
                     break
@@ -462,7 +613,17 @@ class JSONStructureInstanceValidator:
             for idx, subschema in enumerate(subschemas):
                 backup = list(self.errors)
                 self.errors = []
-                self.validate_instance(instance, subschema, f"{path}/oneOf[{idx}]")
+                # Ensure subschema inherits validation context from parent
+                enhanced_subschema = dict(subschema)
+                if self.root_schema.get("$uses"):
+                    if "$uses" not in enhanced_subschema:
+                        enhanced_subschema["$uses"] = list(self.root_schema["$uses"])
+                    else:
+                        # Merge validation addins
+                        for addin in self.root_schema["$uses"]:
+                            if addin not in enhanced_subschema["$uses"]:
+                                enhanced_subschema["$uses"].append(addin)
+                self.validate_instance(instance, enhanced_subschema, f"{path}/oneOf[{idx}]")
                 if not self.errors:
                     valid_count += 1
                 else:
@@ -524,39 +685,68 @@ class JSONStructureInstanceValidator:
                     self.errors.append(f"Cannot evaluate exclusiveMinimum constraint at {path}")
             if schema.get("exclusiveMaximum") is True:
                 try:
-                    if instance >= schema.get("maximum", float("inf")):
-                        self.errors.append(
+                    if instance >= schema.get("maximum", float("inf")):                        self.errors.append(
                             f"Value at {path} is not less than exclusive maximum {schema.get('maximum')}")
                 except Exception:
                     self.errors.append(f"Cannot evaluate exclusiveMaximum constraint at {path}")
             if "multipleOf" in schema:
                 try:
-                    if instance % schema["multipleOf"] != 0:
+                    # Handle floating point precision issues
+                    multiple_of = schema["multipleOf"]
+                    quotient = instance / multiple_of
+                    # Check if the quotient is close to an integer within a small tolerance
+                    if abs(quotient - round(quotient)) > 1e-10:
                         self.errors.append(f"Value at {path} is not a multiple of {schema['multipleOf']}")
                 except Exception:
                     self.errors.append(f"Cannot evaluate multipleOf constraint at {path}")
+        
         # String constraints.
         if schema.get("type") == "string":
             if "minLength" in schema:
-                if len(instance) < schema["minLength"]:
-                    self.errors.append(f"String at {path} shorter than minLength {schema['minLength']}")
+                try:
+                    if len(instance) < schema["minLength"]:
+                        self.errors.append(f"String at {path} shorter than minLength {schema['minLength']}")
+                except TypeError:
+                    self.errors.append(f"Invalid minLength constraint at {path}")
             if "maxLength" in schema:
-                if len(instance) > schema["maxLength"]:
-                    self.errors.append(f"String at {path} longer than maxLength {schema['maxLength']}")
+                try:
+                    if len(instance) > schema["maxLength"]:
+                        self.errors.append(f"String at {path} exceeds maxLength {schema['maxLength']}")
+                except TypeError:
+                    self.errors.append(f"Invalid maxLength constraint at {path}")
             if "pattern" in schema:
-                pattern = re.compile(schema["pattern"])
-                if not pattern.search(instance):
-                    self.errors.append(f"String at {path} does not match pattern {schema['pattern']}")
+                try:
+                    pattern = re.compile(schema["pattern"])
+                    if not pattern.search(instance):
+                        self.errors.append(f"String at {path} does not match pattern {schema['pattern']}")
+                except (re.error, TypeError):
+                    self.errors.append(f"Invalid pattern constraint at {path}")
             if "format" in schema:
                 fmt = schema["format"]
-                if fmt == "email":
-                    if "@" not in instance:
-                        self.errors.append(f"String at {path} does not appear to be a valid email")
-                elif fmt == "uri":
-                    parsed = urlparse(instance)
-                    if not parsed.scheme:
-                        self.errors.append(f"String at {path} does not appear to be a valid uri")
-        # Array constraints.
+                try:
+                    if fmt == "email":
+                        # Simple email validation
+                        if "@" not in instance or not re.match(r'^[^@]+@[^@]+\.[^@]+$', instance):
+                            self.errors.append(f"String at {path} does not match format email")
+                    elif fmt == "ipv4":
+                        # IPv4 validation
+                        parts = instance.split('.')
+                        if len(parts) != 4 or not all(0 <= int(part) <= 255 for part in parts):
+                            self.errors.append(f"String at {path} does not match format ipv4")
+                    elif fmt == "ipv6":
+                        # Basic IPv6 validation
+                        if not re.match(r'^[0-9a-fA-F:]+$', instance):
+                            self.errors.append(f"String at {path} does not match format ipv6")
+                    elif fmt == "uri":
+                        parsed = urlparse(instance)
+                        if not parsed.scheme:
+                            self.errors.append(f"String at {path} does not match format uri")
+                    elif fmt == "hostname":
+                        if not re.match(r'^[a-zA-Z0-9.-]+$', instance):
+                            self.errors.append(f"String at {path} does not match format hostname")
+                    # Add more format validations as needed
+                except (ValueError, TypeError):
+                    self.errors.append(f"String at {path} does not match format {fmt}")        # Array constraints.
         if schema.get("type") == "array":
             if "minItems" in schema:
                 if len(instance) < schema["minItems"]:
@@ -568,6 +758,29 @@ class JSONStructureInstanceValidator:
                 serialized = [json.dumps(x, sort_keys=True) for x in instance]
                 if len(serialized) != len(set(serialized)):
                     self.errors.append(f"Array at {path} does not have unique items")
+            
+            # contains validation
+            if "contains" in schema:
+                contains_schema = schema["contains"]
+                matches = []
+                for i, item in enumerate(instance):
+                    temp_validator = JSONStructureInstanceValidator(contains_schema, import_map=self.import_map, allow_import=self.allow_import)
+                    item_errors = temp_validator.validate_instance(item)
+                    if not item_errors:
+                        matches.append(i)
+                
+                if not matches:
+                    self.errors.append(f"Array at {path} does not contain required element")
+                
+                # minContains validation
+                if "minContains" in schema:
+                    if len(matches) < schema["minContains"]:
+                        self.errors.append(f"Array at {path} contains fewer than minContains {schema['minContains']} matching elements")
+                
+                # maxContains validation  
+                if "maxContains" in schema:
+                    if len(matches) > schema["maxContains"]:
+                        self.errors.append(f"Array at {path} contains more than maxContains {schema['maxContains']} matching elements")
         # Object constraints.
         if schema.get("type") == "object":
             if "minProperties" in schema:
@@ -606,10 +819,16 @@ class JSONStructureInstanceValidator:
                         for dep in required_deps:
                             if dep not in instance:
                                 self.errors.append(
-                                    f"Property '{prop_name}' at {path} requires dependent property '{dep}'")
-
-        # Map constraints
+                                    f"Property '{prop_name}' at {path} requires dependent property '{dep}'")        # Map constraints
         if schema.get("type") == "map":
+            # minEntries and maxEntries validation
+            if "minEntries" in schema:
+                if len(instance) < schema["minEntries"]:
+                    self.errors.append(f"Map at {path} has fewer than minEntries {schema['minEntries']}")
+            if "maxEntries" in schema:
+                if len(instance) > schema["maxEntries"]:
+                    self.errors.append(f"Map at {path} has more than maxEntries {schema['maxEntries']}")
+                    
             # patternKeys validation
             if "patternKeys" in schema and isinstance(schema["patternKeys"], dict):
                 for pattern_str, pattern_schema in schema["patternKeys"].items():
@@ -628,7 +847,17 @@ class JSONStructureInstanceValidator:
                     self.errors.append(f"keyNames schema must be of type string at {path}")
                 else:
                     for key_name in instance.keys():
-                        self.validate_instance(key_name, key_names_schema, f"{path}/keyName({key_name})")
+                        # Ensure validation addins are enabled for keyNames schema validation
+                        keynames_validation_schema = dict(key_names_schema)
+                        if "$uses" not in keynames_validation_schema:
+                            keynames_validation_schema["$uses"] = ["JSONStructureValidation"]
+                        elif "JSONStructureValidation" not in keynames_validation_schema["$uses"]:
+                            keynames_validation_schema["$uses"].append("JSONStructureValidation")
+                        
+                        temp_validator = JSONStructureInstanceValidator(keynames_validation_schema, import_map=self.import_map, allow_import=self.allow_import)
+                        key_errors = temp_validator.validate_instance(key_name)
+                        if key_errors:
+                            self.errors.append(f"Map key name '{key_name}' at {path} does not match keyNames constraint")
 
     def _resolve_ref(self, ref):
         """
@@ -799,39 +1028,28 @@ class JSONStructureInstanceValidator:
                 self.errors.append(f"Invalid add-in definition for '{use}'")
         return merged
 
-    def main():
-        """
-        Command line entry point.
-        Usage: python json_structure_instance_validator.py <schema_file> <instance_file>
-        Loads the schema and instance from files and prints validation errors if any.
-        """
-        if len(sys.argv) != 3:
-            print("Usage: python json_structure_instance_validator.py <schema_file> <instance_file>")
-            sys.exit(1)
-        schema_file = sys.argv[1]
-        instance_file = sys.argv[2]
-        try:
-            with open(schema_file, "r", encoding="utf-8") as f:
-                schema = json.load(f)
-        except Exception as e:
-            print(f"Error loading schema: {e}")
-            sys.exit(1)
-        try:
-            with open(instance_file, "r", encoding="utf-8") as f:
-                instance = json.load(f)
-        except Exception as e:
-            print(f"Error loading instance: {e}")
-            sys.exit(1)
-        # Enable import processing.
-        validator = JSONStructureInstanceValidator(schema, allow_import=True)
-        errors = validator.validate_instance(instance)
-        if errors:
-            print("Instance is invalid:")
-            for err in errors:
-                print(" -", err)
-            sys.exit(1)
-        else:
-            print("Instance is valid.")
 
-    if __name__ == "__main__":
-        main()
+def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('instance_file')
+    parser.add_argument('schema_file')
+    parser.add_argument('--extended', action='store_true')
+    args = parser.parse_args()
+    import json
+    with open(args.schema_file, 'r', encoding='utf-8') as f:
+        schema = json.load(f)
+    with open(args.instance_file, 'r', encoding='utf-8') as f:
+        instance = json.load(f)
+    validator = JSONStructureInstanceValidator(schema, extended=args.extended)
+    errors = validator.validate(instance)
+    if errors:
+        print("Instance is invalid:")
+        for err in errors:
+            print(" -", err)
+        exit(1)
+    print("Instance is valid.")
+
+
+if __name__ == "__main__":
+    main()
