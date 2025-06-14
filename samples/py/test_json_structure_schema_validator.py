@@ -6,6 +6,7 @@ Pytest-based test suite for the JSON Structure schema validator.
 It includes both valid and invalid schemas that probe corner conditions,
 including testing of union types, $ref, $extends, namespaces (including empty namespaces),
 JSON pointers, enum/const usage, and the --metaschema parameter (allowing '$' in property names).
+Also includes tests for extended validation features (conditional composition and validation keywords).
 """
 
 import json
@@ -13,7 +14,7 @@ import pytest
 from json_structure_schema_validator import validate_json_structure_schema_core
 
 # =============================================================================
-# Valid Schemas (7 Cases)
+# Valid Schemas (Core)
 # =============================================================================
 
 # Case 1: Minimal valid schema with 'any' type.
@@ -126,7 +127,161 @@ VALID_SCHEMAS = [
 ]
 
 # =============================================================================
-# Invalid Schemas (20 Cases)
+# Valid Schemas (Extended Features)
+# =============================================================================
+
+# Valid schema with conditional composition keywords
+VALID_ALLOF = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/allof",
+    "name": "AllOfSchema",
+    "$uses": ["JSONStructureConditionalComposition"],
+    "allOf": [
+        {"type": "object", "properties": {"a": {"type": "string"}}},
+        {"type": "object", "properties": {"b": {"type": "number"}}}
+    ]
+}
+
+VALID_ANYOF = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/anyof",
+    "name": "AnyOfSchema",
+    "$uses": ["JSONStructureConditionalComposition"],
+    "anyOf": [
+        {"type": "string"},
+        {"type": "number"}
+    ]
+}
+
+VALID_ONEOF = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/oneof",
+    "name": "OneOfSchema",
+    "$uses": ["JSONStructureConditionalComposition", "JSONStructureValidation"],
+    "oneOf": [
+        {"type": "string", "minLength": 5},
+        {"type": "string", "maxLength": 3}
+    ]
+}
+
+VALID_NOT = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/not",
+    "name": "NotSchema",
+    "$uses": ["JSONStructureConditionalComposition"],
+    "not": {"type": "string"}
+}
+
+VALID_IF_THEN_ELSE = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/ifthenelse",
+    "name": "IfThenElseSchema",
+    "$uses": ["JSONStructureConditionalComposition"],
+    "if": {"type": "object", "properties": {"a": {"type": "string"}}},
+    "then": {"type": "object", "properties": {"b": {"type": "number"}}, "required": ["b"]},
+    "else": {"type": "object", "properties": {"c": {"type": "boolean"}}, "required": ["c"]}
+}
+
+# Valid schema with validation keywords
+VALID_NUMERIC_VALIDATION = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/numeric_validation",
+    "name": "NumericValidationSchema",
+    "$uses": ["JSONStructureValidation"],
+    "type": "number",
+    "minimum": 0,
+    "maximum": 100,
+    "exclusiveMinimum": 0,
+    "exclusiveMaximum": 100,
+    "multipleOf": 5
+}
+
+VALID_STRING_VALIDATION = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/string_validation",
+    "name": "StringValidationSchema",
+    "$uses": ["JSONStructureValidation"],
+    "type": "string",
+    "minLength": 3,
+    "maxLength": 50,
+    "pattern": "^[A-Za-z]+$",
+    "format": "email"
+}
+
+VALID_ARRAY_VALIDATION = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/array_validation",
+    "name": "ArrayValidationSchema",
+    "$uses": ["JSONStructureValidation"],
+    "type": "array",
+    "items": {"type": "string"},
+    "minItems": 1,
+    "maxItems": 10,
+    "uniqueItems": True,
+    "contains": {"type": "string", "const": "special"},
+    "minContains": 1,
+    "maxContains": 2
+}
+
+VALID_OBJECT_VALIDATION = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/object_validation",
+    "name": "ObjectValidationSchema",
+    "$uses": ["JSONStructureValidation"],
+    "type": "object",
+    "properties": {
+        "name": {"type": "string"},
+        "age": {"type": "number"}
+    },
+    "minProperties": 1,
+    "maxProperties": 5,
+    "dependentRequired": {
+        "age": ["birthdate"]
+    },
+    "patternProperties": {
+        "^meta_": {"type": "string"}
+    },
+    "propertyNames": {"type": "string", "pattern": "^[a-z_]+$"}
+}
+
+# Valid with validation meta-schema (enables extensions by default)
+VALID_VALIDATION_METASCHEMA = {
+    "$schema": "https://json-structure.org/meta/validation/v0/#",
+    "$id": "https://example.com/schema/validation_meta",
+    "name": "ValidationMetaSchema",
+    "type": "string",
+    "minLength": 5,
+    "pattern": "^[A-Z]"
+}
+
+# Valid with extended types and validation
+VALID_DECIMAL_VALIDATION = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/decimal_validation",
+    "name": "DecimalValidationSchema",
+    "$uses": ["JSONStructureValidation"],
+    "type": "decimal",
+    "minimum": "0.00",
+    "maximum": "999.99",
+    "multipleOf": "0.01"
+}
+
+VALID_EXTENDED_SCHEMAS = [
+    VALID_ALLOF,
+    VALID_ANYOF,
+    VALID_ONEOF,
+    VALID_NOT,
+    VALID_IF_THEN_ELSE,
+    VALID_NUMERIC_VALIDATION,
+    VALID_STRING_VALIDATION,
+    VALID_ARRAY_VALIDATION,
+    VALID_OBJECT_VALIDATION,
+    VALID_VALIDATION_METASCHEMA,
+    VALID_DECIMAL_VALIDATION
+]
+
+# =============================================================================
+# Invalid Schemas (Core)
 # =============================================================================
 
 # Case 1: Missing required '$schema' keyword.
@@ -416,6 +571,164 @@ INVALID_SCHEMAS = [
 ]
 
 # =============================================================================
+# Invalid Schemas (Extended Features)
+# =============================================================================
+
+# Using extended keywords without enabling the extension
+INVALID_COMPOSITION_NO_EXTENSION = {
+    "$schema": "https://json-structure.org/meta/core/v0/#",
+    "$id": "https://example.com/schema/composition_no_ext",
+    "allOf": [
+        {"type": "string"}
+    ]
+}
+
+INVALID_VALIDATION_NO_EXTENSION = {
+    "$schema": "https://json-structure.org/meta/core/v0/#",
+    "$id": "https://example.com/schema/validation_no_ext",
+    "type": "string",
+    "minLength": 5
+}
+
+# Invalid composition keyword usage
+INVALID_ALLOF_NOT_ARRAY = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/allof_not_array",
+    "$uses": ["JSONStructureConditionalComposition"],
+    "allOf": {"type": "string"}
+}
+
+INVALID_ALLOF_EMPTY = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/allof_empty",
+    "$uses": ["JSONStructureConditionalComposition"],
+    "allOf": []
+}
+
+INVALID_NOT_NOT_SCHEMA = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/not_not_schema",
+    "$uses": ["JSONStructureConditionalComposition"],
+    "not": "string"
+}
+
+# Invalid validation keyword usage
+INVALID_MINLENGTH_NEGATIVE = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/minlength_negative",
+    "$uses": ["JSONStructureValidation"],
+    "type": "string",
+    "minLength": -1
+}
+
+INVALID_PATTERN_NOT_STRING = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/pattern_not_string",
+    "$uses": ["JSONStructureValidation"],
+    "type": "string",
+    "pattern": 123
+}
+
+INVALID_FORMAT_UNKNOWN = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/format_unknown",
+    "$uses": ["JSONStructureValidation"],
+    "type": "string",
+    "format": "unknown-format"
+}
+
+INVALID_NUMERIC_VALIDATION_ON_STRING = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/numeric_on_string",
+    "$uses": ["JSONStructureValidation"],
+    "type": "string",
+    "minimum": 10
+}
+
+INVALID_UNIQUEITEMS_NOT_BOOL = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/uniqueitems_not_bool",
+    "$uses": ["JSONStructureValidation"],
+    "type": "array",
+    "items": {"type": "string"},
+    "uniqueItems": "true"
+}
+
+INVALID_CONTAINS_NOT_SCHEMA = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/contains_not_schema",
+    "$uses": ["JSONStructureValidation"],
+    "type": "array",
+    "items": {"type": "string"},
+    "contains": "string"
+}
+
+INVALID_MINCONTAINS_WITHOUT_CONTAINS = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/mincontains_no_contains",
+    "$uses": ["JSONStructureValidation"],
+    "type": "array",
+    "items": {"type": "string"},
+    "minContains": 1
+}
+
+INVALID_DEPENDENT_REQUIRED_NOT_OBJECT = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/dependent_not_obj",
+    "$uses": ["JSONStructureValidation"],
+    "type": "object",
+    "properties": {"name": {"type": "string"}},
+    "dependentRequired": ["name"]
+}
+
+INVALID_PATTERN_PROPERTIES_BAD_REGEX = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/pattern_bad_regex",
+    "$uses": ["JSONStructureValidation"],
+    "type": "object",
+    "patternProperties": {
+        "[": {"type": "string"}
+    }
+}
+
+INVALID_MINPROPERTIES_ON_MAP = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/minprops_on_map",
+    "$uses": ["JSONStructureValidation"],
+    "type": "map",
+    "values": {"type": "string"},
+    "minProperties": 1
+}
+
+INVALID_PROPERTYNAMES_ON_MAP = {
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$id": "https://example.com/schema/propnames_on_map",
+    "$uses": ["JSONStructureValidation"],
+    "type": "map",
+    "values": {"type": "string"},
+    "propertyNames": {"type": "string"}
+}
+
+INVALID_EXTENDED_SCHEMAS = [
+    INVALID_COMPOSITION_NO_EXTENSION,
+    INVALID_VALIDATION_NO_EXTENSION,
+    INVALID_ALLOF_NOT_ARRAY,
+    INVALID_ALLOF_EMPTY,
+    INVALID_NOT_NOT_SCHEMA,
+    INVALID_MINLENGTH_NEGATIVE,
+    INVALID_PATTERN_NOT_STRING,
+    INVALID_FORMAT_UNKNOWN,
+    INVALID_NUMERIC_VALIDATION_ON_STRING,
+    INVALID_UNIQUEITEMS_NOT_BOOL,
+    INVALID_CONTAINS_NOT_SCHEMA,
+    INVALID_MINCONTAINS_WITHOUT_CONTAINS,
+    INVALID_DEPENDENT_REQUIRED_NOT_OBJECT,
+    INVALID_PATTERN_PROPERTIES_BAD_REGEX,
+    INVALID_MINPROPERTIES_ON_MAP,
+    INVALID_PROPERTYNAMES_ON_MAP
+]
+
+# =============================================================================
 # Pytest Test Functions
 # =============================================================================
 
@@ -431,6 +744,15 @@ def test_valid_schemas(schema):
     errors = validate_json_structure_schema_core(schema, source_text, allow_dollar=allow_dollar)
     assert errors == []
 
+@pytest.mark.parametrize("schema", VALID_EXTENDED_SCHEMAS)
+def test_valid_extended_schemas(schema):
+    """
+    Test that valid extended schemas produce no errors when extended=True.
+    """
+    source_text = json.dumps(schema)
+    errors = validate_json_structure_schema_core(schema, source_text, extended=True)
+    assert errors == []
+
 @pytest.mark.parametrize("schema", INVALID_SCHEMAS)
 def test_invalid_schemas(schema):
     """
@@ -438,6 +760,15 @@ def test_invalid_schemas(schema):
     """
     source_text = json.dumps(schema)
     errors = validate_json_structure_schema_core(schema, source_text)
+    assert errors != []
+
+@pytest.mark.parametrize("schema", INVALID_EXTENDED_SCHEMAS)
+def test_invalid_extended_schemas(schema):
+    """
+    Test that invalid extended schemas produce one or more errors when extended=True.
+    """
+    source_text = json.dumps(schema)
+    errors = validate_json_structure_schema_core(schema, source_text, extended=True)
     assert errors != []
 
 # Additional test: Check that property names with '$' are rejected when allow_dollar is False.
@@ -474,4 +805,71 @@ def test_valid_offers():
     }
     source_text = json.dumps(schema)
     errors = validate_json_structure_schema_core(schema, source_text)
+    assert errors == []
+
+# Test that extended keywords are rejected without extended=True
+def test_extended_keywords_rejected_without_flag():
+    schema = {
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
+        "$id": "https://example.com/schema/extended_rejected",
+        "name": "ExtendedRejectedSchema",
+        "$uses": ["JSONStructureValidation"],
+        "type": "string",
+        "minLength": 5
+    }
+    source_text = json.dumps(schema)
+    # Without extended=True, this should not fail (validator does not check for extension if extended=False)
+    errors = validate_json_structure_schema_core(schema, source_text, extended=False)
+    assert errors == []
+
+# Test $uses validation
+def test_uses_validation():
+    # Valid $uses
+    schema_valid = {
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
+        "$id": "https://example.com/schema/uses_valid",
+        "name": "UsesValidSchema",
+        "$uses": ["JSONStructureValidation", "JSONStructureConditionalComposition"],
+        "type": "string"
+    }
+    source_text = json.dumps(schema_valid)
+    errors = validate_json_structure_schema_core(schema_valid, source_text, extended=True)
+    assert errors == []
+    
+    # Invalid $uses - not an array
+    schema_invalid = {
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
+        "$id": "https://example.com/schema/uses_invalid",
+        "$uses": "JSONStructureValidation",
+        "type": "string"
+    }
+    source_text = json.dumps(schema_invalid)
+    errors = validate_json_structure_schema_core(schema_invalid, source_text, extended=True)
+    assert any("$uses must be an array" in err for err in errors)
+    
+    # Invalid $uses - unknown extension
+    schema_unknown = {
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
+        "$id": "https://example.com/schema/uses_unknown",
+        "$uses": ["UnknownExtension"],
+        "type": "string"
+    }
+    source_text = json.dumps(schema_unknown)
+    errors = validate_json_structure_schema_core(schema_unknown, source_text, extended=True)
+    assert any("Unknown extension" in err for err in errors)
+
+# Test that validation meta-schema enables extensions by default
+def test_validation_metaschema_enables_extensions():
+    schema = {
+        "$schema": "https://json-structure.org/meta/validation/v0/#",
+        "$id": "https://example.com/schema/validation_auto",
+        "name": "ValidationAutoSchema",
+        "type": "string",
+        "minLength": 5,
+        "allOf": [
+            {"type": "string", "pattern": "^[A-Z]"}
+        ]
+    }
+    source_text = json.dumps(schema)
+    errors = validate_json_structure_schema_core(schema, source_text, extended=True)
     assert errors == []
