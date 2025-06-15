@@ -209,9 +209,7 @@ class JSONStructureInstanceValidator:
 
         if not isinstance(schema_type, str):
             self.errors.append(f"Schema at {path} has invalid 'type'")
-            return self.errors
-
-        # Process $extends. [Metaschema: $extends in ObjectType/TupleType]
+            return self.errors        # Process $extends. [Metaschema: $extends in ObjectType/TupleType]
         if schema_type != "choice" and "$extends" in schema:
             base = self._resolve_ref(schema["$extends"])
             if base is None:
@@ -225,6 +223,11 @@ class JSONStructureInstanceValidator:
                         f"Property '{key}' is inherited via $extends and must not be redefined at {path}")
             merged = dict(base)
             merged.update(schema)
+            # Properly merge properties: base properties + derived properties
+            if "properties" in base or "properties" in schema:
+                merged_props = dict(base_props)
+                merged_props.update(derived_props)
+                merged["properties"] = merged_props
             merged.pop("$extends", None)
             merged.pop("abstract", None)
             schema = merged
@@ -331,6 +334,14 @@ class JSONStructureInstanceValidator:
                 self.errors.append(f"Expected JSON pointer format at {path}")
         # Compound types.
         elif schema_type == "object":
+            # Validate schema: properties MUST have at least one entry if present,
+            # unless the schema uses $extends (properties may be inherited)
+            if "properties" in schema:
+                props_def = schema["properties"]
+                if not isinstance(props_def, dict) or (len(props_def) == 0 and "$extends" not in schema):
+                    self.errors.append(f"Object schema at {path} has 'properties' but it is empty - properties MUST have at least one entry")
+                    return self.errors
+            
             if not isinstance(instance, dict):
                 self.errors.append(f"Expected object at {path}, got {type(instance).__name__}")
             else:
@@ -390,6 +401,7 @@ class JSONStructureInstanceValidator:
             if not isinstance(instance, dict):
                 self.errors.append(f"Expected map (object) at {path}, got {type(instance).__name__}")
             else:
+                # Map keys MAY be any valid JSON string (no restrictions on key format)
                 values_schema = schema.get("values")
                 if values_schema:
                     for key, val in instance.items():
