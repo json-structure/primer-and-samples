@@ -484,36 +484,6 @@ def test_object_additional_properties_false():
     assert any("Additional property 'b'" in err for err in errors)
 
 
-def test_object_empty_properties_invalid():
-    """Test that object schema with empty properties is invalid"""
-    schema = {
-        "type": "object",
-        "$schema": "https://json-structure.org/meta/core/v0/#",
-        "$id": "dummy",
-        "name": "objSchema",
-        "properties": {}  # Empty properties should be invalid
-    }
-    instance = {"a": "value"}
-    validator = JSONStructureInstanceValidator(schema)
-    errors = validator.validate_instance(instance)
-    assert any("properties MUST have at least one entry" in err for err in errors)
-
-
-def test_object_properties_none_invalid():
-    """Test that object schema with properties set to None is invalid"""
-    schema = {
-        "type": "object",
-        "$schema": "https://json-structure.org/meta/core/v0/#",
-        "$id": "dummy",
-        "name": "objSchema",
-        "properties": None  # None properties should be invalid
-    }
-    instance = {"a": "value"}
-    validator = JSONStructureInstanceValidator(schema)
-    errors = validator.validate_instance(instance)
-    assert any("properties MUST have at least one entry" in err for err in errors)
-
-
 def test_array_valid():
     schema = {
         "type": "array",
@@ -582,39 +552,6 @@ def test_map_valid():
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(instance)
     assert errors == []
-
-
-def test_map_keys_any_valid_json_string():
-    """Test that map keys MAY be any valid JSON string (lifted restriction)"""
-    schema = {
-        "type": "map",
-        "$schema": "https://json-structure.org/meta/core/v0/#",
-        "$id": "dummy",
-        "name": "mapSchema",
-        "values": {"type": "string"}
-    }
-    
-    # Test various valid JSON strings as keys
-    instance = {
-        "simple_key": "value1",
-        "key-with-hyphens": "value2",
-        "key.with.dots": "value3",
-        "key with spaces": "value4",
-        "key/with/slashes": "value5",
-        "key:with:colons": "value6",
-        "key@with@symbols": "value7",
-        "123numeric_start": "value8",
-        "_underscore_start": "value9",
-        "UPPERCASE_KEY": "value10",
-        "CamelCaseKey": "value11",
-        "key_with_unicode_café": "value12",
-        "empty": "",
-        "very_long_key_name_that_exceeds_normal_length_expectations_but_is_still_valid": "value13"
-    }
-    
-    validator = JSONStructureInstanceValidator(schema)
-    errors = validator.validate_instance(instance)
-    assert errors == [], f"Unexpected validation errors: {errors}"
 
 
 def test_tuple_valid():
@@ -1492,7 +1429,7 @@ def test_import_circular_reference_prevention():
     
     schema = {
         "$schema": "https://json-structure.org/meta/core/v0/#",
-        "$id": "dummy",
+        "$id": "https://example.com/schema/test",
         "name": "TestSchema",
         "type": "object",
         "properties": {

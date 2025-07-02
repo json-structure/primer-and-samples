@@ -1,6 +1,6 @@
 # JSON Structure Primer
 
-> Author: Clemens Vasters, Microsoft, February 2025, clemensv@microsoft.com
+> Author: Clemens Vasters, Microsoft, February 2025, <clemensv@microsoft.com>
 
 This primer introduces _JSON Structure_, a modern, strictly typed data
 definition language that resembles JSON Schema, but has very different basic
@@ -8,7 +8,7 @@ design principles.
 
 JSON Structure focuses on defining data types with clear, deterministic
 constraints while supporting extensions for precise representations of numbers,
-dates, and more. 
+dates, and more.
 
 Common programming language concepts like reuse and composition are supported
 directly in the schema language, but while avoiding introduction of the entire
@@ -66,14 +66,59 @@ This approach better supports code generation, database mappings, and
 integration with modern programming languages, while keeping the validation
 capabilities as optional extensions for those who need them.
 
-## 2. Key Concepts
+## 2. Design Principles
+
+JSON Structure is designed with the following principles in mind:
+
+- **Scope**: JSON Structure "Core" is meant to be a sufficient language for a
+  "schema first" approach to defining application data structures in "polyglot"
+  environments where such definitions are shared across application modules and
+  tiers and databases and caches and other data stores. It is not a goal to be
+  able to capture, say, all intricacies of a C++ class and express those. In
+  that way, JSON Structure definitions are meant to be authoritative. Tools
+  should be able to map from JSON Structure to programming language constructs
+  and, within reasonable bounds, to database structures without losing
+  structural information, but the reverse might not always be true.
+- **Relation to JSON**: JSON Structure is expressed in JSON and has built-in
+  rules for how types are mapped to JSON encoding, but the data definitions can
+  be seen as being independent of JSON. You can declare an _object_ type in JSON
+  Structure and use that type to code-generate a record class for an
+  Object-Relational-Mapping framework and a corresponding database table without
+  JSON encoding ever playing a role.
+- **Familiarity**: Millions of software developers recognize declarations of the
+  shape _"type":"object", "properties": {...}_ as what a "schema" should look
+  like and it's often the only formal schema model they a have encountered. In
+  spite of its shortcomings as a data definition language, JSON Schema's most
+  basic expressions for to declare a type are etched into people's minds and
+  any improvement that does not pick people up from where they are´will have
+  it harder to gain substantial traction.
+- **Simplicity**: JSON Structure is designed to be simple and easy to
+  understand. The schema language is designed to be easy to read and write, with
+  a focus on clear and concise definitions. The type system is meant to easily
+  align with concepts people use and need in their programming and database
+  work, including safe numeric expressions and date and time expressions.
+- **Pragmatism**: JSON Structure is designed to be a pragmatic data definition
+  language for application developers and not a language for metadata geeks.
+  That means that when there is tension between providing type definitions for
+  application use-cases and being able to describe or validate any imaginable
+  JSON expression, the application use-cases win.
+- **Optional Complexity**: JSON Structure "Core" documents are always
+  self-contained and simple to understand and process. If the user needs further
+  capabilities like imports of definitions from external files, semantic
+  annotations, or complex validation hints, they can opt into those by using
+  companion specifications, potentially at the expense of compatibility with
+  implementations of JSON Structure that are restricted to the "Core"
+  specification.
+
+## 3. Key Concepts
 
 JSON Structure is designed to look and feel very much like the JSON Schema
+
 drafts you already know, but some rules have been tightened up to make it easier
 to understand and use. Therefore, existing JSON Schema documents may need to be
 updated to conform to the new rules.
 
-### 2.1. Differences to JSON Schema Drafts
+### 3.1. Differences to JSON Schema Drafts
 
 - **Strict Typing:** Every schema must explicitly specify its data type. For
   compound types (objects, arrays, sets), additional required metadata like a
@@ -88,18 +133,18 @@ updated to conform to the new rules.
   format-specific data.
 - **Compound Types:** The compound types have been extended to include `set`,
   `map`, and `tuple`
-    - **Object:** Define structured data with a required `name` and a set of
+  - **Object:** Define structured data with a required `name` and a set of
       `properties`.
-    - **Array:** List of items where the `items` attribute references a declared
+  - **Array:** List of items where the `items` attribute references a declared
       type without inline compound definitions.
-    - **Set:** An unordered collection of unique elements.
-    - **Map:** A collection of key-value pairs where keys are strings and values
+  - **Set:** An unordered collection of unique elements.
+  - **Map:** A collection of key-value pairs where keys are strings and values
       are of a declared type.
-    - **Tuple:** A fixed-length array of elements where each element is of a
+  - **Tuple:** A fixed-length array of elements where each element is of a
       declared type. It's a more compact alternative to objects where the
       property names are replaced by the position in the tuple. Arrays or maps
       of tuples are especially useful for time-series data.
-    - **Choice:** A discriminated union of types, where one of the types is
+  - **Choice:** A discriminated union of types, where one of the types is
       selected based on a discriminator property. The `choice` keyword is used
       to define the union and the `selector` property is used to specify the
       discriminator property.
@@ -113,7 +158,7 @@ updated to conform to the new rules.
   `$import` keyword from the optional [import][JSTRUCT-IMPORT] spec to import
   the types you need. Once imported, you can reference types with `$ref`.
 
-### 2.2. Extensibility Model
+### 3.2. Extensibility Model
 
 JSON Structure is designed to be extensible. Any schema can be extended with
 custom keywords given that those do not conflict with the core schema language
@@ -125,7 +170,7 @@ custom keywords, but it's recommended to do so.
 JSON Structure is designed to be modular. The core schema language is defined in
 the [JSON Structure Core][JSTRUCT-CORE] document. Companion specifications
 provide additional features and capabilities that can be used to extend the core
-schema language. 
+schema language.
 
 The `abstract` and `$extends` keywords enable controlled type extension,
 supporting basic object-oriented-programming-style inheritance while not
@@ -135,7 +180,7 @@ issues between JSON schemas, programming types, and databases.
 
 There are two types of formal extensions: _extensible types_ and _add-in types_.
 
-#### 2.2.1. Extensible Types
+### 3.3. Extensible Types
 
 It's fairly common that different types share a common basic set of properties.
 In JSON Schema itself, the `description` property is a good example of a
@@ -185,7 +230,7 @@ Example:
 }
 ```
 
-#### 2.2.2. Add-in Types
+### 3.4. Add-in Types
 
 Add-in types allow modifying any existing type in a schema with additional
 properties or constraints. Add-ins are offered to the instance document author
@@ -248,7 +293,7 @@ set of add-in names that are applied to the schema for the document.
 }
 ```
 
-### 2.3. Reusing Types across different Schema Documents
+### 3.5. Reusing Types across different Schema Documents
 
 The prior versions of JSON Schema in effect allowed for `$ref` to reference
 arbitrary JSON nodes from the same or external document, which made references
@@ -257,11 +302,11 @@ deep links into external schema documents and/or schema documents were
 cross-referenced using relative URIs to avoid committing to an absolute schema
 location.
 
-JSON Structure has a more controlled approach to limit that complexity. 
+JSON Structure has a more controlled approach to limit that complexity.
 
   1. The `$ref` keyword can only reference named types that exist within the
      same document. It can no longer reference and insert arbitrary JSON nodes
-     and it can no longer reference external documents. 
+     and it can no longer reference external documents.
   2. To reuse types from other documents, you now need to use the `$import`
      keyword from the optional [import][JSTRUCT-IMPORT] spec to import the types
      you need into the scope of the schema document. Once imported, you use the
@@ -272,7 +317,7 @@ JSON Structure has a more controlled approach to limit that complexity.
      with local definitions by explicitly declaring a type with the same name
      and namespace as as the imported type.
 
-### 2.4. Core and Companion Specifications
+### 3.6. Core and Companion Specifications
 
 The following documents are part of this JSON Structure proposal:
 
@@ -291,7 +336,7 @@ The following documents are part of this JSON Structure proposal:
 - [JSON Structure Import][JSTRUCT-IMPORT]: Defines a mechanism for importing
   external schemas and definitions into a schema document.
 
-### 2.5. Meta-Schemas
+### 3.7. Meta-Schemas
 
 Meta-schemas are JSON Structure documents that define the structure and
 constraints of schema documents themselves. Meta-schemas do not have special
@@ -325,11 +370,11 @@ of the extended meta-schema is
 The ["validation" meta-schema](./json-schema-metaschema-validation.json) enables
 all add-ins defined in the extended meta-schema.
 
-## 3. Using Structure Core 
+## 4. Using Structure Core
 
 This section introduces JSON Structure by example.
 
-### 3.1. Example: Declaring a simple object type
+### 4.1. Example: Declaring a simple object type
 
 Here is an example of a simple object type definition:
 
@@ -358,7 +403,7 @@ required and no longer implied to be `object` if not present. You may also
 notice that the "dateOfBirth" property uses the new `date` type, which is an
 extended native type.
 
-### 3.2. Example: Declaring Primitive and Extended Types
+### 4.2. Example: Declaring Primitive and Extended Types
 
 Below is an example schema that defines a simple profile with a few more
 extended types:
@@ -385,7 +430,7 @@ The `decimal` type is another extended type that represents a decimal number
 with a specified precision and scale. The `datetime` type is an extended type
 that represents a date and time value.
 
-## 4. Example: Declaring inline compound types
+## 5. Example: Declaring inline compound types
 
 This is an example of a type that is declared inline. This is useful for
 compound types that are not reused elsewhere in the schema. The `address`
@@ -420,7 +465,7 @@ type cannot be referenced from other types in the schema.
 }
 ```
 
-### 4.1. Example: Declaring reusable types in `definitions`
+### 5.1. Example: Declaring reusable types in `definitions`
 
 To define reusable types, you can use the `definitions` keyword to define types
 that can be referenced by other types in the same document. Here is an example:
@@ -461,7 +506,7 @@ Mind that the `$ref` keyword can now only reference types declared in the
 `definitions` section of the same document. The keyword can only be used where a
 type is expected.
 
-### 4.2. Example: Structuring types with namespaces
+### 5.2. Example: Structuring types with namespaces
 
 Namespaces are used to scope type definitions. Here is an example of how to use
 namespaces to structure your types, with two differing `Address` types:
@@ -504,7 +549,7 @@ namespaces to structure your types, with two differing `Address` types:
 }
 ```
 
-### 4.3. Example: Using an Array Type
+### 5.3. Example: Using an Array Type
 
 This example shows how to declare an array of strings, which is not much
 different from defining an object:
@@ -558,7 +603,7 @@ To declare an array of a reusable type, you can use the `$ref` keyword:
 }
 ```
 
-### 4.4. Example: Declaring Maps
+### 5.4. Example: Declaring Maps
 
 This example shows how to declare a map of strings to `Color` objects:
 
@@ -580,7 +625,7 @@ This example shows how to declare a map of strings to `Color` objects:
         }
     }
 }
-``` 
+```
 
 Instance data for this schema might look like this:
 
@@ -595,7 +640,7 @@ Instance data for this schema might look like this:
 }
 ```
 
-### 4.5. Example: Declaring Sets
+### 5.5. Example: Declaring Sets
 
 This example shows how to declare a set of strings:
 
@@ -614,7 +659,7 @@ elements. The schema above would match the following instance data:
 ["apple", "banana", "cherry"]
 ```
 
-### 4.6. Example: Declaring Tuples
+### 5.6. Example: Declaring Tuples
 
 Tuples are fixed-length arrays with named elements, declared via the `tuple` keyword.
 
@@ -637,11 +682,11 @@ An instance of this tuple type:
 ["Alice", 30]
 ```
 
-### 4.7. Example: Declaring Choice Types
+### 5.7. Example: Declaring Choice Types
 
 Choice types define discriminated unions via the `choice` keyword. Two forms are supported:
 
-#### Tagged Unions
+### 5.8. Tagged Unions
 
 Tagged unions represent the selected type as a single-property object:
 
@@ -664,7 +709,7 @@ Valid instances:
 { "int32":  42 }
 ```
 
-#### Inline Unions
+### 5.9. Inline Unions
 
 Inline unions extend a common abstract base type and use a selector property:
 
@@ -715,10 +760,10 @@ Instance of this inline union:
 }
 ```
 
-## 5. Using Companion Specifications
+## 6. Using Companion Specifications
 
 The JSON Structure Core specification is designed to be extensible through
-companion specifications that provide additional features and capabilities. 
+companion specifications that provide additional features and capabilities.
 
 The extended schema that includes all companion specifications is identified by
 the `https://json-structure.org/meta/extended/v0` URI. Each companion
@@ -727,6 +772,7 @@ specification is identified by a unique identifier that can be used in the
 document.
 
 The feature identifiers for the companion specifications are:
+
 - `JSONStructureAlternateNames`: Alternate names and descriptions for properties
   and types.
 - `JSONStructureUnits`: Symbols, scientific units, and currencies for numeric
@@ -736,7 +782,7 @@ The feature identifiers for the companion specifications are:
 - `JSONStructureConditionalComposition`: Conditional composition and validation
   rules.
 
-### 5.1. Example: Using the `altnames` Keyword
+### 6.1. Example: Using the `altnames` Keyword
 
 The [JSON Structure Alternate Names and Descriptions][JSTRUCT-ALTNAMES]
 companion specification introduces the `altnames` keyword to provide alternate
@@ -780,7 +826,7 @@ Here is an example of how to use the `altnames` keyword:
 ```
 
 Each named type or property in the schema has been given an `altnames` attribute
-that provides alternate names for the type or property. 
+that provides alternate names for the type or property.
 
 The `json` key is used to specify alternate names for JSON encoding, meaning
 that if the schema is used to encode or decode JSON data, the alternate key MUST
@@ -790,7 +836,7 @@ Keys beginning with `lang:` are reserved for providing localized alternate names
 that can be used for user interface display. Additional keys can be used for
 custom purposes, subject to no conflicts with reserved keys or prefixes.
 
-### 5.2. Example: Using the `altenums` Keyword
+### 6.2. Example: Using the `altenums` Keyword
 
 The [JSON Structure Alternate Enumerations][JSTRUCT-ALTNAMES] companion
 specification introduces the `altenums` keyword to provide alternative
@@ -833,7 +879,7 @@ possible values for the property. The `altenums` attribute provides alternative
 names for each enumeration value. The `lang:en` key provides English names for
 the enumeration values, and the `lang:de` key provides German names.
 
-### 5.3. Example: Using the `unit` Keyword
+### 6.3. Example: Using the `unit` Keyword
 
 The [JSON Structure Symbols, Scientific Units, and Currencies][JSTRUCT-UNITS]
 companion specification introduces the `unit` keyword to provide a standard way
@@ -859,7 +905,7 @@ In this example, the `value` property has a `unit` attribute that specifies the
 unit of measurement for the property. The unit of measurement is specified as a
 string value. In this case, the unit of measurement is "Pa" for Pascals.
 
-### 5.4. Example: Using the `currency` Keyword
+### 6.4. Example: Using the `currency` Keyword
 
 The [JSON Structure Symbols, Scientific Units, and Currencies][JSTRUCT-UNITS]
 companion specification also introduces the `currency` keyword to provide a
@@ -886,14 +932,14 @@ In this example, the `value` property has a `currency` attribute that specifies
 the currency for the property. The currency is specified as a string value. In
 this case, the currency is "USD" for US Dollars.
 
-## 6. Using Validation
+## 7. Using Validation
 
 The companion specifications for conditional composition and validation provide
 additional constructs for defining conditional validation rules and composing
 that resemble those found in prior versions of JSON Schema. However, those have
 been split out into optional extensions to keep the core schema language simple.
 
-### 6.1. Example: Using Conditional Composition
+### 7.1. Example: Using Conditional Composition
 
 The [JSON Structure Conditionals][JSTRUCT-COMPOSITION] companion specification
 introduces conditional composition constructs for combining multiple schema
@@ -904,7 +950,7 @@ as the `if`/`then`/`else` conditional construct.
 The specification has several examples that show how to use the conditional
 composition keywords.
 
-### 6.2. Example: Using Validation Rules
+### 7.2. Example: Using Validation Rules
 
 The [JSON Structure Validation][JSTRUCT-VALIDATION] companion specification
 introduces additional validation rules for JSON data.
@@ -917,4 +963,3 @@ introduces additional validation rules for JSON data.
 [JSTRUCT-UNITS]:https://github.com/json-structure/units
 [JSTRUCT-VALIDATION]: https://github.com/json-structure/validation
 [JSTRUCT-CORE]: https://github.com/json-structure/core
-
