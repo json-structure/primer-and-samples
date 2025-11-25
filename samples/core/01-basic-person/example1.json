@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schemas.example.com/basic-person",
+  "firstName": "John",
+  "lastName": "Doe",
+  "dateOfBirth": "1990-05-15",
+  "email": "john.doe@example.com",
+  "age": 33,
+  "profileData": {
+    "preferences": {
+      "theme": "dark",
+      "notifications": true
+    },
+    "badges": ["verified", "premium"]
+  },
+  "isActive": true
+}

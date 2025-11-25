@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-structure.org/meta/extended/v0/#",
+  "$id": "https://schemas.example.com/examples/shadowing",
+  "name": "EnhancedCustomer",
+  "description": "Demonstrates shadowing - overriding imported types with local definitions",
+  "$uses": ["JSONStructureValidation"],
+  "type": "object",
+  "properties": {
+    "customerId": {
+      "type": "uuid",
+      "description": "Customer identifier"
+    },
+    "profile": {
+      "type": { "$ref": "#/definitions/CustomerTypes/Person" },
+      "description": "Customer profile using imported base but enhanced Address"
+    },
+    "preferences": {
+      "type": { "$ref": "#/definitions/CustomerPreferences" },
+      "description": "Customer preferences"
+    },
+    "paymentMethods": {
+      "type": "array",
+      "description": "Available payment methods",
+      "items": { "$ref": "#/definitions/FinanceTypes/PaymentMethod" }
+    }
+  },
+  "required": ["customerId", "profile"],
+  "definitions": {
+    "CustomerTypes": {
+      "$import": "../02-namespace-import/person-library/schema.struct.json",
+      "Address": {
+        "type": "object",
+        "description": "Enhanced address with additional fields - shadows imported Address",
+        "properties": {
+          "street": {
+            "type": "string",
+            "description": "Street address",
+            "maxLength": 100
+          },
+          "unit": {
+            "type": "string", 
+            "description": "Apartment/unit number",
+            "maxLength": 20
+          },
+          "city": {
+            "type": "string",
+            "description": "City name",
+            "maxLength": 50
+          },
+          "state": {
+            "type": "string",
+            "description": "State or province", 
+            "maxLength": 50
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Postal/ZIP code",
+            "maxLength": 20
+          },
+          "country": {
+            "type": "string",
+            "description": "Country code",
+            "enum": ["US", "CA", "MX", "UK", "DE", "FR", "JP", "AU"],
+            "examples": ["US", "CA"]
+          },
+          "coordinates": {
+            "type": "object",
+            "description": "GPS coordinates for delivery",
+            "properties": {
+              "latitude": {
+                "type": "decimal",
+                "precision": 10,
+                "scale": 7
+              },
+              "longitude": {
+                "type": "decimal",
+                "precision": 10, 
+                "scale": 7
+              }
+            },
+            "required": ["latitude", "longitude"]
+          },
+          "deliveryInstructions": {
+            "type": "string",
+            "description": "Special delivery instructions",
+            "maxLength": 500
+          }
+        },
+        "required": ["street", "city", "country"]
+      }
+    },
+    "FinanceTypes": {
+      "$importdefs": "../02-namespace-import/financial-library/schema.struct.json"
+    },
+    "CustomerPreferences": {
+      "type": "object",
+      "description": "Customer preferences and settings",
+      "properties": {
+        "communicationChannels": {
+          "type": "array",
+          "description": "Preferred communication methods",
+          "items": {
+            "type": "string",
+            "enum": ["email", "sms", "phone", "mail", "push_notification"]
+          }
+        },
+        "marketingOptIn": {
+          "type": "boolean",
+          "description": "Opt-in for marketing communications",
+          "default": false
+        },
+        "language": {
+          "type": "string",
+          "description": "Preferred language code",
+          "enum": ["en", "es", "fr", "de", "ja", "zh"],
+          "default": "en"
+        },
+        "timezone": {
+          "type": "string",
+          "description": "Customer timezone",
+          "examples": ["America/New_York", "Europe/London", "Asia/Tokyo"]
+        }
+      }
+    }
+  }
+}

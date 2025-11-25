@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schemas.example.com/unions",
+  "requestId": "550e8400-e29b-41d4-a716-446655440001",
+  "status": "SUCCESS",
+  "input": {
+    "text": "This is a sample document for processing.",
+    "encoding": "UTF-8"
+  },
+  "output": {
+    "text": "This is a sample document for processing. [PROCESSED]",
+    "encoding": "UTF-8"
+  },
+  "metadata": {
+    "processingEngine": "TextProcessor v2.1",
+    "wordCount": 8,
+    "confidence": 0.95,
+    "enhanced": true
+  },
+  "processingTime": "PT2.5S"
+}

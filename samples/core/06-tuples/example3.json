@@ -1,0 +1,25 @@
+{
+  "$schema": "https://schemas.example.com/tuples",
+  "name": "Color Palette Testing",
+  "description": "Color palette data for UI design validation",
+  "dataPoints": [
+    {
+      "id": "COLOR_SAMPLE_1",
+      "location": ["0.0000000", "0.0000000"],
+      "measurements": [],
+      "visualColor": [255, 255, 255]
+    },
+    {
+      "id": "COLOR_SAMPLE_2", 
+      "location": ["1.0000000", "1.0000000"],
+      "measurements": [],
+      "visualColor": [0, 0, 0]
+    },
+    {
+      "id": "COLOR_SAMPLE_3",
+      "location": ["0.5000000", "0.5000000"], 
+      "measurements": [],
+      "visualColor": [128, 128, 128]
+    }
+  ]
+}

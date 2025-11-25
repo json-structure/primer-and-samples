@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-structure.org/meta/extended/v0/#", 
+  "$id": "https://schemas.example.com/examples/namespace-import",
+  "name": "OrderSystem",
+  "description": "Demonstrates importing into specific namespaces",
+  "type": "object",
+  "properties": {
+    "orderId": {
+      "type": "uuid",
+      "description": "Unique order identifier"
+    },
+    "customer": {
+      "type": { "$ref": "#/definitions/People/Person" },
+      "description": "Customer who placed the order"
+    },
+    "billingAddress": {
+      "type": { "$ref": "#/definitions/People/Address" },
+      "description": "Billing address"
+    },
+    "shippingAddress": {
+      "type": { "$ref": "#/definitions/People/Address" },
+      "description": "Shipping address"
+    },
+    "payment": {
+      "type": { "$ref": "#/definitions/Finance/Transaction" },
+      "description": "Payment transaction"
+    },
+    "items": {
+      "type": "array",
+      "description": "Order items",
+      "items": { "$ref": "#/definitions/OrderItem" }
+    },
+    "totalAmount": {
+      "type": { "$ref": "#/definitions/Finance/Money" },
+      "description": "Total order amount"
+    },
+    "orderDate": {
+      "type": "datetime",
+      "description": "When order was placed"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "processing", "shipped", "delivered", "cancelled"],
+      "description": "Order status"
+    }
+  },
+  "required": ["orderId", "customer", "payment", "items", "totalAmount", "orderDate", "status"],
+  "definitions": {
+    "People": {
+      "$import": "person-library/schema.struct.json"
+    },
+    "Finance": {
+      "$import": "financial-library/schema.struct.json"
+    },
+    "OrderItem": {
+      "type": "object", 
+      "description": "Single item in an order",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "description": "Product identifier",
+          "maxLength": 50
+        },
+        "productName": {
+          "type": "string",
+          "description": "Product name",
+          "maxLength": 100
+        },
+        "quantity": {
+          "type": "uint16",
+          "description": "Number of items"
+        },
+        "unitPrice": {
+          "type": { "$ref": "#/definitions/Finance/Money" },
+          "description": "Price per unit"
+        },
+        "lineTotal": {
+          "type": { "$ref": "#/definitions/Finance/Money" },
+          "description": "Total for this line item"
+        }
+      },
+      "required": ["productId", "productName", "quantity", "unitPrice", "lineTotal"]
+    }
+  }
+}

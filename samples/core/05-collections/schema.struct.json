@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-structure.org/meta/core/v0/#",
+  "$id": "https://schemas.example.com/collections",
+  "name": "ProductCatalog",
+  "description": "Demonstrates array, set, and map collection types",
+  "$root": "#/definitions/Catalog",
+  "definitions": {
+    "Product": {
+      "type": "object",
+      "description": "A product in the catalog",
+      "properties": {
+        "sku": {
+          "type": "string",
+          "description": "Stock Keeping Unit identifier",
+          "maxLength": 20
+        },
+        "name": {
+          "type": "string",
+          "description": "Product name",
+          "maxLength": 100
+        },
+        "price": {
+          "type": "decimal",
+          "description": "Product price",
+          "precision": 10,
+          "scale": 2
+        },
+        "tags": {
+          "type": "set",
+          "description": "Unique product tags",
+          "items": { "type": "string" }
+        },
+        "specifications": {
+          "type": "map",
+          "description": "Product specifications as key-value pairs",
+          "values": { "type": "string" }
+        },
+        "images": {
+          "type": "array",
+          "description": "Ordered list of product image URLs",
+          "items": { "type": "uri" }
+        }
+      },
+      "required": ["sku", "name", "price"]
+    },
+    "Category": {
+      "type": "object",
+      "description": "Product category with nested subcategories",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Category identifier",
+          "maxLength": 20
+        },
+        "name": {
+          "type": "string",
+          "description": "Category name",
+          "maxLength": 50
+        },
+        "parentId": {
+          "type": "string",
+          "description": "Parent category ID for hierarchical structure",
+          "maxLength": 20
+        },
+        "productSkus": {
+          "type": "set",
+          "description": "Set of product SKUs in this category",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["id", "name"]
+    },
+    "Catalog": {
+      "type": "object",
+      "description": "Complete product catalog",
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Catalog version",
+          "maxLength": 20
+        },
+        "lastUpdated": {
+          "type": "datetime",
+          "description": "When the catalog was last updated"
+        },
+        "products": {
+          "type": "array",
+          "description": "List of all products in order",
+          "items": { "type": { "$ref": "#/definitions/Product" }}
+        },
+        "categories": {
+          "type": "array",
+          "description": "List of product categories",
+          "items": { "type": { "$ref": "#/definitions/Category" }}
+        },
+        "productBySku": {
+          "type": "map",
+          "description": "Quick lookup map from SKU to product",
+          "values": { "type": { "$ref": "#/definitions/Product" }}
+        },
+        "featuredSkus": {
+          "type": "set",
+          "description": "Set of featured product SKUs",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["version", "lastUpdated", "products", "categories"]
+    }
+  }
+}

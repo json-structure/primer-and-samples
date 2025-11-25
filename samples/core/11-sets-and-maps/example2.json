@@ -1,0 +1,91 @@
+{
+  "$schema": "https://schemas.example.com/sets-and-maps",
+  "name": "University Research Library",
+  "location": "456 Academic Avenue, Campus",
+  "books": {
+    "978-0-262-03384-8": {
+      "isbn": "978-0-262-03384-8",
+      "title": "Introduction to Algorithms",
+      "authors": ["550e8400-e29b-41d4-a716-446655440004", "550e8400-e29b-41d4-a716-446655440005"],
+      "genres": ["technical", "non-fiction"],
+      "publishYear": 2009,
+      "pageCount": 1312,
+      "ratings": {
+        "550e8400-e29b-41d4-a716-446655440014": {
+          "score": 9,
+          "review": "Comprehensive and well-structured. The go-to algorithms textbook.",
+          "reviewDate": "2023-09-01"
+        }
+      },
+      "metadata": {
+        "edition": "3rd",
+        "isbn_13": "978-0262033848",
+        "subject_area": "computer_science"
+      }
+    }
+  },
+  "authors": {
+    "550e8400-e29b-41d4-a716-446655440004": {
+      "id": "550e8400-e29b-41d4-a716-446655440004",
+      "name": "Thomas H. Cormen",
+      "nationality": "American",
+      "birthYear": 1956
+    },
+    "550e8400-e29b-41d4-a716-446655440005": {
+      "id": "550e8400-e29b-41d4-a716-446655440005",
+      "name": "Charles E. Leiserson",
+      "nationality": "American",
+      "birthYear": 1953
+    }
+  },
+  "categories": ["technical", "non-fiction", "computer_science", "mathematics"],
+  "memberIds": [
+    "550e8400-e29b-41d4-a716-446655440014",
+    "550e8400-e29b-41d4-a716-446655440015"
+  ],
+  "openingHours": {
+    "monday": {
+      "open": "08:00:00",
+      "close": "22:00:00",
+      "isClosed": false
+    },
+    "tuesday": {
+      "open": "08:00:00",
+      "close": "22:00:00",
+      "isClosed": false
+    },
+    "wednesday": {
+      "open": "08:00:00",
+      "close": "22:00:00",
+      "isClosed": false
+    },
+    "thursday": {
+      "open": "08:00:00",
+      "close": "22:00:00",
+      "isClosed": false
+    },
+    "friday": {
+      "open": "08:00:00",
+      "close": "20:00:00",
+      "isClosed": false
+    },
+    "saturday": {
+      "open": "10:00:00",
+      "close": "18:00:00",
+      "isClosed": false
+    },
+    "sunday": {
+      "open": "12:00:00",
+      "close": "20:00:00",
+      "isClosed": false
+    }
+  },
+  "specialCollections": {
+    "research_papers": {
+      "description": "Academic research papers and journals",
+      "bookIsbns": ["978-0-262-03384-8"],
+      "curator": "Prof. Alan Turing",
+      "accessLevel": "members"
+    }
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-structure.org/meta/core/v0/#",
+  "$id": "https://schemas.example.com/tuples",
+  "name": "DataAnalytics",
+  "description": "Demonstrates tuple types for structured data with fixed positions",
+  "$root": "#/definitions/DataSet",
+  "definitions": {
+    "Coordinate": {
+      "type": "tuple",
+      "name": "Coordinate",
+      "description": "Geographic coordinate as [latitude, longitude]",
+      "properties": {
+        "latitude": {
+          "type": "decimal",
+          "description": "Latitude in degrees",
+          "precision": 10,
+          "scale": 7
+        },
+        "longitude": {
+          "type": "decimal",
+          "description": "Longitude in degrees", 
+          "precision": 10,
+          "scale": 7
+        }
+      },
+      "tuple": ["latitude", "longitude"]
+    },
+    "TimeSeriesPoint": {
+      "type": "tuple",
+      "name": "TimeSeriesPoint", 
+      "description": "Time series data point as [timestamp, value, quality]",
+      "properties": {
+        "timestamp": {
+          "type": "datetime",
+          "description": "Data point timestamp"
+        },
+        "value": {
+          "type": "decimal",
+          "description": "Measured value",
+          "precision": 15,
+          "scale": 6
+        },
+        "quality": {
+          "type": "uint8",
+          "description": "Data quality score (0-100)"
+        }
+      },
+      "tuple": ["timestamp", "value", "quality"]
+    },
+    "ColorRGB": {
+      "type": "tuple",
+      "name": "ColorRGB",
+      "description": "RGB color as [red, green, blue]",
+      "properties": {
+        "red": {
+          "type": "uint8",
+          "description": "Red component (0-255)"
+        },
+        "green": {
+          "type": "uint8", 
+          "description": "Green component (0-255)"
+        },
+        "blue": {
+          "type": "uint8",
+          "description": "Blue component (0-255)"
+        },
+        "alpha": {
+          "type": "float8",
+          "description": "Alpha transparency (0.0-1.0) with 8-bit precision"
+        }
+      },
+      "tuple": ["red", "green", "blue", "alpha"]
+    },
+    "DataPoint": {
+      "type": "object",
+      "description": "A single data point with location and measurements",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Data point identifier",
+          "maxLength": 50
+        },
+        "location": {
+          "type": { "$ref": "#/definitions/Coordinate" },
+          "description": "Geographic location"
+        },
+        "measurements": {
+          "type": "array",
+          "description": "Time series measurements",
+          "items": { "type": { "$ref": "#/definitions/TimeSeriesPoint" }}
+        },
+        "visualColor": {
+          "type": { "$ref": "#/definitions/ColorRGB" },
+          "description": "Display color for this data point"
+        }
+      },
+      "required": ["id", "location", "measurements"]
+    },
+    "DataSet": {
+      "type": "object",
+      "description": "Collection of data points with metadata",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Dataset name",
+          "maxLength": 100
+        },
+        "description": {
+          "type": "string",
+          "description": "Dataset description",
+          "maxLength": 500
+        },
+        "dataPoints": {
+          "type": "array",
+          "description": "Array of data points",
+          "items": { "type": { "$ref": "#/definitions/DataPoint" }}
+        },
+        "bounds": {
+          "type": "tuple",
+          "name": "BoundingBox",
+          "description": "Dataset bounding box as [southwest, northeast] coordinates",
+          "properties": {
+            "southwest": {
+              "type": { "$ref": "#/definitions/Coordinate" },
+              "description": "Southwest corner"
+            },
+            "northeast": {
+              "type": { "$ref": "#/definitions/Coordinate" },
+              "description": "Northeast corner"
+            }
+          },
+          "tuple": ["southwest", "northeast"]
+        }
+      },
+      "required": ["name", "dataPoints"]
+    }
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-structure.org/meta/core/v0/#",
+  "$id": "https://schemas.example.com/unions",
+  "name": "DocumentProcessing",
+  "description": "Demonstrates type unions for flexible data handling",
+  "$root": "#/definitions/ProcessingResult",
+  "definitions": {
+    "TextContent": {
+      "type": "object",
+      "description": "Plain text content",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "The text content",
+          "maxLength": 10000
+        },
+        "encoding": {
+          "type": "string",
+          "description": "Text encoding",
+          "const": "UTF-8"
+        }
+      },
+      "required": ["text", "encoding"]
+    },
+    "BinaryContent": {
+      "type": "object",
+      "description": "Binary file content",
+      "properties": {
+        "data": {
+          "type": "binary",
+          "description": "Binary data encoded as base64",
+          "contentEncoding": "base64"
+        },
+        "mimeType": {
+          "type": "string",
+          "description": "MIME type of the binary content",
+          "examples": ["application/pdf", "image/png", "application/msword"]
+        },
+        "size": {
+          "type": "uint64",
+          "description": "Size of the binary content in bytes"
+        }
+      },
+      "required": ["data", "mimeType", "size"]
+    },
+    "DocumentId": {
+      "type": "object",
+      "description": "Document identified by ID reference",
+      "properties": {
+        "id": {
+          "type": "uuid",
+          "description": "Document identifier"
+        },
+        "url": {
+          "type": "uri",
+          "description": "URL to retrieve the document"
+        },
+        "schemaRef": {
+          "type": "jsonpointer",
+          "description": "JSON Pointer to the document schema definition"
+        },
+        "confidence": {
+          "type": "float",
+          "description": "Document processing confidence score (0.0 to 1.0)"
+        }
+      },
+      "required": ["id"]
+    },
+    "ProcessingError": {
+      "type": "object",
+      "description": "Error that occurred during processing",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Error code",
+          "enum": ["INVALID_FORMAT", "SIZE_LIMIT_EXCEEDED", "PROCESSING_TIMEOUT", "PERMISSION_DENIED"]
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error message",
+          "maxLength": 500
+        },
+        "timestamp": {
+          "type": "datetime",
+          "description": "When the error occurred"
+        }
+      },
+      "required": ["code", "message", "timestamp"]
+    },
+    "ProcessingResult": {
+      "type": "object",
+      "description": "Result of document processing operation",
+      "properties": {
+        "requestId": {
+          "type": "uuid",
+          "description": "Unique request identifier"
+        },
+        "status": {
+          "type": "string",
+          "description": "Processing status",
+          "enum": ["SUCCESS", "PARTIAL_SUCCESS", "FAILED"]
+        },
+        "input": {
+          "type": [
+            { "$ref": "#/definitions/TextContent" },
+            { "$ref": "#/definitions/BinaryContent" },
+            { "$ref": "#/definitions/DocumentId" }
+          ],
+          "description": "Input document content - can be text, binary, or reference"
+        },
+        "output": {
+          "type": [
+            { "$ref": "#/definitions/TextContent" },
+            { "$ref": "#/definitions/BinaryContent" },
+            { "$ref": "#/definitions/ProcessingError" }
+          ],
+          "description": "Processing output - success result or error"
+        },
+        "metadata": {
+          "type": "map",
+          "description": "Additional processing metadata",
+          "values": {
+            "type": ["string", "number", "boolean"]
+          }
+        },
+        "processingTime": {
+          "type": "duration",
+          "description": "Time taken to process the document"
+        }
+      },
+      "required": ["requestId", "status", "input"]
+    }
+  }
+}

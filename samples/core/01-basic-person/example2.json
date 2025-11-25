@@ -1,0 +1,9 @@
+{
+  "$schema": "https://schemas.example.com/basic-person",
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "dateOfBirth": "1985-12-03",
+  "email": "jane.smith@company.org",
+  "age": 28,
+  "profileData": "Simple string profile"
+}

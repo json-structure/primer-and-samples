@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-structure.org/meta/extended/v0/#",
+  "$id": "https://schemas.example.com/examples/full-import",
+  "name": "CustomerProfile",
+  "description": "Demonstrates $import to bring in complete external schema",
+  "$uses": ["JSONStructureValidation"],
+  "$import": "../02-namespace-import/person-library/schema.struct.json",
+  "type": "object",
+  "properties": {
+    "customerId": {
+      "type": "string",
+      "description": "Customer identifier",
+      "maxLength": 20
+    },
+    "person": {
+      "type": { "$ref": "#/definitions/Person" },
+      "description": "Customer personal information"
+    },
+    "contactInfo": {
+      "type": { "$ref": "#/definitions/ContactInfo" },
+      "description": "Additional contact methods"
+    },
+    "registrationDate": {
+      "type": "date",
+      "description": "When customer registered"
+    },
+    "isActive": {
+      "type": "boolean",
+      "description": "Whether customer account is active",
+      "default": true
+    },
+    "loyaltyLevel": {
+      "type": "string", 
+      "enum": ["bronze", "silver", "gold", "platinum"],
+      "description": "Customer loyalty tier",
+      "default": "bronze"
+    }
+  },
+  "required": ["customerId", "person", "registrationDate"]
+}

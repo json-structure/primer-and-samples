@@ -1,0 +1,45 @@
+{
+  "$schema": "https://schemas.example.com/financial-types",
+  "invoiceNumber": "INV-2023-003",
+  "issueDate": "2023-11-15",
+  "dueDate": "2023-12-15",
+  "lineItems": [
+    {
+      "description": "Consulting Hours",
+      "quantity": "25.500",
+      "unitPrice": {
+        "amount": "200.00",
+        "currency": "GBP"
+      },
+      "totalPrice": {
+        "amount": "5100.00",
+        "currency": "GBP"
+      }
+    },
+    {
+      "description": "Travel Expenses",
+      "quantity": "1.000",
+      "unitPrice": {
+        "amount": "450.75",
+        "currency": "GBP"
+      },
+      "totalPrice": {
+        "amount": "450.75",
+        "currency": "GBP"
+      }
+    }
+  ],
+  "subtotal": {
+    "amount": "5550.75",
+    "currency": "GBP"
+  },
+  "taxRate": "0.2000",
+  "taxAmount": {
+    "amount": "1110.15",
+    "currency": "GBP"
+  },
+  "totalAmount": {
+    "amount": "6660.90",
+    "currency": "GBP"
+  }
+}

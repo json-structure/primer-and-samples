@@ -1,0 +1,102 @@
+{
+  "$schema": "https://schemas.example.com/extensions",
+  "fleetName": "Metro City Fleet",
+  "cars": [
+    {
+      "vin": "1HGBH41JXMN109186",
+      "make": "Honda",
+      "model": "Civic",
+      "year": 2023,
+      "color": "Silver",
+      "mileage": 15420,
+      "registrationDate": "2023-01-15",
+      "engineType": "hybrid",
+      "fuelCapacity": "12.40",
+      "transmissionType": "cvt",
+      "doors": 4,
+      "seatingCapacity": 5,
+      "trunkCapacity": "15.10",
+      "features": ["air_conditioning", "navigation", "bluetooth", "backup_camera"]
+    },
+    {
+      "vin": "5NPE34AF4KH012345",
+      "make": "Hyundai", 
+      "model": "Elantra",
+      "year": 2022,
+      "color": "Blue",
+      "mileage": 28750,
+      "registrationDate": "2022-05-10",
+      "engineType": "gasoline",
+      "fuelCapacity": "14.00",
+      "transmissionType": "automatic",
+      "doors": 4,
+      "seatingCapacity": 5,
+      "trunkCapacity": "14.20"
+    }
+  ],
+  "trucks": [
+    {
+      "vin": "1FTFW1ET5DKE12345",
+      "make": "Ford",
+      "model": "F-150",
+      "year": 2021,
+      "color": "Red", 
+      "mileage": 45680,
+      "registrationDate": "2021-03-22",
+      "engineType": "gasoline",
+      "fuelCapacity": "36.00",
+      "transmissionType": "automatic", 
+      "payloadCapacity": 3270,
+      "towingCapacity": 13200,
+      "axles": 2,
+      "commercialLicense": false,
+      "cargoType": "general"
+    }
+  ],
+  "motorcycles": [
+    {
+      "vin": "JH2RC5014LM100123",
+      "make": "Honda",
+      "model": "CBR600RR",
+      "year": 2020,
+      "color": "Black",
+      "mileage": 8450,
+      "registrationDate": "2020-04-18",
+      "engineType": "gasoline",
+      "fuelCapacity": "4.50",
+      "transmissionType": "manual",
+      "engineSize": 599,
+      "style": "sport",
+      "helmetsRequired": true
+    }
+  ],
+  "bicycles": [
+    {
+      "vin": "BK1234567890",
+      "make": "Trek",
+      "model": "FX 3",
+      "year": 2023,
+      "color": "Green", 
+      "mileage": 0,
+      "registrationDate": "2023-06-01",
+      "gears": 21,
+      "frameSize": "Medium",
+      "bikeType": "hybrid",
+      "wheelSize": "27.5"
+    }
+  ],
+  "maintenanceRecords": [
+    {
+      "recordId": "550e8400-e29b-41d4-a716-446655440001",
+      "vehicleVin": "1HGBH41JXMN109186",
+      "serviceDate": "2023-11-01",
+      "mileageAtService": 15000,
+      "serviceType": "oil_change",
+      "description": "Regular oil change and filter replacement",
+      "cost": "65.99",
+      "serviceProvider": "QuickLube Express"
+    }
+  ],
+  "totalVehicles": 5,
+  "lastInventoryDate": "2023-11-13T10:00:00Z"
+}

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://schemas.example.com/address",
+  "street": "456 Oak Avenue",
+  "city": "Toronto",
+  "state": "Ontario", 
+  "zipCode": "M5V 3A8",
+  "country": "CA"
+}

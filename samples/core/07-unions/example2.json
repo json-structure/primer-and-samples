@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schemas.example.com/unions",
+  "requestId": "550e8400-e29b-41d4-a716-446655440002", 
+  "status": "SUCCESS",
+  "input": {
+    "data": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+    "mimeType": "image/png",
+    "size": "95"
+  },
+  "output": {
+    "data": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+    "mimeType": "image/png", 
+    "size": "95"
+  },
+  "metadata": {
+    "imageProcessor": "ImageOptimizer v1.5",
+    "originalFormat": "PNG",
+    "compressionRatio": 1.0
+  },
+  "processingTime": "PT0.8S"
+}

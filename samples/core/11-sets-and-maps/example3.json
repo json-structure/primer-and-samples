@@ -1,0 +1,94 @@
+{
+  "$schema": "https://schemas.example.com/sets-and-maps",
+  "name": "Community Branch Library",
+  "location": "789 Neighborhood Street, Suburb",
+  "books": {
+    "978-1-4028-9462-6": {
+      "isbn": "978-1-4028-9462-6",
+      "title": "A Brief History of Time", 
+      "authors": ["550e8400-e29b-41d4-a716-446655440006"],
+      "genres": ["non-fiction", "science"],
+      "publishYear": 1988,
+      "pageCount": 256,
+      "ratings": {
+        "550e8400-e29b-41d4-a716-446655440016": {
+          "score": 8,
+          "review": "Accessible introduction to cosmology and physics.",
+          "reviewDate": "2023-10-05"
+        },
+        "550e8400-e29b-41d4-a716-446655440017": {
+          "score": 7,
+          "reviewDate": "2023-10-12"
+        }
+      },
+      "metadata": {
+        "subject": "cosmology",
+        "reading_level": "general_audience",
+        "awards": ["Royal Society Science Book Prize shortlist"]
+      }
+    }
+  },
+  "authors": {
+    "550e8400-e29b-41d4-a716-446655440006": {
+      "id": "550e8400-e29b-41d4-a716-446655440006",
+      "name": "Stephen Hawking",
+      "nationality": "British",
+      "birthYear": 1942
+    }
+  },
+  "categories": ["non-fiction", "science", "biography", "children"],
+  "memberIds": [
+    "550e8400-e29b-41d4-a716-446655440016",
+    "550e8400-e29b-41d4-a716-446655440017",
+    "550e8400-e29b-41d4-a716-446655440018"
+  ],
+  "openingHours": {
+    "monday": {
+      "open": "10:00:00",
+      "close": "17:00:00",
+      "isClosed": false
+    },
+    "tuesday": {
+      "open": "10:00:00",
+      "close": "17:00:00",
+      "isClosed": false
+    },
+    "wednesday": {
+      "open": "10:00:00",
+      "close": "19:00:00",
+      "isClosed": false
+    },
+    "thursday": {
+      "open": "10:00:00",
+      "close": "17:00:00",
+      "isClosed": false
+    },
+    "friday": {
+      "open": "10:00:00",
+      "close": "17:00:00",
+      "isClosed": false
+    },
+    "saturday": {
+      "open": "09:00:00",
+      "close": "15:00:00",
+      "isClosed": false
+    },
+    "sunday": {
+      "isClosed": true
+    }
+  },
+  "specialCollections": {
+    "childrens_corner": {
+      "description": "Books and materials specifically curated for young readers",
+      "bookIsbns": [],
+      "curator": "Ms. Sarah Johnson",
+      "accessLevel": "public"
+    },
+    "local_history": {
+      "description": "Historical documents and books about our local community",
+      "bookIsbns": ["978-1-4028-9462-6"],
+      "curator": "Mr. Robert Chen",
+      "accessLevel": "public"
+    }
+  }
+}

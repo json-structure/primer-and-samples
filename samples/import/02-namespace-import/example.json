@@ -1,0 +1,82 @@
+{
+  "$schema": "https://schemas.example.com/examples/namespace-import",
+  "orderId": "550e8400-e29b-41d4-a716-446655440002",
+  "customer": {
+    "id": "550e8400-e29b-41d4-a716-446655440003",
+    "firstName": "Maria",
+    "lastName": "Garcia",
+    "email": "maria.garcia@example.com",
+    "dateOfBirth": "1990-07-22",
+    "address": {
+      "street": "456 Oak Avenue",
+      "city": "Portland",
+      "state": "Oregon", 
+      "postalCode": "97201",
+      "country": "US"
+    }
+  },
+  "billingAddress": {
+    "street": "456 Oak Avenue",
+    "city": "Portland",
+    "state": "Oregon",
+    "postalCode": "97201", 
+    "country": "US"
+  },
+  "shippingAddress": {
+    "street": "789 Pine Street",
+    "city": "Portland", 
+    "state": "Oregon",
+    "postalCode": "97202",
+    "country": "US"
+  },
+  "payment": {
+    "id": "550e8400-e29b-41d4-a716-446655440004",
+    "amount": {
+      "amount": "125.99",
+      "currency": "USD"
+    },
+    "paymentMethod": {
+      "type": "credit_card",
+      "last4Digits": "1234",
+      "expiryMonth": 12,
+      "expiryYear": 2026
+    },
+    "timestamp": "2023-11-13T15:30:00Z",
+    "status": "completed",
+    "description": "Order payment for electronics"
+  },
+  "items": [
+    {
+      "productId": "PROD001",
+      "productName": "Wireless Headphones",
+      "quantity": 1,
+      "unitPrice": {
+        "amount": "89.99",
+        "currency": "USD"
+      },
+      "lineTotal": {
+        "amount": "89.99", 
+        "currency": "USD"
+      }
+    },
+    {
+      "productId": "PROD002",
+      "productName": "Phone Case",
+      "quantity": 2,
+      "unitPrice": {
+        "amount": "18.00",
+        "currency": "USD"
+      },
+      "lineTotal": {
+        "amount": "36.00",
+        "currency": "USD"
+      }
+    }
+  ],
+  "totalAmount": {
+    "amount": "125.99",
+    "currency": "USD"
+  },
+  "orderDate": "2023-11-13T15:25:00Z",
+  "status": "processing"
+}

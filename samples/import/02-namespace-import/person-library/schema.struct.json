@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-structure.org/meta/core/v0/#",
+  "$id": "https://schemas.example.com/common/person",
+  "name": "Person",
+  "description": "Common person type for reuse across schemas",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "uuid",
+      "description": "Unique person identifier"
+    },
+    "firstName": {
+      "type": "string",
+      "description": "Person's first name",
+      "maxLength": 50
+    },
+    "lastName": {
+      "type": "string", 
+      "description": "Person's last name",
+      "maxLength": 50
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address",
+      "examples": ["john.doe@example.com"]
+    },
+    "dateOfBirth": {
+      "type": "date",
+      "description": "Date of birth"
+    },
+    "address": {
+      "type": { "$ref": "#/definitions/Address" },
+      "description": "Home address"
+    }
+  },
+  "required": ["id", "firstName", "lastName", "email"],
+  "definitions": {
+    "Address": {
+      "type": "object",
+      "description": "Physical address",
+      "properties": {
+        "street": {
+          "type": "string",
+          "description": "Street address",
+          "maxLength": 100
+        },
+        "city": {
+          "type": "string",
+          "description": "City name",
+          "maxLength": 50
+        },
+        "state": {
+          "type": "string",
+          "description": "State or province",
+          "maxLength": 50
+        },
+        "postalCode": {
+          "type": "string",
+          "description": "Postal/ZIP code",
+          "maxLength": 20
+        },
+        "country": {
+          "type": "string",
+          "description": "Country code",
+          "enum": ["US", "CA", "MX", "UK", "DE", "FR", "JP", "AU"],
+          "examples": ["US", "CA"]
+        }
+      },
+      "required": ["street", "city", "country"]
+    },
+    "ContactInfo": {
+      "type": "object",
+      "description": "Contact information",
+      "properties": {
+        "phone": {
+          "type": "string",
+          "description": "Phone number",
+          "maxLength": 20
+        },
+        "mobile": {
+          "type": "string", 
+          "description": "Mobile phone number",
+          "maxLength": 20
+        },
+        "emergencyContact": {
+          "type": "string",
+          "description": "Emergency contact name and number",
+          "maxLength": 100
+        }
+      }
+    }
+  }
+}

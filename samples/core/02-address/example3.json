@@ -1,0 +1,6 @@
+{
+  "$schema": "https://schemas.example.com/address",
+  "street": "789 Queen Street",
+  "city": "London",
+  "country": "UK"
+}
