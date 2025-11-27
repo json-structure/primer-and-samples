@@ -1,9 +1,9 @@
 # encoding: utf-8
 """
-test_json_structure_instance_validator.py
+test_instance_validator.py
 
-Pytest-based test suite for json_structure_instance_validator.py.
-which validates JSON document instances against full JSON Structure Core schemas,
+Pytest-based test suite for the JSON Structure instance validator.
+Tests validation of JSON document instances against full JSON Structure Core schemas,
 including support for:
   - Primitive types and compound types.
   - Extended constructs: abstract types, $extends, $offers/$uses.
@@ -1093,8 +1093,8 @@ def test_import_and_importdefs(tmp_path):
         "name": "LocalSchema",
         "type": "object",
         "properties": {
-            "person": {"type": {"$ref": "#/Person"}},
-            "library": {"type": {"$ref": "#/LibraryType"}}
+            "person": {"type": {"$ref": "#/definitions/Person"}},
+            "library": {"type": {"$ref": "#/definitions/LibraryType"}}
         },
         "$import": "https://example.com/people.json",
         "$importdefs": "https://example.com/importdefs.json"
@@ -1468,7 +1468,7 @@ def test_import_root_level_vs_definitions_level(tmp_path):
     external_file = tmp_path / "external.json"
     external_file.write_text(json.dumps(external_schema), encoding="utf-8")
 
-    # Root-level import brings everything into root namespace
+    # Root-level import brings everything into definitions namespace
     root_import_schema = {
         "$schema": "https://json-structure.org/meta/core/v0/#",
         "$id": "https://example.com/schema/root_import",
@@ -1476,8 +1476,8 @@ def test_import_root_level_vs_definitions_level(tmp_path):
         "name": "RootImportSchema",
         "type": "object",
         "properties": {
-            "root_type": {"type": {"$ref": "#/RootType"}},
-            "nested_type": {"type": {"$ref": "#/NestedType"}}
+            "root_type": {"type": {"$ref": "#/definitions/RootType"}},
+            "nested_type": {"type": {"$ref": "#/definitions/NestedType"}}
         }
     }
     
@@ -2863,6 +2863,369 @@ def test_import_deep_nested_refs(tmp_path):
     }
     
     validator = JSONStructureInstanceValidator(local_schema, allow_import=True, import_map=import_map)
+    errors = validator.validate_instance(valid_instance)
+    assert errors == [], f"Expected no errors but got: {errors}"
+
+
+# -------------------------------------------------------------------
+# External Schemas (Sideloading) Tests
+# -------------------------------------------------------------------
+
+
+def test_external_schemas_single_import():
+    """Test sideloading a single external schema via external_schemas parameter."""
+    # External schema to sideload
+    people_schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/people.json",
+        "name": "Person",
+        "type": "object",
+        "properties": {
+            "firstName": {"type": "string"},
+            "lastName": {"type": "string"}
+        }
+    }
+    
+    # Main schema importing the external one
+    main_schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/main",
+        "name": "MainSchema",
+        "type": "object",
+        "properties": {
+            "person": {"$ref": "#/definitions/People/Person"}
+        },
+        "definitions": {
+            "People": {
+                "$import": "https://example.com/people.json"
+            }
+        }
+    }
+    
+    # Valid instance
+    valid_instance = {
+        "person": {
+            "firstName": "John",
+            "lastName": "Doe"
+        }
+    }
+    
+    # Use external_schemas instead of import_map
+    validator = JSONStructureInstanceValidator(
+        main_schema,
+        allow_import=True,
+        external_schemas=[people_schema]
+    )
+    errors = validator.validate_instance(valid_instance)
+    assert errors == [], f"Expected no errors but got: {errors}"
+
+
+def test_external_schemas_multiple_imports():
+    """Test sideloading multiple external schemas for multiple imports."""
+    # First external schema
+    address_schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/address.json",
+        "name": "Address",
+        "type": "object",
+        "properties": {
+            "street": {"type": "string"},
+            "city": {"type": "string"}
+        }
+    }
+    
+    # Second external schema
+    person_schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/person.json",
+        "name": "Person",
+        "type": "object",
+        "properties": {
+            "name": {"type": "string"},
+            "address": {"$ref": "#/definitions/Address"}
+        },
+        "definitions": {
+            "Address": {
+                "name": "Address",
+                "type": "object",
+                "properties": {
+                    "street": {"type": "string"},
+                    "city": {"type": "string"}
+                }
+            }
+        }
+    }
+    
+    # Main schema importing both
+    main_schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/main",
+        "name": "MainSchema",
+        "type": "object",
+        "properties": {
+            "person": {"$ref": "#/definitions/People/Person"},
+            "location": {"$ref": "#/definitions/Addresses/Address"}
+        },
+        "definitions": {
+            "People": {
+                "$import": "https://example.com/person.json"
+            },
+            "Addresses": {
+                "$import": "https://example.com/address.json"
+            }
+        }
+    }
+    
+    valid_instance = {
+        "person": {
+            "name": "Alice",
+            "address": {
+                "street": "123 Main St",
+                "city": "Seattle"
+            }
+        },
+        "location": {
+            "street": "456 Oak Ave",
+            "city": "Portland"
+        }
+    }
+    
+    # Supply both schemas
+    validator = JSONStructureInstanceValidator(
+        main_schema,
+        allow_import=True,
+        external_schemas=[address_schema, person_schema]
+    )
+    errors = validator.validate_instance(valid_instance)
+    assert errors == [], f"Expected no errors but got: {errors}"
+
+
+def test_external_schemas_with_definitions():
+    """Test that sideloaded schemas with definitions work correctly."""
+    external_schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/models.json",
+        "name": "Models",
+        "type": "object",
+        "properties": {
+            "inner": {"$ref": "#/definitions/Inner"}
+        },
+        "definitions": {
+            "Inner": {
+                "name": "Inner",
+                "type": "object",
+                "properties": {
+                    "value": {"type": "int32"}
+                }
+            }
+        }
+    }
+    
+    main_schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/main",
+        "name": "MainSchema",
+        "type": "object",
+        "properties": {
+            "model": {"$ref": "#/definitions/External/Models"}
+        },
+        "definitions": {
+            "External": {
+                "$import": "https://example.com/models.json"
+            }
+        }
+    }
+    
+    valid_instance = {
+        "model": {
+            "inner": {
+                "value": 42
+            }
+        }
+    }
+    
+    validator = JSONStructureInstanceValidator(
+        main_schema,
+        allow_import=True,
+        external_schemas=[external_schema]
+    )
+    errors = validator.validate_instance(valid_instance)
+    assert errors == [], f"Expected no errors but got: {errors}"
+
+
+def test_external_schemas_invalid_instance():
+    """Test that validation still catches errors with sideloaded schemas."""
+    people_schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/people.json",
+        "name": "Person",
+        "type": "object",
+        "properties": {
+            "firstName": {"type": "string"},
+            "age": {"type": "int32"}
+        }
+    }
+    
+    main_schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/main",
+        "name": "MainSchema",
+        "type": "object",
+        "properties": {
+            "person": {"$ref": "#/definitions/People/Person"}
+        },
+        "definitions": {
+            "People": {
+                "$import": "https://example.com/people.json"
+            }
+        }
+    }
+    
+    # Invalid - age should be int32, not string
+    invalid_instance = {
+        "person": {
+            "firstName": "John",
+            "age": "not a number"
+        }
+    }
+    
+    validator = JSONStructureInstanceValidator(
+        main_schema,
+        allow_import=True,
+        external_schemas=[people_schema]
+    )
+    errors = validator.validate_instance(invalid_instance)
+    assert len(errors) > 0, "Expected validation errors for invalid instance"
+    assert any("int32" in err.lower() or "expected" in err.lower() for err in errors)
+
+
+def test_external_schemas_missing_import():
+    """Test that missing external schemas still produce errors."""
+    main_schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/main",
+        "name": "MainSchema",
+        "type": "object",
+        "properties": {
+            "person": {"$ref": "#/definitions/People/Person"}
+        },
+        "definitions": {
+            "People": {
+                "$import": "https://example.com/missing.json"
+            }
+        }
+    }
+    
+    # No external schemas provided
+    validator = JSONStructureInstanceValidator(
+        main_schema,
+        allow_import=True,
+        external_schemas=[]
+    )
+    errors = validator.validate_instance({"person": {}})
+    assert any("unable to fetch" in err.lower() for err in errors)
+
+
+def test_external_schemas_priority_over_simulated():
+    """Test that external_schemas takes priority over simulated schemas."""
+    # Override the simulated people.json with our own version
+    custom_people_schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/people.json",
+        "name": "CustomPerson",
+        "type": "object",
+        "properties": {
+            "customField": {"type": "boolean"}
+        }
+    }
+    
+    main_schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/main",
+        "name": "MainSchema",
+        "type": "object",
+        "properties": {
+            "person": {"$ref": "#/definitions/People/CustomPerson"}
+        },
+        "definitions": {
+            "People": {
+                "$import": "https://example.com/people.json"
+            }
+        }
+    }
+    
+    # Uses our custom schema, not the simulated one
+    valid_instance = {
+        "person": {
+            "customField": True
+        }
+    }
+    
+    validator = JSONStructureInstanceValidator(
+        main_schema,
+        allow_import=True,
+        external_schemas=[custom_people_schema]
+    )
+    errors = validator.validate_instance(valid_instance)
+    assert errors == [], f"Expected no errors but got: {errors}"
+
+
+def test_external_schemas_combined_with_import_map(tmp_path):
+    """Test that external_schemas and import_map can be used together."""
+    # Schema provided via file (import_map)
+    file_schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/file-schema.json",
+        "name": "FileType",
+        "type": "object",
+        "properties": {
+            "fromFile": {"type": "string"}
+        }
+    }
+    schema_file = tmp_path / "file-schema.json"
+    schema_file.write_text(json.dumps(file_schema), encoding="utf-8")
+    
+    # Schema provided directly (external_schemas)
+    memory_schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/memory-schema.json",
+        "name": "MemoryType",
+        "type": "object",
+        "properties": {
+            "fromMemory": {"type": "int32"}
+        }
+    }
+    
+    main_schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/main",
+        "name": "MainSchema",
+        "type": "object",
+        "properties": {
+            "file": {"$ref": "#/definitions/FromFile/FileType"},
+            "memory": {"$ref": "#/definitions/FromMemory/MemoryType"}
+        },
+        "definitions": {
+            "FromFile": {
+                "$import": "https://example.com/file-schema.json"
+            },
+            "FromMemory": {
+                "$import": "https://example.com/memory-schema.json"
+            }
+        }
+    }
+    
+    valid_instance = {
+        "file": {"fromFile": "hello"},
+        "memory": {"fromMemory": 42}
+    }
+    
+    validator = JSONStructureInstanceValidator(
+        main_schema,
+        allow_import=True,
+        import_map={"https://example.com/file-schema.json": str(schema_file)},
+        external_schemas=[memory_schema]
+    )
     errors = validator.validate_instance(valid_instance)
     assert errors == [], f"Expected no errors but got: {errors}"
 
