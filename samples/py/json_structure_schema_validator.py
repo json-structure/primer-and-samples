@@ -54,7 +54,7 @@ class JSONStructureSchemaCoreValidator:
     
     # Extended keywords for validation
     NUMERIC_VALIDATION_KEYWORDS = {"minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum", "multipleOf"}
-    STRING_VALIDATION_KEYWORDS = {"minLength", "pattern", "format"}
+    STRING_VALIDATION_KEYWORDS = {"minLength", "maxLength", "pattern", "format"}
     ARRAY_VALIDATION_KEYWORDS = {"minItems", "maxItems", "uniqueItems", "contains", "minContains", "maxContains"}
     OBJECT_VALIDATION_KEYWORDS = {"minProperties", "maxProperties", "minEntries", "maxEntries", 
                                   "dependentRequired", "patternProperties", "patternKeys", 
@@ -545,6 +545,11 @@ class JSONStructureSchemaCoreValidator:
             val = obj["minLength"]
             if not isinstance(val, int) or val < 0:
                 self._err("'minLength' must be a non-negative integer.", f"{path}/minLength")
+        
+        if "maxLength" in obj:
+            val = obj["maxLength"]
+            if not isinstance(val, int) or val < 0:
+                self._err("'maxLength' must be a non-negative integer.", f"{path}/maxLength")
                 
         if "pattern" in obj:
             val = obj["pattern"]
