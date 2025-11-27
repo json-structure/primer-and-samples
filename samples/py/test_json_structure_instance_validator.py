@@ -143,9 +143,144 @@ def test_null_invalid():
     errors = validator.validate_instance(0)
     assert any("Expected null" in err for err in errors)
 
+
+def test_any_accepts_string():
+    """Test any type accepts string values"""
+    schema = {"type": "any", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "anySchema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance("hello")
+    assert errors == []
+
+
+def test_any_accepts_number():
+    """Test any type accepts numeric values"""
+    schema = {"type": "any", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "anySchema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(42.5)
+    assert errors == []
+
+
+def test_any_accepts_object():
+    """Test any type accepts object values"""
+    schema = {"type": "any", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "anySchema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance({"key": "value"})
+    assert errors == []
+
+
+def test_any_accepts_array():
+    """Test any type accepts array values"""
+    schema = {"type": "any", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "anySchema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance([1, 2, 3])
+    assert errors == []
+
+
+def test_any_accepts_null():
+    """Test any type accepts null values"""
+    schema = {"type": "any", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "anySchema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(None)
+    assert errors == []
+
+
+def test_any_accepts_boolean():
+    """Test any type accepts boolean values"""
+    schema = {"type": "any", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "anySchema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(True)
+    assert errors == []
+
+
 # -------------------------------------------------------------------
 # Integer and Floating Point Tests (Numeric JSONStructureValidation Addins)
 # -------------------------------------------------------------------
+
+
+def test_int8_valid():
+    schema = {"type": "int8", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "int8Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(127)
+    assert errors == []
+
+
+def test_int8_out_of_range():
+    schema = {"type": "int8", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "int8Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(128)
+    assert any("out of range" in err for err in errors)
+
+
+def test_int8_negative_valid():
+    schema = {"type": "int8", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "int8Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(-128)
+    assert errors == []
+
+
+def test_uint8_valid():
+    schema = {"type": "uint8", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "uint8Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(255)
+    assert errors == []
+
+
+def test_uint8_out_of_range():
+    schema = {"type": "uint8", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "uint8Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(256)
+    assert any("out of range" in err for err in errors)
+
+
+def test_uint8_negative():
+    schema = {"type": "uint8", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "uint8Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(-1)
+    assert any("out of range" in err for err in errors)
+
+
+def test_int16_valid():
+    schema = {"type": "int16", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "int16Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(32767)
+    assert errors == []
+
+
+def test_int16_out_of_range():
+    schema = {"type": "int16", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "int16Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(32768)
+    assert any("out of range" in err for err in errors)
+
+
+def test_uint16_valid():
+    schema = {"type": "uint16", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "uint16Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(65535)
+    assert errors == []
+
+
+def test_uint16_out_of_range():
+    schema = {"type": "uint16", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "uint16Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(65536)
+    assert any("out of range" in err for err in errors)
 
 
 def test_int32_valid():
@@ -212,12 +347,144 @@ def test_uint64_invalid_format():
     assert any("Expected uint64 as string" in err for err in errors)
 
 
+def test_int128_valid():
+    schema = {"type": "int128", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "int128Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance("170141183460469231731687303715884105727")
+    assert errors == []
+
+
+def test_int128_out_of_range():
+    schema = {"type": "int128", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "int128Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance("170141183460469231731687303715884105728")  # 2^127
+    assert any("out of range" in err for err in errors)
+
+
+def test_int128_invalid_format():
+    schema = {"type": "int128", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "int128Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(12345)  # Should be string
+    assert any("Expected int128 as string" in err for err in errors)
+
+
+def test_uint128_valid():
+    schema = {"type": "uint128", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "uint128Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance("340282366920938463463374607431768211455")  # 2^128 - 1
+    assert errors == []
+
+
+def test_uint128_out_of_range():
+    schema = {"type": "uint128", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "uint128Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance("340282366920938463463374607431768211456")  # 2^128
+    assert any("out of range" in err for err in errors)
+
+
+def test_uint128_negative():
+    schema = {"type": "uint128", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "uint128Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance("-1")
+    assert any("out of range" in err for err in errors)
+
+
+def test_float8_valid():
+    schema = {"type": "float8", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "float8Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(0.5)
+    assert errors == []
+
+
+def test_float8_integer_accepted():
+    schema = {"type": "float8", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "float8Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(1)  # int is accepted for float8
+    assert errors == []
+
+
+def test_float8_invalid():
+    schema = {"type": "float8", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "float8Schema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance("0.5")  # Should be number, not string
+    assert any("Expected float8" in err for err in errors)
+
+
+def test_integer_valid():
+    """Test integer type (alias for int32)"""
+    schema = {"type": "integer", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "integerSchema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(123)
+    assert errors == []
+
+
+def test_integer_out_of_range():
+    """Test integer type (alias for int32) range validation"""
+    schema = {"type": "integer", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "integerSchema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(2**31)
+    assert any("out of range" in err for err in errors)
+
+
+def test_integer_invalid_type():
+    """Test integer type rejects non-integers"""
+    schema = {"type": "integer", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "integerSchema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance("123")
+    assert any("Expected integer" in err for err in errors)
+
+
 def test_float_valid():
     schema = {"type": "float", "$schema": "https://json-structure.org/meta/core/v0/#",
               "$id": "dummy", "name": "floatSchema"}
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance(1.23)
     assert errors == []
+
+
+def test_float_invalid():
+    schema = {"type": "float", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "floatSchema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance("1.23")
+    assert any("Expected float" in err for err in errors)
+
+
+def test_double_valid():
+    schema = {"type": "double", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "doubleSchema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(3.141592653589793)
+    assert errors == []
+
+
+def test_double_integer_accepted():
+    """Test that integers are accepted for double type"""
+    schema = {"type": "double", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "doubleSchema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(42)
+    assert errors == []
+
+
+def test_double_invalid():
+    schema = {"type": "double", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "doubleSchema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance("3.14")
+    assert any("Expected double" in err for err in errors)
 
 
 def test_float_invalid():
@@ -357,6 +624,23 @@ def test_time_invalid():
     validator = JSONStructureInstanceValidator(schema)
     errors = validator.validate_instance("123456")
     assert any("Expected time" in err for err in errors)
+
+
+def test_duration_valid():
+    schema = {"type": "duration", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "durationSchema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance("P1Y2M3DT4H5M6S")  # ISO 8601 duration
+    assert errors == []
+
+
+def test_duration_invalid():
+    schema = {"type": "duration", "$schema": "https://json-structure.org/meta/core/v0/#",
+              "$id": "dummy", "name": "durationSchema"}
+    validator = JSONStructureInstanceValidator(schema)
+    errors = validator.validate_instance(3600)  # Should be string, not number
+    assert any("Expected duration" in err for err in errors)
+
 
 # -------------------------------------------------------------------
 # UUID and URI Tests
