@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-structure.org/meta/core/v0/#",
+  "$id": "https://schemas.example.com/sets-and-maps",
+  "name": "DataCollections",
+  "description": "Demonstrates set and map types with various data structures",
+  "$root": "#/definitions/Library",
+  "definitions": {
+    "Author": {
+      "type": "object",
+      "description": "Author information",
+      "properties": {
+        "id": { "type": "uuid" },
+        "name": { "type": "string", "maxLength": 100 },
+        "nationality": { "type": "string", "maxLength": 50 },
+        "birthYear": { "type": "uint16" }
+      },
+      "required": ["id", "name"]
+    },
+    "Book": {
+      "type": "object", 
+      "description": "Book information",
+      "properties": {
+        "isbn": { "type": "string", "maxLength": 17 },
+        "title": { "type": "string", "maxLength": 200 },
+        "authors": {
+          "type": "set",
+          "description": "Unique set of author IDs for this book",
+          "items": { "type": "uuid" }
+        },
+        "genres": {
+          "type": "set",
+          "description": "Unique set of genre categories",
+          "items": { 
+            "type": "string",
+            "enum": ["fiction", "non-fiction", "mystery", "romance", "sci-fi", "biography", "history", "technical"]
+          }
+        },
+        "publishYear": { "type": "uint16" },
+        "pageCount": { "type": "uint16" },
+        "ratings": {
+          "type": "map",
+          "description": "User ratings mapped by user ID",
+          "keys": { "type": "uuid" },
+          "values": { 
+            "type": "object",
+            "properties": {
+              "score": { "type": "uint8", "description": "Rating from 1-10" },
+              "review": { "type": "string", "maxLength": 1000 },
+              "reviewDate": { "type": "date" }
+            },
+            "required": ["score", "reviewDate"]
+          }
+        },
+        "metadata": {
+          "type": "map",
+          "description": "Flexible metadata key-value pairs",
+          "keys": { "type": "string" },
+          "values": { "type": "any" }
+        }
+      },
+      "required": ["isbn", "title", "authors", "publishYear"]
+    },
+    "Library": {
+      "type": "object",
+      "description": "Library management system",
+      "properties": {
+        "name": { "type": "string", "maxLength": 100 },
+        "location": { "type": "string", "maxLength": 200 },
+        "books": {
+          "type": "map",
+          "description": "Books indexed by ISBN",
+          "keys": { "type": "string" },
+          "values": { "$ref": "#/definitions/Book" }
+        },
+        "authors": {
+          "type": "map", 
+          "description": "Authors indexed by author ID",
+          "keys": { "type": "uuid" },
+          "values": { "$ref": "#/definitions/Author" }
+        },
+        "categories": {
+          "type": "set",
+          "description": "All available book categories",
+          "items": { "type": "string" }
+        },
+        "memberIds": {
+          "type": "set",
+          "description": "Set of active library member IDs", 
+          "items": { "type": "uuid" }
+        },
+        "openingHours": {
+          "type": "map",
+          "description": "Opening hours by day of week",
+          "keys": { 
+            "type": "string",
+            "enum": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+          },
+          "values": {
+            "type": "object",
+            "properties": {
+              "open": { "type": "time", "description": "Opening time" },
+              "close": { "type": "time", "description": "Closing time" },
+              "isClosed": { "type": "boolean", "default": false }
+            },
+            "required": ["isClosed"]
+          }
+        },
+        "specialCollections": {
+          "type": "map",
+          "description": "Special collections with flexible organization",
+          "keys": { "type": "string" },
+          "values": {
+            "type": "object",
+            "properties": {
+              "description": { "type": "string", "maxLength": 500 },
+              "bookIsbns": {
+                "type": "set",
+                "items": { "type": "string" }
+              },
+              "curator": { "type": "string", "maxLength": 100 },
+              "accessLevel": {
+                "type": "string",
+                "enum": ["public", "members", "restricted", "staff"],
+                "default": "public"
+              }
+            },
+            "required": ["description", "bookIsbns"]
+          }
+        }
+      },
+      "required": ["name", "books", "authors", "categories", "memberIds"]
+    }
+  }
+}

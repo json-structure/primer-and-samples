@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schemas.example.com/tuples",
+  "name": "Weather Monitoring Network",
+  "description": "Network of weather monitoring stations across the region",
+  "dataPoints": [
+    {
+      "id": "STATION_001",
+      "location": ["47.6062100", "-122.3320700"],
+      "measurements": [
+        ["2023-11-13T12:00:00Z", "22.500000", 95],
+        ["2023-11-13T13:00:00Z", "23.200000", 98],
+        ["2023-11-13T14:00:00Z", "24.100000", 100]
+      ],
+      "visualColor": [0, 128, 255, 1.0]
+    },
+    {
+      "id": "STATION_002",
+      "location": ["47.7210800", "-122.3197100"],
+      "measurements": [
+        ["2023-11-13T12:00:00Z", "21.800000", 92],
+        ["2023-11-13T13:00:00Z", "22.400000", 94]
+      ],
+      "visualColor": [255, 128, 0, 0.8]
+    }
+  ],
+  "bounds": [
+    ["47.6000000", "-122.4000000"],
+    ["47.8000000", "-122.2000000"]
+  ]
+}

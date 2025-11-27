@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-structure.org/meta/core/v0/#",
+  "$id": "https://schemas.example.com/basic-person",
+  "name": "Person",
+  "type": "object",
+  "description": "A basic person schema demonstrating primitive types",
+  "properties": {
+    "firstName": {
+      "type": "string",
+      "description": "The person's first name",
+      "maxLength": 50
+    },
+    "lastName": {
+      "type": "string",
+      "description": "The person's last name",
+      "maxLength": 50
+    },
+    "dateOfBirth": {
+      "type": "date",
+      "description": "The person's date of birth"
+    },
+    "email": {
+      "type": "string",
+      "description": "The person's email address",
+      "examples": ["john.doe@example.com"]
+    },
+    "age": {
+      "type": "int8",
+      "description": "The person's age in years (0-127)"
+    },
+    "profileData": {
+      "type": "any",
+      "description": "Flexible profile data - can be any JSON value"
+    },
+    "isActive": {
+      "type": "boolean",
+      "description": "Whether the person is currently active",
+      "default": true
+    }
+  },
+  "required": ["firstName", "lastName", "email"]
+}

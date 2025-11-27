@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schemas.example.com/examples/shadowing",
+  "customerId": "550e8400-e29b-41d4-a716-446655440005",
+  "profile": {
+    "id": "550e8400-e29b-41d4-a716-446655440006",
+    "firstName": "David",
+    "lastName": "Chen",
+    "email": "david.chen@example.com",
+    "dateOfBirth": "1985-11-08",
+    "address": {
+      "street": "999 Technology Drive",
+      "unit": "Apt 42",
+      "city": "San Francisco",
+      "state": "California",
+      "postalCode": "94105",
+      "country": "US",
+      "coordinates": {
+        "latitude": "37.7749295",
+        "longitude": "-122.4194155"
+      },
+      "deliveryInstructions": "Ring buzzer for Apt 42. Use side entrance after 6pm."
+    }
+  },
+  "preferences": {
+    "communicationChannels": ["email", "sms"],
+    "marketingOptIn": true,
+    "language": "en",
+    "timezone": "America/Los_Angeles"
+  },
+  "paymentMethods": [
+    {
+      "type": "credit_card",
+      "last4Digits": "5678",
+      "expiryMonth": 8,
+      "expiryYear": 2027
+    },
+    {
+      "type": "paypal"
+    }
+  ]
+}

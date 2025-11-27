@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schemas.example.com/discriminated-unions",
+  "transactionId": "550e8400-e29b-41d4-a716-446655440005",
+  "merchantId": "MERCH_11111",
+  "amount": "25.00",
+  "currency": "USD", 
+  "description": "Digital gift card purchase",
+  "paymentMethod": {
+    "digitalWallet": {
+      "walletProvider": "PayPal",
+      "walletId": "user@example.com",
+      "transactionId": "PP123456789",
+      "walletBalance": "150.75"
+    }
+  },
+  "status": "completed",
+  "notification": {
+    "notificationId": "550e8400-e29b-41d4-a716-446655440006",
+    "timestamp": "2023-11-13T17:10:45Z",
+    "priority": "normal",
+    "recipient": "admin@merchantstore.com",
+    "notificationType": "webhook",
+    "webhookUrl": "https://api.merchantstore.com/webhooks/payment",
+    "webhookPayload": {
+      "event": "payment.completed",
+      "transactionId": "550e8400-e29b-41d4-a716-446655440005",
+      "amount": "25.00"
+    }
+  },
+  "processedAt": "2023-11-13T17:10:45Z",
+  "fees": {
+    "processing": "0.75"
+  }
+}

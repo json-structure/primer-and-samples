@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schemas.example.com/discriminated-unions",
+  "transactionId": "550e8400-e29b-41d4-a716-446655440001",
+  "merchantId": "MERCH_12345",
+  "amount": "149.99",
+  "currency": "USD",
+  "description": "Online purchase - electronics",
+  "paymentMethod": {
+    "creditCard": {
+      "cardNumber": "**** **** **** 1234",
+      "cardholderName": "John Smith",
+      "expiryMonth": 12,
+      "expiryYear": 2026,
+      "cardType": "visa",
+      "authorizationCode": "ABC123"
+    }
+  },
+  "status": "captured",
+  "notification": {
+    "notificationId": "550e8400-e29b-41d4-a716-446655440002",
+    "timestamp": "2023-11-13T15:45:30Z",
+    "priority": "normal", 
+    "recipient": "customer@example.com",
+    "notificationType": "email",
+    "subject": "Payment Confirmation - Order #12345",
+    "body": "Thank you for your purchase! Your payment of $149.99 has been successfully processed."
+  },
+  "processedAt": "2023-11-13T15:45:30Z",
+  "fees": {
+    "processing": "4.35",
+    "interchange": "1.85"
+  }
+}

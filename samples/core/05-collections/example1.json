@@ -1,0 +1,65 @@
+{
+  "$schema": "https://schemas.example.com/collections",
+  "version": "1.0.0",
+  "lastUpdated": "2023-11-13T15:30:00Z",
+  "products": [
+    {
+      "sku": "LAPTOP-001",
+      "name": "Professional Laptop",
+      "price": "1299.99",
+      "tags": ["laptop", "professional", "portable"],
+      "specifications": {
+        "processor": "Intel Core i7",
+        "memory": "16GB RAM",
+        "storage": "512GB SSD",
+        "display": "15.6 inch"
+      },
+      "images": [
+        "https://images.example.com/laptop-001-front.jpg",
+        "https://images.example.com/laptop-001-side.jpg"
+      ]
+    },
+    {
+      "sku": "MOUSE-001", 
+      "name": "Wireless Mouse",
+      "price": "29.99",
+      "tags": ["mouse", "wireless", "ergonomic"],
+      "specifications": {
+        "connectivity": "Bluetooth 5.0",
+        "battery": "AAA x 2",
+        "weight": "85g"
+      },
+      "images": [
+        "https://images.example.com/mouse-001.jpg"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "id": "ELECTRONICS",
+      "name": "Electronics",
+      "productSkus": ["LAPTOP-001", "MOUSE-001"]
+    },
+    {
+      "id": "COMPUTERS",
+      "name": "Computers",
+      "parentId": "ELECTRONICS",
+      "productSkus": ["LAPTOP-001"]
+    }
+  ],
+  "productBySku": {
+    "LAPTOP-001": {
+      "sku": "LAPTOP-001",
+      "name": "Professional Laptop",
+      "price": "1299.99",
+      "tags": ["laptop", "professional", "portable"],
+      "specifications": {
+        "processor": "Intel Core i7",
+        "memory": "16GB RAM",
+        "storage": "512GB SSD"
+      },
+      "images": ["https://images.example.com/laptop-001-front.jpg"]
+    }
+  },
+  "featuredSkus": ["LAPTOP-001"]
+}

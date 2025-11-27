@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schemas.example.com/datetime-examples",
+  "id": "550e8400-e29b-41d4-a716-446655440001",
+  "title": "Weekly Team Meeting",
+  "description": "Regular team standup meeting to discuss progress and blockers",
+  "timeSlot": {
+    "startTime": "2023-11-20T09:00:00-08:00",
+    "endTime": "2023-11-20T10:00:00-08:00",
+    "duration": "PT1H"
+  },
+  "location": "Conference Room A",
+  "organizerEmail": "team.lead@company.com",
+  "attendeeEmails": [
+    "developer1@company.com",
+    "developer2@company.com",
+    "designer@company.com"
+  ],
+  "recurrence": {
+    "frequency": "WEEKLY",
+    "interval": 1,
+    "daysOfWeek": ["MON"],
+    "endDate": "2024-01-15"
+  },
+  "createdAt": "2023-11-13T14:30:00Z",
+  "modifiedAt": "2023-11-13T14:30:00Z"
+}

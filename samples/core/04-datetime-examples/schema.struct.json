@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-structure.org/meta/core/v0/#",
+  "$id": "https://schemas.example.com/datetime-examples",
+  "name": "EventSchedule",
+  "description": "Demonstrates date, time, and duration types for event management",
+  "$root": "#/definitions/Event",
+  "definitions": {
+    "TimeSlot": {
+      "type": "object",
+      "description": "A time slot with start and end times",
+      "properties": {
+        "startTime": {
+          "type": "datetime",
+          "description": "Event start time with timezone"
+        },
+        "endTime": {
+          "type": "datetime",
+          "description": "Event end time with timezone"
+        },
+        "duration": {
+          "type": "duration",
+          "description": "Duration of the event (ISO 8601 format)"
+        }
+      },
+      "required": ["startTime", "endTime"]
+    },
+    "RecurrenceRule": {
+      "type": "object",
+      "description": "Defines how an event repeats",
+      "properties": {
+        "frequency": {
+          "type": "string",
+          "description": "How often the event repeats",
+          "enum": ["DAILY", "WEEKLY", "MONTHLY", "YEARLY"]
+        },
+        "interval": {
+          "type": "uint16",
+          "description": "Interval between occurrences",
+          "default": 1
+        },
+        "endDate": {
+          "type": "date",
+          "description": "When the recurrence ends"
+        },
+        "daysOfWeek": {
+          "type": "array",
+          "description": "Days of week for weekly recurrence",
+          "items": {
+            "type": "string",
+            "enum": ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+          }
+        }
+      },
+      "required": ["frequency"]
+    },
+    "Event": {
+      "type": "object",
+      "description": "A calendar event with scheduling information",
+      "properties": {
+        "id": {
+          "type": "uuid",
+          "description": "Unique event identifier"
+        },
+        "title": {
+          "type": "string",
+          "description": "Event title",
+          "maxLength": 100
+        },
+        "description": {
+          "type": "string",
+          "description": "Event description",
+          "maxLength": 1000
+        },
+        "timeSlot": {
+          "type": { "$ref": "#/definitions/TimeSlot" },
+          "description": "When the event occurs"
+        },
+        "location": {
+          "type": "string",
+          "description": "Event location",
+          "maxLength": 200
+        },
+        "organizerEmail": {
+          "type": "string",
+          "description": "Email of the event organizer"
+        },
+        "attendeeEmails": {
+          "type": "array",
+          "description": "List of attendee email addresses",
+          "items": { "type": "string" }
+        },
+        "recurrence": {
+          "type": { "$ref": "#/definitions/RecurrenceRule" },
+          "description": "Recurrence pattern for repeating events"
+        },
+        "createdAt": {
+          "type": "datetime",
+          "description": "When the event was created"
+        },
+        "modifiedAt": {
+          "type": "datetime",
+          "description": "When the event was last modified"
+        }
+      },
+      "required": ["id", "title", "timeSlot", "organizerEmail", "createdAt"]
+    }
+  }
+}

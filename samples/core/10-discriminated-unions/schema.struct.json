@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-structure.org/meta/core/v0/#",
+  "$id": "https://schemas.example.com/discriminated-unions",
+  "name": "PaymentSystem",
+  "description": "Demonstrates discriminated unions (choice types) - both tagged and inline variants",
+  "$root": "#/definitions/PaymentTransaction",
+  "definitions": {
+    "TaggedPaymentMethod": {
+      "type": "choice",
+      "name": "TaggedPaymentMethod",
+      "description": "Tagged union - payment method is wrapped with type selector",
+      "choices": {
+        "creditCard": { "type": { "$ref": "#/definitions/CreditCardPayment" }},
+        "bankTransfer": { "type": { "$ref": "#/definitions/BankTransferPayment" }},
+        "digitalWallet": { "type": { "$ref": "#/definitions/DigitalWalletPayment" }},
+        "cash": { "type": { "$ref": "#/definitions/CashPayment" }}
+      }
+    },
+    "CreditCardPayment": {
+      "type": "object",
+      "description": "Credit card payment details",
+      "properties": {
+        "cardNumber": {
+          "type": "string",
+          "description": "Masked card number",
+          "maxLength": 19
+        },
+        "cardholderName": { "type": "string", "maxLength": 100 },
+        "expiryMonth": { "type": "uint8" },
+        "expiryYear": { "type": "uint16" },
+        "cardType": {
+          "type": "string",
+          "enum": ["visa", "mastercard", "amex", "discover"]
+        },
+        "authorizationCode": { "type": "string", "maxLength": 20 }
+      },
+      "required": ["cardNumber", "cardholderName", "expiryMonth", "expiryYear", "cardType"]
+    },
+    "BankTransferPayment": {
+      "type": "object",
+      "description": "Bank transfer payment details",
+      "properties": {
+        "bankName": { "type": "string", "maxLength": 100 },
+        "routingNumber": { "type": "string", "maxLength": 15 },
+        "accountNumber": { 
+          "type": "string",
+          "description": "Masked account number",
+          "maxLength": 20 
+        },
+        "transferType": {
+          "type": "string",
+          "enum": ["ach", "wire", "instant"]
+        },
+        "referenceNumber": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["bankName", "accountNumber", "transferType"]
+    },
+    "DigitalWalletPayment": {
+      "type": "object",
+      "description": "Digital wallet payment details",
+      "properties": {
+        "walletProvider": {
+          "type": "string",
+          "enum": ["paypal", "apple_pay", "google_pay", "venmo", "zelle"]
+        },
+        "walletAccountId": { "type": "string", "maxLength": 100 },
+        "transactionId": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["walletProvider", "walletAccountId"]
+    },
+    "CashPayment": {
+      "type": "object",
+      "description": "Cash payment details",
+      "properties": {
+        "receivedAmount": {
+          "type": "decimal",
+          "precision": 10,
+          "scale": 2
+        },
+        "changeGiven": {
+          "type": "decimal", 
+          "precision": 10,
+          "scale": 2
+        },
+        "registerId": { "type": "string", "maxLength": 20 },
+        "cashierId": { "type": "string", "maxLength": 20 }
+      },
+      "required": ["receivedAmount", "registerId"]
+    },
+    "BaseNotification": {
+      "abstract": true,
+      "type": "object",
+      "description": "Abstract base type for all notifications",
+      "properties": {
+        "notificationId": { "type": "uuid" },
+        "timestamp": { "type": "datetime" },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "normal", "high", "urgent"]
+        },
+        "recipient": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["notificationId", "timestamp", "priority", "recipient"]
+    },
+    "EmailNotification": {
+      "type": "object",
+      "$extends": "#/definitions/BaseNotification", 
+      "description": "Email notification extending base notification",
+      "properties": {
+        "subject": { "type": "string", "maxLength": 200 },
+        "body": { "type": "string", "maxLength": 5000 },
+        "attachments": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["subject", "body"]
+    },
+    "SmsNotification": {
+      "type": "object",
+      "$extends": "#/definitions/BaseNotification",
+      "description": "SMS notification extending base notification", 
+      "properties": {
+        "message": { "type": "string", "maxLength": 160 },
+        "phoneNumber": { "type": "string", "maxLength": 20 }
+      },
+      "required": ["message", "phoneNumber"]
+    },
+    "PushNotification": {
+      "type": "object",
+      "$extends": "#/definitions/BaseNotification",
+      "description": "Push notification extending base notification",
+      "properties": {
+        "title": { "type": "string", "maxLength": 100 },
+        "body": { "type": "string", "maxLength": 500 },
+        "badge": { "type": "uint16" },
+        "sound": { "type": "string", "maxLength": 50 },
+        "deviceToken": { "type": "string", "maxLength": 200 }
+      },
+      "required": ["title", "body", "deviceToken"]
+    },
+    "InlineNotificationChoice": {
+      "type": "choice",
+      "name": "InlineNotificationChoice",
+      "description": "Inline union - notification type is embedded as a property",
+      "$extends": "#/definitions/BaseNotification",
+      "selector": "notificationType",
+      "choices": {
+        "email": { "type": { "$ref": "#/definitions/EmailNotification" }},
+        "sms": { "type": { "$ref": "#/definitions/SmsNotification" }},
+        "push": { "type": { "$ref": "#/definitions/PushNotification" }}
+      }
+    },
+    "PaymentTransaction": {
+      "type": "object",
+      "description": "Complete payment transaction with both types of discriminated unions",
+      "properties": {
+        "transactionId": { "type": "uuid" },
+        "merchantId": { "type": "string", "maxLength": 50 },
+        "amount": {
+          "type": "decimal",
+          "precision": 12,
+          "scale": 2
+        },
+        "currency": {
+          "type": "string", 
+          "enum": ["USD", "EUR", "GBP", "CAD", "AUD"]
+        },
+        "description": { "type": "string", "maxLength": 200 },
+        "paymentMethod": { 
+          "type": { "$ref": "#/definitions/TaggedPaymentMethod" },
+          "description": "Tagged union example - payment details wrapped with type"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "authorized", "captured", "failed", "refunded"]
+        },
+        "notification": {
+          "type": { "$ref": "#/definitions/InlineNotificationChoice" },
+          "description": "Inline union example - notification details with embedded type selector"
+        },
+        "processedAt": { "type": "datetime" },
+        "fees": {
+          "type": "map",
+          "description": "Processing fees by type",
+          "values": {
+            "type": "decimal",
+            "precision": 10,
+            "scale": 4
+          }
+        }
+      },
+      "required": ["transactionId", "merchantId", "amount", "currency", "paymentMethod", "status", "processedAt"]
+    }
+  }
+}

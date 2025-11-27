@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schemas.example.com/examples/importdefs-only", 
+  "employeeId": "EMP12345",
+  "personalInfo": {
+    "street": "321 Elm Street",
+    "city": "Austin",
+    "state": "Texas",
+    "postalCode": "78701",
+    "country": "US"
+  },
+  "workContact": {
+    "phone": "+1-512-555-0123",
+    "mobile": "+1-512-555-0456"
+  },
+  "salary": {
+    "amount": "85000.00",
+    "currency": "USD"
+  },
+  "department": "Engineering",
+  "hireDate": "2022-03-01",
+  "position": "Software Engineer II",
+  "manager": "EMP98765",
+  "isActive": true
+}

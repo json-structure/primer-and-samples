@@ -873,3 +873,183 @@ def test_validation_metaschema_enables_extensions():
     source_text = json.dumps(schema)
     errors = validate_json_structure_schema_core(schema, source_text, extended=True)
     assert errors == []
+
+
+# =============================================================================
+# Tests for all primitive types
+# =============================================================================
+
+# Test all primitive types are recognized
+@pytest.mark.parametrize("primitive_type", [
+    "string", "number", "integer", "boolean", "null",
+    "int8", "uint8", "int16", "uint16", "int32", "uint32",
+    "int64", "uint64", "int128", "uint128",
+    "float8", "float", "double", "decimal",
+    "date", "datetime", "time", "duration",
+    "uuid", "uri", "binary", "jsonpointer"
+])
+def test_all_primitive_types_valid(primitive_type):
+    """Test that all primitive types are recognized as valid."""
+    schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": f"https://example.com/schema/{primitive_type}_test",
+        "name": f"{primitive_type.capitalize()}Schema",
+        "type": primitive_type
+    }
+    source_text = json.dumps(schema)
+    errors = validate_json_structure_schema_core(schema, source_text)
+    assert errors == [], f"Type '{primitive_type}' should be valid but got errors: {errors}"
+
+
+# Test that unknown types are rejected
+def test_unknown_type_rejected():
+    schema = {
+        "$schema": "https://json-structure.org/meta/core/v0/#",
+        "$id": "https://example.com/schema/unknown_type",
+        "name": "UnknownTypeSchema",
+        "type": "unknowntype"
+    }
+    source_text = json.dumps(schema)
+    errors = validate_json_structure_schema_core(schema, source_text)
+    assert any("not a recognized" in err for err in errors)
+
+
+# Test maxLength validation
+def test_maxlength_valid():
+    schema = {
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
+        "$id": "https://example.com/schema/maxlength_valid",
+        "name": "MaxLengthSchema",
+        "$uses": ["JSONStructureValidation"],
+        "type": "string",
+        "maxLength": 100
+    }
+    source_text = json.dumps(schema)
+    errors = validate_json_structure_schema_core(schema, source_text, extended=True)
+    assert errors == []
+
+
+def test_maxlength_negative():
+    schema = {
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
+        "$id": "https://example.com/schema/maxlength_negative",
+        "name": "MaxLengthNegativeSchema",
+        "$uses": ["JSONStructureValidation"],
+        "type": "string",
+        "maxLength": -1
+    }
+    source_text = json.dumps(schema)
+    errors = validate_json_structure_schema_core(schema, source_text, extended=True)
+    assert any("maxLength" in err for err in errors)
+
+
+def test_maxlength_not_integer():
+    schema = {
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
+        "$id": "https://example.com/schema/maxlength_not_int",
+        "name": "MaxLengthNotIntSchema",
+        "$uses": ["JSONStructureValidation"],
+        "type": "string",
+        "maxLength": "100"
+    }
+    source_text = json.dumps(schema)
+    errors = validate_json_structure_schema_core(schema, source_text, extended=True)
+    assert any("maxLength" in err for err in errors)
+
+
+# Test compound types are valid
+@pytest.mark.parametrize("compound_type", ["object", "array", "set", "map", "tuple", "choice", "any"])
+def test_compound_types_recognized(compound_type):
+    """Test that compound types are recognized."""
+    # Build appropriate schema for each compound type
+    if compound_type == "object":
+        schema = {
+            "$schema": "https://json-structure.org/meta/core/v0/#",
+            "$id": f"https://example.com/schema/{compound_type}_test",
+            "name": "ObjectSchema",
+            "type": "object",
+            "properties": {"prop": {"type": "string"}}
+        }
+    elif compound_type in ["array", "set"]:
+        schema = {
+            "$schema": "https://json-structure.org/meta/core/v0/#",
+            "$id": f"https://example.com/schema/{compound_type}_test",
+            "name": f"{compound_type.capitalize()}Schema",
+            "type": compound_type,
+            "items": {"type": "string"}
+        }
+    elif compound_type == "map":
+        schema = {
+            "$schema": "https://json-structure.org/meta/core/v0/#",
+            "$id": f"https://example.com/schema/{compound_type}_test",
+            "name": "MapSchema",
+            "type": "map",
+            "values": {"type": "string"}
+        }
+    elif compound_type == "tuple":
+        schema = {
+            "$schema": "https://json-structure.org/meta/core/v0/#",
+            "$id": f"https://example.com/schema/{compound_type}_test",
+            "name": "TupleSchema",
+            "type": "tuple",
+            "properties": {"a": {"type": "string"}, "b": {"type": "int32"}},
+            "tuple": ["a", "b"]
+        }
+    elif compound_type == "choice":
+        schema = {
+            "$schema": "https://json-structure.org/meta/core/v0/#",
+            "$id": f"https://example.com/schema/{compound_type}_test",
+            "name": "ChoiceSchema",
+            "type": "choice",
+            "choices": {"opt1": {"type": "string"}, "opt2": {"type": "int32"}}
+        }
+    else:  # any
+        schema = {
+            "$schema": "https://json-structure.org/meta/core/v0/#",
+            "$id": f"https://example.com/schema/{compound_type}_test",
+            "name": "AnySchema",
+            "type": "any"
+        }
+    
+    source_text = json.dumps(schema)
+    errors = validate_json_structure_schema_core(schema, source_text)
+    assert errors == [], f"Compound type '{compound_type}' should be valid but got errors: {errors}"
+
+
+# Test validation keywords on all numeric types
+@pytest.mark.parametrize("numeric_type", [
+    "number", "integer", "float", "double", "float8",
+    "int8", "uint8", "int16", "uint16", "int32", "uint32"
+])
+def test_numeric_validation_keywords(numeric_type):
+    """Test that numeric validation keywords work on numeric types."""
+    schema = {
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
+        "$id": f"https://example.com/schema/{numeric_type}_validation",
+        "name": f"{numeric_type.capitalize()}ValidationSchema",
+        "$uses": ["JSONStructureValidation"],
+        "type": numeric_type,
+        "minimum": 0,
+        "maximum": 100
+    }
+    source_text = json.dumps(schema)
+    errors = validate_json_structure_schema_core(schema, source_text, extended=True)
+    assert errors == [], f"Numeric validation on '{numeric_type}' should be valid but got errors: {errors}"
+
+
+# Test validation keywords on string-based numeric types (int64, uint64, int128, uint128, decimal)
+@pytest.mark.parametrize("string_numeric_type", ["int64", "uint64", "int128", "uint128", "decimal"])
+def test_string_numeric_validation_keywords(string_numeric_type):
+    """Test that string-based numeric types require string values for validation keywords."""
+    schema = {
+        "$schema": "https://json-structure.org/meta/extended/v0/#",
+        "$id": f"https://example.com/schema/{string_numeric_type}_validation",
+        "name": f"{string_numeric_type.capitalize()}ValidationSchema",
+        "$uses": ["JSONStructureValidation"],
+        "type": string_numeric_type,
+        "minimum": "0",
+        "maximum": "1000000000000"
+    }
+    source_text = json.dumps(schema)
+    errors = validate_json_structure_schema_core(schema, source_text, extended=True)
+    assert errors == [], f"String-based numeric validation on '{string_numeric_type}' should be valid but got errors: {errors}"

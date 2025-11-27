@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schemas.example.com/unions",
+  "requestId": "550e8400-e29b-41d4-a716-446655440003",
+  "status": "FAILED",
+  "input": {
+    "id": "550e8400-e29b-41d4-a716-446655440999",
+    "url": "https://documents.example.com/large-file.pdf"
+  },
+  "output": {
+    "code": "SIZE_LIMIT_EXCEEDED",
+    "message": "Document size exceeds the maximum allowed limit of 10MB",
+    "timestamp": "2023-11-13T15:45:30Z"
+  },
+  "metadata": {
+    "attemptedEngine": "PDFProcessor v3.0",
+    "fileSize": "15728640",
+    "maxAllowedSize": "10485760"
+  },
+  "processingTime": "PT0.1S"
+}

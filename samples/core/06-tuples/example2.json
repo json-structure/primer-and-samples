@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schemas.example.com/tuples",
+  "name": "Traffic Analysis Dataset",
+  "description": "Vehicle traffic flow data from intersection cameras",
+  "dataPoints": [
+    {
+      "id": "INTERSECTION_A1",
+      "location": ["40.7589000", "-73.9851000"],
+      "measurements": [
+        ["2023-11-13T08:00:00Z", "125.000000", 85],
+        ["2023-11-13T09:00:00Z", "178.000000", 90],
+        ["2023-11-13T10:00:00Z", "145.000000", 88]
+      ],
+      "visualColor": [255, 0, 0]
+    }
+  ],
+  "bounds": [
+    ["40.7500000", "-73.9900000"],
+    ["40.7600000", "-73.9800000"]
+  ]
+}

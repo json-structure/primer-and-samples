@@ -1,0 +1,128 @@
+{
+  "$schema": "https://schemas.example.com/sets-and-maps",
+  "name": "Central Public Library",
+  "location": "123 Main Street, Downtown",
+  "books": {
+    "978-0-13-110362-7": {
+      "isbn": "978-0-13-110362-7",
+      "title": "The C Programming Language",
+      "authors": ["550e8400-e29b-41d4-a716-446655440001", "550e8400-e29b-41d4-a716-446655440002"],
+      "genres": ["technical", "non-fiction"],
+      "publishYear": 1988,
+      "pageCount": 272,
+      "ratings": {
+        "550e8400-e29b-41d4-a716-446655440010": {
+          "score": 9,
+          "review": "Essential reading for any programmer. Clear and concise.",
+          "reviewDate": "2023-08-15"
+        },
+        "550e8400-e29b-41d4-a716-446655440011": {
+          "score": 10,
+          "reviewDate": "2023-09-22"
+        }
+      },
+      "metadata": {
+        "edition": "2nd",
+        "language": "English",
+        "dewey_decimal": "005.133",
+        "difficulty_level": 3
+      }
+    },
+    "978-0-7475-3269-9": {
+      "isbn": "978-0-7475-3269-9", 
+      "title": "Harry Potter and the Philosopher's Stone",
+      "authors": ["550e8400-e29b-41d4-a716-446655440003"],
+      "genres": ["fiction", "fantasy"],
+      "publishYear": 1997,
+      "pageCount": 223,
+      "ratings": {
+        "550e8400-e29b-41d4-a716-446655440012": {
+          "score": 8,
+          "review": "Wonderful start to an amazing series!",
+          "reviewDate": "2023-07-10"
+        }
+      },
+      "metadata": {
+        "series": "Harry Potter",
+        "series_number": 1,
+        "target_age": "young_adult"
+      }
+    }
+  },
+  "authors": {
+    "550e8400-e29b-41d4-a716-446655440001": {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "name": "Brian W. Kernighan",
+      "nationality": "Canadian",
+      "birthYear": 1942
+    },
+    "550e8400-e29b-41d4-a716-446655440002": {
+      "id": "550e8400-e29b-41d4-a716-446655440002", 
+      "name": "Dennis M. Ritchie",
+      "nationality": "American",
+      "birthYear": 1941
+    },
+    "550e8400-e29b-41d4-a716-446655440003": {
+      "id": "550e8400-e29b-41d4-a716-446655440003",
+      "name": "J.K. Rowling",
+      "nationality": "British",
+      "birthYear": 1965
+    }
+  },
+  "categories": ["fiction", "non-fiction", "technical", "fantasy", "biography"],
+  "memberIds": [
+    "550e8400-e29b-41d4-a716-446655440010",
+    "550e8400-e29b-41d4-a716-446655440011", 
+    "550e8400-e29b-41d4-a716-446655440012",
+    "550e8400-e29b-41d4-a716-446655440013"
+  ],
+  "openingHours": {
+    "monday": {
+      "open": "09:00:00",
+      "close": "18:00:00",
+      "isClosed": false
+    },
+    "tuesday": {
+      "open": "09:00:00", 
+      "close": "18:00:00",
+      "isClosed": false
+    },
+    "wednesday": {
+      "open": "09:00:00",
+      "close": "20:00:00",
+      "isClosed": false
+    },
+    "thursday": {
+      "open": "09:00:00",
+      "close": "18:00:00", 
+      "isClosed": false
+    },
+    "friday": {
+      "open": "09:00:00",
+      "close": "17:00:00",
+      "isClosed": false
+    },
+    "saturday": {
+      "open": "10:00:00",
+      "close": "16:00:00",
+      "isClosed": false
+    },
+    "sunday": {
+      "isClosed": true
+    }
+  },
+  "specialCollections": {
+    "rare_books": {
+      "description": "Rare and antique books collection with climate-controlled environment",
+      "bookIsbns": ["978-0-13-110362-7"],
+      "curator": "Dr. Emily Richardson",
+      "accessLevel": "restricted"
+    },
+    "local_authors": {
+      "description": "Works by authors from our local community",
+      "bookIsbns": ["978-0-7475-3269-9"],
+      "curator": "Maria Santos",
+      "accessLevel": "public"
+    }
+  }
+}

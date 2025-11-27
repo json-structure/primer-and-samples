@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-structure.org/meta/extended/v0/#",
+  "$id": "https://schemas.example.com/examples/importdefs-only",
+  "name": "EmployeeRecord", 
+  "description": "Demonstrates $importdefs to import only definitions (not root types)",
+  "$uses": ["JSONStructureValidation"],
+  "type": "object",
+  "properties": {
+    "employeeId": {
+      "type": "string",
+      "description": "Employee identifier",
+      "maxLength": 10
+    },
+    "personalInfo": {
+      "type": { "$ref": "#/definitions/PersonLib/Address" },
+      "description": "Employee home address - using imported Address type"
+    },
+    "workContact": {
+      "type": { "$ref": "#/definitions/PersonLib/ContactInfo" },
+      "description": "Work contact information - using imported ContactInfo type"
+    },
+    "salary": {
+      "type": { "$ref": "#/definitions/FinanceLib/Money" },
+      "description": "Employee salary - using imported Money type"
+    },
+    "department": {
+      "type": "string",
+      "enum": ["HR", "Engineering", "Sales", "Marketing", "Finance"],
+      "description": "Employee department"
+    },
+    "hireDate": {
+      "type": "date",
+      "description": "Employee hire date"
+    },
+    "position": {
+      "type": "string",
+      "description": "Job title",
+      "maxLength": 100
+    },
+    "manager": {
+      "type": "string",
+      "description": "Manager's employee ID",
+      "maxLength": 10
+    },
+    "isActive": {
+      "type": "boolean",
+      "description": "Whether employee is currently active",
+      "default": true
+    }
+  },
+  "required": ["employeeId", "personalInfo", "salary", "department", "hireDate", "position"],
+  "definitions": {
+    "PersonLib": {
+      "$importdefs": "../02-namespace-import/person-library/schema.struct.json"
+    },
+    "FinanceLib": {
+      "$importdefs": "../02-namespace-import/financial-library/schema.struct.json"
+    }
+  }
+}

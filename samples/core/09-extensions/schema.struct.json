@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-structure.org/meta/core/v0/#",
+  "$id": "https://schemas.example.com/extensions",
+  "name": "VehicleManagement",
+  "description": "Demonstrates abstract types and $extends for inheritance",
+  "$root": "#/definitions/Fleet",
+  "definitions": {
+    "Vehicle": {
+      "abstract": true,
+      "type": "object",
+      "description": "Abstract base vehicle type - cannot be instantiated directly",
+      "properties": {
+        "vin": {
+          "type": "string",
+          "description": "Vehicle Identification Number",
+          "maxLength": 17
+        },
+        "make": { "type": "string", "maxLength": 50 },
+        "model": { "type": "string", "maxLength": 50 },
+        "year": { "type": "uint16" },
+        "color": { "type": "string", "maxLength": 30 },
+        "mileage": { "type": "uint32" },
+        "registrationDate": { "type": "date" }
+      },
+      "required": ["vin", "make", "model", "year"]
+    },
+    "MotorVehicle": {
+      "abstract": true,
+      "type": "object",
+      "description": "Abstract motor vehicle extending base Vehicle",
+      "$extends": "#/definitions/Vehicle",
+      "properties": {
+        "engineType": {
+          "type": "string",
+          "enum": ["gasoline", "diesel", "hybrid", "electric"]
+        },
+        "fuelCapacity": {
+          "type": "decimal",
+          "precision": 5,
+          "scale": 2
+        },
+        "transmissionType": {
+          "type": "string",
+          "enum": ["manual", "automatic", "cvt"]
+        }
+      },
+      "required": ["engineType"]
+    },
+    "Car": {
+      "type": "object",
+      "description": "Passenger car extending MotorVehicle",
+      "$extends": "#/definitions/MotorVehicle",
+      "properties": {
+        "doors": {
+          "type": "uint8",
+          "enum": [2, 4, 5]
+        },
+        "seatingCapacity": { "type": "uint8" },
+        "trunkCapacity": {
+          "type": "decimal",
+          "precision": 6,
+          "scale": 2
+        },
+        "features": {
+          "type": "set",
+          "items": {
+            "type": "string",
+            "enum": ["air_conditioning", "navigation", "bluetooth", "backup_camera", "heated_seats", "sunroof"]
+          }
+        }
+      },
+      "required": ["doors", "seatingCapacity"]
+    },
+    "Truck": {
+      "type": "object",
+      "description": "Commercial truck extending MotorVehicle",
+      "$extends": "#/definitions/MotorVehicle",
+      "properties": {
+        "payloadCapacity": {
+          "type": "uint32",
+          "description": "Payload capacity in pounds"
+        },
+        "towingCapacity": {
+          "type": "uint32",
+          "description": "Towing capacity in pounds"
+        },
+        "axles": { "type": "uint8" },
+        "commercialLicense": { "type": "boolean" },
+        "cargoType": {
+          "type": "string",
+          "enum": ["general", "refrigerated", "hazmat", "livestock", "construction"]
+        }
+      },
+      "required": ["payloadCapacity", "commercialLicense"]
+    },
+    "Motorcycle": {
+      "type": "object", 
+      "description": "Motorcycle extending MotorVehicle",
+      "$extends": "#/definitions/MotorVehicle",
+      "properties": {
+        "engineSize": {
+          "type": "uint16",
+          "description": "Engine displacement in cubic centimeters"
+        },
+        "style": {
+          "type": "string",
+          "enum": ["sport", "cruiser", "touring", "dirt", "scooter"]
+        },
+        "helmetsRequired": { "type": "boolean" }
+      },
+      "required": ["engineSize", "style"]
+    },
+    "Bicycle": {
+      "type": "object",
+      "description": "Non-motor bicycle extending base Vehicle",
+      "$extends": "#/definitions/Vehicle",
+      "properties": {
+        "gears": { "type": "uint8" },
+        "frameSize": { "type": "string", "maxLength": 10 },
+        "bikeType": {
+          "type": "string",
+          "enum": ["road", "mountain", "hybrid", "bmx", "electric"]
+        },
+        "wheelSize": {
+          "type": "decimal",
+          "precision": 3,
+          "scale": 1
+        }
+      },
+      "required": ["bikeType"]
+    },
+    "MaintenanceRecord": {
+      "type": "object",
+      "description": "Vehicle maintenance record",
+      "properties": {
+        "recordId": { "type": "uuid" },
+        "vehicleVin": { "type": "string", "maxLength": 17 },
+        "serviceDate": { "type": "date" },
+        "mileageAtService": { "type": "uint32" },
+        "serviceType": {
+          "type": "string",
+          "enum": ["oil_change", "tire_rotation", "brake_service", "transmission", "major_service", "repair"]
+        },
+        "description": { "type": "string", "maxLength": 500 },
+        "cost": {
+          "type": "decimal",
+          "precision": 10,
+          "scale": 2
+        },
+        "serviceProvider": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["recordId", "vehicleVin", "serviceDate", "serviceType", "cost"]
+    },
+    "Fleet": {
+      "type": "object",
+      "description": "Complete vehicle fleet management system",
+      "properties": {
+        "fleetName": { "type": "string", "maxLength": 100 },
+        "cars": {
+          "type": "array",
+          "items": { "type": { "$ref": "#/definitions/Car" }}
+        },
+        "trucks": {
+          "type": "array", 
+          "items": { "type": { "$ref": "#/definitions/Truck" }}
+        },
+        "motorcycles": {
+          "type": "array",
+          "items": { "type": { "$ref": "#/definitions/Motorcycle" }}
+        },
+        "bicycles": {
+          "type": "array",
+          "items": { "type": { "$ref": "#/definitions/Bicycle" }}
+        },
+        "maintenanceRecords": {
+          "type": "array",
+          "items": { "type": { "$ref": "#/definitions/MaintenanceRecord" }}
+        },
+        "totalVehicles": { "type": "uint32" },
+        "lastInventoryDate": { "type": "datetime" }
+      },
+      "required": ["fleetName", "totalVehicles", "lastInventoryDate"]
+    }
+  }
+}

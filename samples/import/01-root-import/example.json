@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schemas.example.com/examples/full-import",
+  "customerId": "CUST001",
+  "person": {
+    "id": "550e8400-e29b-41d4-a716-446655440001",
+    "firstName": "Alice",
+    "lastName": "Johnson", 
+    "email": "alice.johnson@email.com",
+    "dateOfBirth": "1988-03-15",
+    "address": {
+      "street": "123 Main Street",
+      "city": "Seattle", 
+      "state": "Washington",
+      "postalCode": "98101",
+      "country": "US"
+    }
+  },
+  "contactInfo": {
+    "phone": "+1-555-123-4567",
+    "mobile": "+1-555-987-6543",
+    "emergencyContact": "Bob Johnson +1-555-111-2222"
+  },
+  "registrationDate": "2023-01-15",
+  "isActive": true,
+  "loyaltyLevel": "gold"
+}

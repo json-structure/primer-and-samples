@@ -1,0 +1,108 @@
+{
+  "$schema": "https://schemas.example.com/namespaces",
+  "companyName": "TechCorp Industries",
+  "headquarters": {
+    "street": "1000 Innovation Drive",
+    "city": "Silicon Valley", 
+    "state": "California",
+    "zipCode": "94025",
+    "country": "US"
+  },
+  "employees": [
+    {
+      "employeeId": "EMP001",
+      "firstName": "Alice",
+      "lastName": "Johnson",
+      "department": {
+        "code": "ENG",
+        "name": "Engineering",
+        "managerId": "EMP003",
+        "budget": "2500000.00"
+      },
+      "position": "Senior Software Engineer",
+      "salary": "145000.00",
+      "hireDate": "2020-03-15",
+      "address": {
+        "street": "123 Oak Street",
+        "city": "Palo Alto",
+        "state": "California", 
+        "zipCode": "94301",
+        "country": "US"
+      },
+      "contact": {
+        "email": "alice.johnson@techcorp.com",
+        "phone": "650-555-1234",
+        "mobile": "650-555-5678"
+      }
+    },
+    {
+      "employeeId": "EMP002", 
+      "firstName": "Bob",
+      "lastName": "Smith",
+      "department": {
+        "code": "MKT",
+        "name": "Marketing",
+        "managerId": "EMP004",
+        "budget": "1200000.00"
+      },
+      "position": "Marketing Manager",
+      "salary": "95000.00",
+      "hireDate": "2019-07-20",
+      "address": {
+        "street": "456 Pine Avenue",
+        "city": "San Jose",
+        "state": "California",
+        "zipCode": "95110", 
+        "country": "US"
+      },
+      "contact": {
+        "email": "bob.smith@techcorp.com",
+        "phone": "408-555-9876"
+      }
+    }
+  ],
+  "departments": [
+    {
+      "code": "ENG",
+      "name": "Engineering",
+      "managerId": "EMP003",
+      "budget": "2500000.00"
+    },
+    {
+      "code": "MKT", 
+      "name": "Marketing",
+      "managerId": "EMP004",
+      "budget": "1200000.00"
+    }
+  ],
+  "buildings": [
+    {
+      "buildingId": "BLDG01",
+      "name": "Main Campus",
+      "address": {
+        "street": "1000 Innovation Drive",
+        "city": "Silicon Valley",
+        "state": "California",
+        "zipCode": "94025",
+        "country": "US"
+      },
+      "floors": 5,
+      "capacity": 500,
+      "offices": [
+        {
+          "officeNumber": "101",
+          "floor": 1,
+          "capacity": 2,
+          "equipment": ["desk", "computer", "phone", "whiteboard"]
+        },
+        {
+          "officeNumber": "205",
+          "floor": 2, 
+          "capacity": 4,
+          "equipment": ["conference_table", "projector", "video_conference"]
+        }
+      ]
+    }
+  ],
+  "lastUpdated": "2023-11-13T15:30:00Z"
+}

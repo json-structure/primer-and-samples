@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-structure.org/meta/core/v0/#",
+  "$id": "https://schemas.example.com/common/financial",
+  "name": "MoneyAmount",
+  "description": "Financial types library for reuse across schemas",
+  "type": "object",
+  "properties": {
+    "amount": {
+      "type": { "$ref": "#/definitions/Money" }
+    }
+  },
+  "definitions": {
+    "Money": {
+      "type": "object",
+      "description": "Monetary amount with currency",
+      "properties": {
+        "amount": {
+          "type": "decimal",
+          "description": "The monetary amount",
+          "precision": 15,
+          "scale": 2
+        },
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code",
+          "enum": ["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY"],
+          "examples": ["USD", "EUR"]
+        }
+      },
+      "required": ["amount", "currency"]
+    },
+    "PaymentMethod": {
+      "type": "object",
+      "description": "Payment method information",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["credit_card", "debit_card", "bank_transfer", "paypal", "cash"],
+          "description": "Payment method type"
+        },
+        "last4Digits": {
+          "type": "string",
+          "description": "Last 4 digits (for cards)",
+          "maxLength": 4
+        },
+        "expiryMonth": {
+          "type": "uint8",
+          "description": "Expiry month for cards"
+        },
+        "expiryYear": {
+          "type": "uint16", 
+          "description": "Expiry year for cards"
+        }
+      },
+      "required": ["type"]
+    },
+    "Transaction": {
+      "type": "object",
+      "description": "Financial transaction",
+      "properties": {
+        "id": {
+          "type": "uuid",
+          "description": "Transaction identifier"
+        },
+        "amount": {
+          "type": { "$ref": "#/definitions/Money" },
+          "description": "Transaction amount"
+        },
+        "paymentMethod": {
+          "type": { "$ref": "#/definitions/PaymentMethod" },
+          "description": "How payment was made"
+        },
+        "timestamp": {
+          "type": "datetime",
+          "description": "When transaction occurred"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "completed", "failed", "cancelled"],
+          "description": "Transaction status"
+        },
+        "description": {
+          "type": "string",
+          "description": "Transaction description",
+          "maxLength": 200
+        }
+      },
+      "required": ["id", "amount", "timestamp", "status"]
+    }
+  }
+}

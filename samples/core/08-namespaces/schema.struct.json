@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-structure.org/meta/core/v0/#",
+  "$id": "https://schemas.example.com/namespaces",
+  "name": "CorporateDirectory",
+  "description": "Demonstrates hierarchical namespaces and type organization",
+  "$root": "#/definitions/Company/Directory",
+  "definitions": {
+    "Common": {
+      "Address": {
+        "type": "object",
+        "description": "Standard address format used across all namespaces",
+        "properties": {
+          "street": { "type": "string", "maxLength": 100 },
+          "city": { "type": "string", "maxLength": 50 },
+          "state": { "type": "string", "maxLength": 50 },
+          "zipCode": { "type": "string", "maxLength": 20 },
+          "country": { "type": "string", "maxLength": 3 }
+        },
+        "required": ["street", "city", "country"]
+      },
+      "ContactInfo": {
+        "type": "object",
+        "description": "Standard contact information",
+        "properties": {
+          "email": { "type": "string" },
+          "phone": { "type": "string", "maxLength": 20 },
+          "mobile": { "type": "string", "maxLength": 20 }
+        },
+        "required": ["email"]
+      }
+    },
+    "HR": {
+      "Employee": {
+        "type": "object",
+        "description": "Employee record in HR namespace",
+        "properties": {
+          "employeeId": { "type": "string", "maxLength": 20 },
+          "firstName": { "type": "string", "maxLength": 50 },
+          "lastName": { "type": "string", "maxLength": 50 },
+          "department": { "type": { "$ref": "#/definitions/HR/Department" }},
+          "position": { "type": "string", "maxLength": 100 },
+          "salary": {
+            "type": "decimal",
+            "precision": 10,
+            "scale": 2
+          },
+          "hireDate": { "type": "date" },
+          "address": { "type": { "$ref": "#/definitions/Common/Address" }},
+          "contact": { "type": { "$ref": "#/definitions/Common/ContactInfo" }}
+        },
+        "required": ["employeeId", "firstName", "lastName", "department", "hireDate"]
+      },
+      "Department": {
+        "type": "object",
+        "description": "Department information",
+        "properties": {
+          "code": { "type": "string", "maxLength": 10 },
+          "name": { "type": "string", "maxLength": 100 },
+          "managerId": { "type": "string", "maxLength": 20 },
+          "budget": {
+            "type": "decimal",
+            "precision": 15,
+            "scale": 2
+          }
+        },
+        "required": ["code", "name"]
+      }
+    },
+    "Facilities": {
+      "Building": {
+        "type": "object",
+        "description": "Building information in facilities namespace",
+        "properties": {
+          "buildingId": { "type": "string", "maxLength": 10 },
+          "name": { "type": "string", "maxLength": 100 },
+          "address": { "type": { "$ref": "#/definitions/Common/Address" }},
+          "floors": { "type": "uint8" },
+          "capacity": { "type": "uint16" },
+          "offices": {
+            "type": "array",
+            "items": { "type": { "$ref": "#/definitions/Facilities/Office" }}
+          }
+        },
+        "required": ["buildingId", "name", "address"]
+      },
+      "Office": {
+        "type": "object",
+        "description": "Individual office within a building",
+        "properties": {
+          "officeNumber": { "type": "string", "maxLength": 10 },
+          "floor": { "type": "uint8" },
+          "capacity": { "type": "uint8" },
+          "equipment": {
+            "type": "set",
+            "items": { "type": "string" }
+          },
+          "occupant": { "type": { "$ref": "#/definitions/HR/Employee" }}
+        },
+        "required": ["officeNumber", "floor"]
+      }
+    },
+    "Company": {
+      "Directory": {
+        "type": "object",
+        "description": "Complete company directory combining all namespaces",
+        "properties": {
+          "companyName": { "type": "string", "maxLength": 100 },
+          "headquarters": { "type": { "$ref": "#/definitions/Common/Address" }},
+          "employees": {
+            "type": "array",
+            "items": { "type": { "$ref": "#/definitions/HR/Employee" }}
+          },
+          "departments": {
+            "type": "array",
+            "items": { "type": { "$ref": "#/definitions/HR/Department" }}
+          },
+          "buildings": {
+            "type": "array",
+            "items": { "type": { "$ref": "#/definitions/Facilities/Building" }}
+          },
+          "lastUpdated": { "type": "datetime" }
+        },
+        "required": ["companyName", "headquarters", "employees", "departments", "lastUpdated"]
+      }
+    }
+  }
+}

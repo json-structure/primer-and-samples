@@ -42,19 +42,19 @@ class JSONStructureSchemaCoreValidator:
         "values", "choices", "selector", "tuple"
     }
     PRIMITIVE_TYPES = {
-        "string", "number", "boolean", "null", "int8", "uint8", "int16", "uint16",
+        "string", "number", "integer", "boolean", "null", "int8", "uint8", "int16", "uint16",
         "int32", "uint32", "int64", "uint64", "int128", "uint128", "float8", 
         "float", "double", "decimal", "date", "datetime", "time", "duration", 
-        "uuid", "uri", "binary", "jsonpointer", "any"
+        "uuid", "uri", "binary", "jsonpointer"
     }
-    COMPOUND_TYPES = {"object", "array", "set", "map", "tuple", "choice"}
+    COMPOUND_TYPES = {"object", "array", "set", "map", "tuple", "choice", "any"}
     
     # Extended keywords for conditional composition
     COMPOSITION_KEYWORDS = {"allOf", "anyOf", "oneOf", "not", "if", "then", "else"}
     
     # Extended keywords for validation
     NUMERIC_VALIDATION_KEYWORDS = {"minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum", "multipleOf"}
-    STRING_VALIDATION_KEYWORDS = {"minLength", "pattern", "format"}
+    STRING_VALIDATION_KEYWORDS = {"minLength", "maxLength", "pattern", "format"}
     ARRAY_VALIDATION_KEYWORDS = {"minItems", "maxItems", "uniqueItems", "contains", "minContains", "maxContains"}
     OBJECT_VALIDATION_KEYWORDS = {"minProperties", "maxProperties", "minEntries", "maxEntries", 
                                   "dependentRequired", "patternProperties", "patternKeys", 
@@ -545,6 +545,11 @@ class JSONStructureSchemaCoreValidator:
             val = obj["minLength"]
             if not isinstance(val, int) or val < 0:
                 self._err("'minLength' must be a non-negative integer.", f"{path}/minLength")
+        
+        if "maxLength" in obj:
+            val = obj["maxLength"]
+            if not isinstance(val, int) or val < 0:
+                self._err("'maxLength' must be a non-negative integer.", f"{path}/maxLength")
                 
         if "pattern" in obj:
             val = obj["pattern"]
