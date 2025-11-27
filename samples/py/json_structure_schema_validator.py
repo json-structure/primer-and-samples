@@ -72,13 +72,15 @@ class JSONStructureSchemaCoreValidator:
         "JSONStructureConditionalComposition", "JSONStructureValidation"
     }
 
-    def __init__(self, allow_dollar=False, allow_import=False, import_map=None, extended=False):
+    def __init__(self, allow_dollar=False, allow_import=False, import_map=None, extended=False, external_schemas=None):
         """
         Initializes a validator instance.
         :param allow_dollar: Boolean flag to allow '$' in property names.
         :param allow_import: Boolean flag to enable processing of $import/$importdefs.
         :param import_map: Dictionary mapping URI to local filenames.
         :param extended: Boolean flag to enable extended validation features.
+        :param external_schemas: List of schema dicts to use for resolving imports by $id.
+                                 Each schema should have a '$id' field matching the import URI.
         """
         self.errors = []
         self.doc = None
@@ -87,6 +89,12 @@ class JSONStructureSchemaCoreValidator:
         self.import_map = import_map if import_map is not None else {}
         self.extended = extended
         self.enabled_extensions = set()
+        # Build lookup for external schemas by $id
+        self.external_schemas = {}
+        if external_schemas:
+            for schema in external_schemas:
+                if isinstance(schema, dict) and "$id" in schema:
+                    self.external_schemas[schema["$id"]] = schema
         if allow_dollar:
             self.identifier_regex = re.compile(r'^[A-Za-z_$][A-Za-z0-9_$]*$')
         else:
@@ -289,9 +297,14 @@ class JSONStructureSchemaCoreValidator:
     def _fetch_external_schema(self, uri):
         """
         Fetches an external schema from a URI.
-        If a mapping is provided and contains the URI, loads from the given file.
-        Otherwise, uses a simulated lookup.
+        Resolution order:
+        1. Check external_schemas (pre-loaded schemas matched by $id)
+        2. Check import_map (URI to file path mapping)
         """
+        # First check sideloaded schemas by $id
+        if uri in self.external_schemas:
+            return self.external_schemas[uri]
+        # Then check import_map for file paths
         if uri in self.import_map:
             try:
                 with open(self.import_map[uri], "r", encoding="utf-8") as f:
@@ -299,41 +312,8 @@ class JSONStructureSchemaCoreValidator:
             except Exception as e:
                 self._err(f"Failed to load imported schema from {self.import_map[uri]}: {e}", "#/import")
                 return None
-        # Simulated external schemas for testing purposes.
-        EXTERNAL_SCHEMAS = {
-            "https://example.com/people.json": {
-                "$schema": "https://json-structure.org/meta/core/v0/#",
-                "$id": "https://example.com/people.json",
-                "name": "Person",
-                "type": "object",
-                "properties": {
-                    "firstName": {"type": "string"},
-                    "lastName": {"type": "string"},
-                    "address": {"$ref": "#/definitions/Address"}
-                },
-                "definitions": {
-                    "Address": {
-                        "name": "Address",
-                        "type": "object",
-                        "properties": {
-                            "street": {"type": "string"},
-                            "city": {"type": "string"}
-                        }
-                    }
-                }
-            },
-            "https://example.com/address.json": {
-                "$schema": "https://json-structure.org/meta/core/v0/#",
-                "$id": "https://example.com/address.json",
-                "name": "Address",
-                "type": "object",
-                "properties": {
-                    "street": {"type": "string"},
-                    "city": {"type": "string"}
-                }
-            }
-        }
-        return EXTERNAL_SCHEMAS.get(uri)
+        # URI not found in external_schemas or import_map
+        return None
 
     def _validate_namespace(self, obj, path):
         """

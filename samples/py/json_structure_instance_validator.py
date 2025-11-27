@@ -50,12 +50,15 @@ class JSONStructureInstanceValidator:
     """
     ABSOLUTE_URI_REGEX = re.compile(r'^[a-zA-Z][a-zA-Z0-9+\-.]*://')
 
-    def __init__(self, root_schema, allow_import=False, import_map=None, extended=False):
+    def __init__(self, root_schema, allow_import=False, import_map=None, extended=False, external_schemas=None):
         """
         Initializes the validator.
         :param root_schema: The JSON Structure (as dict).
         :param allow_import: Enables processing of $import/$importdefs.
         :param import_map: Dict mapping URIs to local filenames.
+        :param extended: Enable extended validation features.
+        :param external_schemas: List of schema dicts to use for resolving imports by $id.
+                                 Each schema should have a '$id' field matching the import URI.
         """
         self.root_schema = root_schema
         self.errors = []
@@ -63,6 +66,12 @@ class JSONStructureInstanceValidator:
         self.import_map = import_map if import_map is not None else {}
         self.extended = extended
         self.enabled_extensions = set()
+        # Build lookup for external schemas by $id
+        self.external_schemas = {}
+        if external_schemas:
+            for schema in external_schemas:
+                if isinstance(schema, dict) and "$id" in schema:
+                    self.external_schemas[schema["$id"]] = schema
         # Process $import and $importdefs if enabled. [Metaschema: JSONStructureImport extension constructs]
         if self.allow_import:
             self._process_imports(self.root_schema, "#")
@@ -1032,9 +1041,14 @@ class JSONStructureInstanceValidator:
         """
         Fetches an external schema from a URI.
         [Metaschema: JSONStructureImport extension resolution]
-        If the URI is in self.import_map, loads the schema from the specified file.
-        Otherwise, uses a simulated lookup.
+        Resolution order:
+        1. Check external_schemas (pre-loaded schemas matched by $id)
+        2. Check import_map (URI to file path mapping)
         """
+        # First check sideloaded schemas by $id
+        if uri in self.external_schemas:
+            return self.external_schemas[uri]
+        # Then check import_map for file paths
         if uri in self.import_map:
             try:
                 with open(self.import_map[uri], "r", encoding="utf-8") as f:
@@ -1042,40 +1056,8 @@ class JSONStructureInstanceValidator:
             except Exception as e:
                 self.errors.append(f"Failed to load imported schema from {self.import_map[uri]}: {e}")
                 return None
-        SIMULATED_SCHEMAS = {
-            "https://example.com/people.json": {
-                "$schema": "https://json-structure.org/meta/core/v0/#",
-                "$id": "https://example.com/people.json",
-                "name": "Person",
-                "type": "object",
-                "properties": {
-                    "firstName": {"type": "string"},
-                    "lastName": {"type": "string"},
-                    "address": {"$ref": "#/Address"}
-                },
-                "definitions": {
-                    "Address": {
-                        "name": "Address",
-                        "type": "object",
-                        "properties": {
-                            "street": {"type": "string"},
-                            "city": {"type": "string"}
-                        }
-                    }
-                }
-            },
-            "https://example.com/importdefs.json": {
-                "$schema": "https://json-structure.org/meta/core/v0/#",
-                "$id": "https://example.com/importdefs.json",
-                "definitions": {
-                    "LibraryType": {
-                        "name": "LibraryType",
-                        "type": "string"
-                    }
-                }
-            }
-        }
-        return SIMULATED_SCHEMAS.get(uri)
+        # URI not found in external_schemas or import_map
+        return None
 
     def _apply_uses(self, schema, instance):
         """
