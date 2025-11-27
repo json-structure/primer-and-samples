@@ -7,25 +7,20 @@
   "description": "Digital gift card purchase",
   "paymentMethod": {
     "digitalWallet": {
-      "walletProvider": "PayPal",
-      "walletId": "user@example.com",
-      "transactionId": "PP123456789",
-      "walletBalance": "150.75"
+      "walletProvider": "paypal",
+      "walletAccountId": "user@example.com",
+      "transactionId": "PP123456789"
     }
   },
-  "status": "completed",
+  "status": "captured",
   "notification": {
     "notificationId": "550e8400-e29b-41d4-a716-446655440006",
     "timestamp": "2023-11-13T17:10:45Z",
     "priority": "normal",
     "recipient": "admin@merchantstore.com",
-    "notificationType": "webhook",
-    "webhookUrl": "https://api.merchantstore.com/webhooks/payment",
-    "webhookPayload": {
-      "event": "payment.completed",
-      "transactionId": "550e8400-e29b-41d4-a716-446655440005",
-      "amount": "25.00"
-    }
+    "notificationType": "email",
+    "subject": "Payment Completed",
+    "body": "Payment of $25.00 has been successfully processed for digital gift card purchase."
   },
   "processedAt": "2023-11-13T17:10:45Z",
   "fees": {
