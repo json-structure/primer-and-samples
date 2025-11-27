@@ -34,10 +34,8 @@
           "maxLength": 200
         },
         "quantity": {
-          "type": "decimal",
-          "description": "Quantity of items",
-          "precision": 10,
-          "scale": 3
+          "type": "integer",
+          "description": "Quantity of items (whole number)"
         },
         "unitPrice": {
           "type": { "$ref": "#/definitions/Money" },
@@ -46,6 +44,14 @@
         "totalPrice": {
           "type": { "$ref": "#/definitions/Money" },
           "description": "Total price for this line item"
+        },
+        "weight": {
+          "type": "double",
+          "description": "Weight of the item in kilograms (double precision)"
+        },
+        "discountPercent": {
+          "type": "number",
+          "description": "Discount percentage as a raw JSON number"
         }
       },
       "required": ["description", "quantity", "unitPrice", "totalPrice"]
@@ -60,8 +66,12 @@
           "maxLength": 50
         },
         "sequenceNumber": {
+          "type": "int32",
+          "description": "Sequential invoice number for internal tracking"
+        },
+        "globalSequenceNumber": {
           "type": "int64",
-          "description": "Sequential invoice number for audit trail"
+          "description": "Global sequential invoice number for audit trail"
         },
         "issueDate": {
           "type": "date",
@@ -73,8 +83,7 @@
         },
         "paymentTermsDays": {
           "type": "int16",
-          "description": "Number of days for payment terms",
-          "default": 30
+          "description": "Number of days for payment terms (1-365 typical range)"
         },
         "lineItems": {
           "type": "array",
@@ -106,6 +115,10 @@
         "blockchainHash": {
           "type": "uint128", 
           "description": "Unsigned 128-bit blockchain transaction hash for immutable record"
+        },
+        "cancelledDate": {
+          "type": ["date", "null"],
+          "description": "Date the invoice was cancelled, or null if not cancelled"
         }
       },
       "required": ["invoiceNumber", "issueDate", "dueDate", "lineItems", "subtotal", "totalAmount"]

@@ -3,10 +3,11 @@
   "invoiceNumber": "INV-2023-002",
   "issueDate": "2023-11-14",
   "dueDate": "2023-11-28",
+  "paymentTermsDays": 14,
   "lineItems": [
     {
       "description": "Monthly Subscription",
-      "quantity": "1.000",
+      "quantity": 1,
       "unitPrice": {
         "amount": "49.99",
         "currency": "EUR"
@@ -14,7 +15,9 @@
       "totalPrice": {
         "amount": "49.99",
         "currency": "EUR"
-      }
+      },
+      "weight": 0.0,
+      "discountPercent": 0
     }
   ],
   "subtotal": {
@@ -24,5 +27,6 @@
   "totalAmount": {
     "amount": "49.99",
     "currency": "EUR"
-  }
+  },
+  "cancelledDate": "2023-11-20"
 }

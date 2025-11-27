@@ -42,12 +42,12 @@ class JSONStructureSchemaCoreValidator:
         "values", "choices", "selector", "tuple"
     }
     PRIMITIVE_TYPES = {
-        "string", "number", "boolean", "null", "int8", "uint8", "int16", "uint16",
+        "string", "number", "integer", "boolean", "null", "int8", "uint8", "int16", "uint16",
         "int32", "uint32", "int64", "uint64", "int128", "uint128", "float8", 
         "float", "double", "decimal", "date", "datetime", "time", "duration", 
-        "uuid", "uri", "binary", "jsonpointer", "any"
+        "uuid", "uri", "binary", "jsonpointer"
     }
-    COMPOUND_TYPES = {"object", "array", "set", "map", "tuple", "choice"}
+    COMPOUND_TYPES = {"object", "array", "set", "map", "tuple", "choice", "any"}
     
     # Extended keywords for conditional composition
     COMPOSITION_KEYWORDS = {"allOf", "anyOf", "oneOf", "not", "if", "then", "else"}
