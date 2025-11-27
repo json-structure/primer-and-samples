@@ -1,5 +1,6 @@
 {
-  "$schema": "https://json-structure.org/meta/core/v0/#",
+  "$schema": "https://json-structure.org/meta/extended/v0/#",
+  "$uses": ["JSONStructureValidation"],
   "$id": "https://schemas.example.com/common/financial",
   "name": "MoneyAmount",
   "description": "Financial types library for reuse across schemas",

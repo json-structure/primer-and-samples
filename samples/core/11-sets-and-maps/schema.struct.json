@@ -32,7 +32,7 @@
           "description": "Unique set of genre categories",
           "items": { 
             "type": "string",
-            "enum": ["fiction", "non-fiction", "mystery", "romance", "sci-fi", "biography", "history", "technical"]
+            "enum": ["fiction", "non-fiction", "mystery", "romance", "sci-fi", "fantasy", "biography", "history", "technical"]
           }
         },
         "publishYear": { "type": "uint16" },
