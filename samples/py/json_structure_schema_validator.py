@@ -194,12 +194,46 @@ class JSONStructureSchemaCoreValidator:
         if not self.ABSOLUTE_URI_REGEX.search(value):
             self._err(f"'{keyword_name}' must be an absolute URI.", location)
 
+    def _rewrite_refs(self, obj, target_path):
+        """
+        Recursively rewrites $ref pointers in an imported schema to be relative to the target path.
+        When a schema is imported at path (e.g., #/definitions/People), all internal $ref pointers
+        like #/definitions/X or #/X need to be rewritten to point to target_path/X.
+        [Metaschema: JSONStructureImport extension - reference rewriting]
+        :param obj: The imported schema object to rewrite.
+        :param target_path: The JSON pointer path where the schema is being imported (e.g., "#/definitions/People").
+        """
+        if isinstance(obj, dict):
+            for key, value in obj.items():
+                if key == "$ref" and isinstance(value, str) and value.startswith("#"):
+                    # Rewrite the $ref to be relative to target_path
+                    # Original ref like "#/definitions/Address" or "#/Address"
+                    # needs to become "target_path/Address"
+                    ref_parts = value.lstrip("#").split("/")
+                    # Get the final referenced name (last part of the path)
+                    if ref_parts and ref_parts[-1]:
+                        ref_name = ref_parts[-1]
+                        # Rewrite to point to the same name under target_path
+                        obj[key] = f"{target_path}/{ref_name}"
+                elif key == "$extends" and isinstance(value, str) and value.startswith("#"):
+                    # Also rewrite $extends references
+                    ref_parts = value.lstrip("#").split("/")
+                    if ref_parts and ref_parts[-1]:
+                        ref_name = ref_parts[-1]
+                        obj[key] = f"{target_path}/{ref_name}"
+                else:
+                    self._rewrite_refs(value, target_path)
+        elif isinstance(obj, list):
+            for item in obj:
+                self._rewrite_refs(item, target_path)
+
     def _process_imports(self, obj, path):
         """
         Recursively processes $import and $importdefs keywords.
         If allow_import is False, an error is reported.
         Otherwise, external schemas are fetched and their definitions merged into the current object.
         This merging is done in-place so that imported definitions appear as if they were defined locally.
+        After merging, $ref pointers in the imported content are rewritten to point to their new locations.
         """
         if isinstance(obj, dict):
             # Process import keywords at current level.
@@ -232,6 +266,14 @@ class JSONStructureSchemaCoreValidator:
                             imported_defs = external["definitions"]
                         else:
                             imported_defs = {}
+                    # Rewrite $ref pointers in imported content to point to their new location
+                    for k, v in imported_defs.items():
+                        if isinstance(v, dict):
+                            # Deep copy to avoid modifying cached schemas
+                            import copy
+                            v = copy.deepcopy(v)
+                            self._rewrite_refs(v, path)
+                            imported_defs[k] = v
                     # Merge imported definitions directly into the current object.
                     for k, v in imported_defs.items():
                         if k not in obj:
