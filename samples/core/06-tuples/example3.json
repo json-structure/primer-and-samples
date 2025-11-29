@@ -7,19 +7,19 @@
       "id": "COLOR_SAMPLE_1",
       "location": ["0.0000000", "0.0000000"],
       "measurements": [],
-      "visualColor": [255, 255, 255]
+      "visualColor": [255, 255, 255, 1.0]
     },
     {
       "id": "COLOR_SAMPLE_2", 
       "location": ["1.0000000", "1.0000000"],
       "measurements": [],
-      "visualColor": [0, 0, 0]
+      "visualColor": [0, 0, 0, 1.0]
     },
     {
       "id": "COLOR_SAMPLE_3",
       "location": ["0.5000000", "0.5000000"], 
       "measurements": [],
-      "visualColor": [128, 128, 128]
+      "visualColor": [128, 128, 128, 1.0]
     }
   ]
 }

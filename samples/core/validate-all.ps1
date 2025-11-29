@@ -1,4 +1,5 @@
-# Test all schema and instance files
+# Test all schema and instance files using the json-structure SDK
+# Run ..\install-validators.ps1 first to install the validators
 Write-Host "Testing JSON Structure Schemas and Instances" -ForegroundColor Yellow
 Write-Host "=" * 50
 
@@ -19,7 +20,7 @@ $schemas = @(
 )
 
 foreach ($schema in $schemas) {
-    $result = python "..\py\json_structure_schema_validator.py" $schema 2>&1
+    $result = python -m json_structure.schema_validator $schema 2>&1
     if ($LASTEXITCODE -eq 0) {
         Write-Host "✓ $schema" -ForegroundColor Green
     } else {
@@ -67,7 +68,7 @@ $tests = @(
 foreach ($test in $tests) {
     $instance = $test[0]
     $schema = $test[1] 
-    $result = python "..\py\json_structure_instance_validator.py" $instance $schema 2>&1
+    $result = python -m json_structure.instance_validator $instance $schema 2>&1
     if ($LASTEXITCODE -eq 0) {
         Write-Host "✓ $instance" -ForegroundColor Green
     } else {

@@ -1,42 +1,39 @@
 {
   "$schema": "https://schemas.example.com/extensions",
-  "fleet": [
+  "fleetName": "Company Fleet 2024",
+  "totalVehicles": 3,
+  "lastInventoryDate": "2024-11-15T10:30:00Z",
+  "trucks": [
     {
-      "vehicleId": "TRUCK001", 
       "make": "Ford",
       "model": "F-150",
       "year": 2023,
       "vin": "1FTFW1E50NFB12345",
-      "licensePlate": "ABC-1234",
-      "registrationExpiry": "2024-12-31",
-      "engineType": "V6",
-      "fuelType": "gasoline",
-      "payloadCapacity": "1500"
-    },
+      "engineType": "gasoline",
+      "payloadCapacity": 1500,
+      "commercialLicense": false
+    }
+  ],
+  "cars": [
     {
-      "vehicleId": "CAR002",
       "make": "Tesla", 
       "model": "Model 3",
       "year": 2024,
       "vin": "5YJ3E1EA0KF123456",
-      "licensePlate": "EV-5678",
-      "registrationExpiry": "2025-06-30",
       "engineType": "electric",
-      "fuelType": "electric",
-      "seatingCapacity": 5,
-      "batteryCapacity": "75"
-    },
+      "doors": 4,
+      "seatingCapacity": 5
+    }
+  ],
+  "motorcycles": [
     {
-      "vehicleId": "BIKE001",
       "make": "Harley-Davidson",
       "model": "Street 750",
       "year": 2022,
       "vin": "1HD1KB4XXNB123456", 
-      "licensePlate": "BIKE-99",
-      "registrationExpiry": "2024-08-15",
-      "engineType": "V-Twin",
-      "fuelType": "gasoline",
-      "engineDisplacement": "749"
+      "engineType": "gasoline",
+      "engineSize": 749,
+      "style": "cruiser"
     }
   ]
 }

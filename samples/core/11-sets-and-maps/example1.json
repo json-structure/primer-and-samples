@@ -32,7 +32,7 @@
       "isbn": "978-0-7475-3269-9", 
       "title": "Harry Potter and the Philosopher's Stone",
       "authors": ["550e8400-e29b-41d4-a716-446655440003"],
-      "genres": ["fiction", "fantasy"],
+      "genres": ["fiction", "mystery"],
       "publishYear": 1997,
       "pageCount": 223,
       "ratings": {

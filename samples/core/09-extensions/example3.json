@@ -1,31 +1,28 @@
 {
   "$schema": "https://schemas.example.com/extensions",
-  "fleet": [
+  "fleetName": "Luxury & Work Fleet",
+  "totalVehicles": 2,
+  "lastInventoryDate": "2024-11-20T09:00:00Z",
+  "cars": [
     {
-      "vehicleId": "CAR003",
       "make": "BMW",
       "model": "X5",
       "year": 2023,
       "vin": "5UXCR6C0XN9123456",
-      "licensePlate": "LUX-2024",
-      "registrationExpiry": "2025-03-31",
-      "engineType": "turbo-inline-6",
-      "fuelType": "gasoline",
-      "seatingCapacity": 7,
-      "drivetrain": "AWD"
-    },
+      "engineType": "gasoline",
+      "doors": 4,
+      "seatingCapacity": 7
+    }
+  ],
+  "trucks": [
     {
-      "vehicleId": "TRUCK002", 
       "make": "Chevrolet",
       "model": "Silverado 2500HD",
       "year": 2024,
       "vin": "1GC4YPEY6NF123456",
-      "licensePlate": "WORK-789",
-      "registrationExpiry": "2025-09-30",
-      "engineType": "V8",
-      "fuelType": "diesel",
-      "payloadCapacity": "3500",
-      "towingCapacity": "18500"
+      "engineType": "diesel",
+      "payloadCapacity": 3500,
+      "commercialLicense": true
     }
   ]
 }

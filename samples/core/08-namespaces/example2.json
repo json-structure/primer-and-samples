@@ -1,35 +1,47 @@
 {
   "$schema": "https://schemas.example.com/namespaces",
-  "employee": {
-    "personalInfo": {
-      "firstName": "Sarah",
-      "lastName": "Johnson", 
-      "dateOfBirth": "1985-08-22"
-    },
-    "contactInfo": {
-      "email": "sarah.johnson@company.com",
-      "phone": "+1-555-987-6543"
-    },
-    "workInfo": {
-      "employeeId": "EMP002",
-      "department": "Engineering",
-      "position": "Senior Software Developer",
-      "manager": "John Smith",
-      "startDate": "2019-03-15",
-      "salary": "125000.00"
-    }
+  "companyName": "DataFlow Solutions",
+  "headquarters": {
+    "street": "500 Tech Boulevard",
+    "city": "Austin",
+    "state": "Texas",
+    "zipCode": "78701",
+    "country": "US"
   },
-  "workspaceAssignment": {
-    "assignmentId": "WS002",
-    "employeeId": "EMP002",
-    "assignedDate": "2019-03-20",
-    "workspace": {
-      "workspaceId": "WS-3B-15",
-      "building": "Building B",
-      "floor": 3,
-      "room": "3B-15",
-      "capacity": 1,
-      "equipment": ["desk", "chair", "monitor", "laptop dock"]
+  "employees": [
+    {
+      "employeeId": "EMP002",
+      "firstName": "Sarah",
+      "lastName": "Johnson",
+      "department": {
+        "code": "ENG",
+        "name": "Engineering",
+        "managerId": "EMP001",
+        "budget": "1800000.00"
+      },
+      "position": "Senior Software Developer",
+      "salary": "125000.00",
+      "hireDate": "2019-03-15",
+      "address": {
+        "street": "789 Maple Lane",
+        "city": "Austin",
+        "state": "Texas",
+        "zipCode": "78702",
+        "country": "US"
+      },
+      "contact": {
+        "email": "sarah.johnson@company.com",
+        "phone": "+1-555-987-6543"
+      }
     }
-  }
+  ],
+  "departments": [
+    {
+      "code": "ENG",
+      "name": "Engineering",
+      "managerId": "EMP001",
+      "budget": "1800000.00"
+    }
+  ],
+  "lastUpdated": "2024-11-15T10:30:00Z"
 }

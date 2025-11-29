@@ -11,7 +11,8 @@
       "accountNumber": "*****6789",
       "routingNumber": "021000021",
       "accountHolderName": "Jane Doe",
-      "transferReference": "REF123456789"
+      "transferType": "wire",
+      "referenceNumber": "REF123456789"
     }
   },
   "status": "pending",
@@ -21,7 +22,8 @@
     "priority": "high",
     "recipient": "+1-555-123-4567",
     "notificationType": "sms",
-    "message": "Payment of $89.50 is being processed. You'll receive confirmation soon."
+    "message": "Payment of $89.50 is being processed.",
+    "phoneNumber": "+1-555-123-4567"
   },
   "processedAt": "2023-11-13T16:20:15Z",
   "fees": {

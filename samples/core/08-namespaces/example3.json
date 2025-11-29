@@ -1,35 +1,47 @@
 {
   "$schema": "https://schemas.example.com/namespaces",
-  "employee": {
-    "personalInfo": {
+  "companyName": "Creative Media Inc",
+  "headquarters": {
+    "street": "200 Arts District",
+    "city": "Los Angeles",
+    "state": "California",
+    "zipCode": "90012",
+    "country": "US"
+  },
+  "employees": [
+    {
+      "employeeId": "EMP003",
       "firstName": "Michael",
       "lastName": "Chen",
-      "dateOfBirth": "1992-11-03"
-    },
-    "contactInfo": {
-      "email": "michael.chen@company.com", 
-      "phone": "+1-555-234-8901"
-    },
-    "workInfo": {
-      "employeeId": "EMP003", 
-      "department": "Marketing",
+      "department": {
+        "code": "MKT",
+        "name": "Marketing",
+        "managerId": "EMP001",
+        "budget": "950000.00"
+      },
       "position": "Marketing Manager",
-      "manager": "Lisa Brown", 
-      "startDate": "2021-01-10",
-      "salary": "95000.00"
+      "salary": "95000.00",
+      "hireDate": "2021-01-10",
+      "address": {
+        "street": "456 Sunset Blvd",
+        "city": "Los Angeles",
+        "state": "California",
+        "zipCode": "90028",
+        "country": "US"
+      },
+      "contact": {
+        "email": "michael.chen@company.com",
+        "phone": "+1-555-234-8901"
+      }
     }
-  },
-  "workspaceAssignment": {
-    "assignmentId": "WS003",
-    "employeeId": "EMP003",
-    "assignedDate": "2021-01-15", 
-    "workspace": {
-      "workspaceId": "WS-2A-08",
-      "building": "Building A",
-      "floor": 2,
-      "room": "2A-08",
-      "capacity": 2,
-      "equipment": ["desk", "chair", "monitor", "laptop dock", "whiteboard"]
+  ],
+  "departments": [
+    {
+      "code": "MKT",
+      "name": "Marketing",
+      "managerId": "EMP001",
+      "budget": "950000.00"
     }
-  }
+  ],
+  "lastUpdated": "2024-11-20T14:45:00Z"
 }
