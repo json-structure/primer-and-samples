@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-structure.org/meta/core/v0/",
+  "name": "MultipleInheritanceExample",
+  "version": "1.0",
+  "description": "Demonstrates multiple inheritance using $extends with an array of JSON Pointers",
+  "type": "object",
+  "$ref": "#/definitions/FlyingCar",
+  "definitions": {
+    "Vehicle": {
+      "name": "Vehicle",
+      "abstract": true,
+      "type": "object",
+      "properties": {
+        "make": { "type": "string" },
+        "model": { "type": "string" },
+        "year": { "type": "int16" }
+      },
+      "required": ["make", "model", "year"]
+    },
+    "Car": {
+      "name": "Car",
+      "$extends": "#/definitions/Vehicle",
+      "type": "object",
+      "properties": {
+        "numDoors": { "type": "uint8" },
+        "fuelType": { 
+          "type": "string",
+          "enum": ["gasoline", "diesel", "electric", "hybrid"]
+        }
+      },
+      "required": ["numDoors", "fuelType"]
+    },
+    "Aircraft": {
+      "name": "Aircraft",
+      "type": "object",
+      "properties": {
+        "wingspan": { "type": "double", "description": "Wingspan in meters" },
+        "maxAltitude": { "type": "uint32", "description": "Maximum altitude in feet" }
+      },
+      "required": ["wingspan", "maxAltitude"]
+    },
+    "FlyingCar": {
+      "name": "FlyingCar",
+      "description": "A car that can also fly - demonstrates multiple inheritance",
+      "$extends": ["#/definitions/Car", "#/definitions/Aircraft"],
+      "type": "object",
+      "properties": {
+        "flightMode": {
+          "type": "string",
+          "enum": ["ground", "air", "transition"]
+        },
+        "transitionTime": { 
+          "type": "uint16",
+          "description": "Time in seconds to transition between ground and air mode"
+        }
+      },
+      "required": ["flightMode"]
+    }
+  }
+}

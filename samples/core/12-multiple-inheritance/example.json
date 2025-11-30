@@ -1,0 +1,11 @@
+{
+  "make": "Terrafugia",
+  "model": "Transition",
+  "year": 2024,
+  "numDoors": 2,
+  "fuelType": "hybrid",
+  "wingspan": 8.0,
+  "maxAltitude": 10000,
+  "flightMode": "ground",
+  "transitionTime": 60
+}
