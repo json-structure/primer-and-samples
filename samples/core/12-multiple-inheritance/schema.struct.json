@@ -1,5 +1,6 @@
 {
   "$schema": "https://json-structure.org/meta/core/v0/",
+  "$id": "urn:example:schema",
   "name": "MultipleInheritanceExample",
   "version": "1.0",
   "description": "Demonstrates multiple inheritance using $extends with an array of JSON Pointers",
