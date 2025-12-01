@@ -70,13 +70,13 @@
           "type": "map",
           "description": "Books indexed by ISBN",
           "keys": { "type": "string" },
-          "values": { "$ref": "#/definitions/Book" }
+          "values": { "type": { "$ref": "#/definitions/Book" } }
         },
         "authors": {
           "type": "map", 
           "description": "Authors indexed by author ID",
           "keys": { "type": "uuid" },
-          "values": { "$ref": "#/definitions/Author" }
+          "values": { "type": { "$ref": "#/definitions/Author" } }
         },
         "categories": {
           "type": "set",

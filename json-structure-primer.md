@@ -721,8 +721,8 @@ Inline unions extend a common abstract base type and use a selector property:
     "$extends": "#/definitions/Address",
     "selector": "addressType",
     "choices": {
-        "StreetAddress":     { "$ref": "#/definitions/StreetAddress" },
-        "PostOfficeBoxAddress": { "$ref": "#/definitions/PostOfficeBoxAddress" }
+        "StreetAddress":     { "type": { "$ref": "#/definitions/StreetAddress" } },
+        "PostOfficeBoxAddress": { "type": { "$ref": "#/definitions/PostOfficeBoxAddress" } }
     },
     "definitions": {
         "Address": {

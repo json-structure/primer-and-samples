@@ -28,7 +28,7 @@
     "items": {
       "type": "array",
       "description": "Order items",
-      "items": { "$ref": "#/definitions/OrderItem" }
+      "items": { "type": { "$ref": "#/definitions/OrderItem" } }
     },
     "totalAmount": {
       "type": { "$ref": "#/definitions/Finance/Money" },

@@ -4,8 +4,7 @@
   "name": "MultipleInheritanceExample",
   "version": "1.0",
   "description": "Demonstrates multiple inheritance using $extends with an array of JSON Pointers",
-  "type": "object",
-  "$ref": "#/definitions/FlyingCar",
+  "$root": "#/definitions/FlyingCar",
   "definitions": {
     "Vehicle": {
       "name": "Vehicle",

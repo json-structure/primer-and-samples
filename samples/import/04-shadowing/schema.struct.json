@@ -21,7 +21,7 @@
     "paymentMethods": {
       "type": "array",
       "description": "Available payment methods",
-      "items": { "$ref": "#/definitions/FinanceTypes/PaymentMethod" }
+      "items": { "type": { "$ref": "#/definitions/FinanceTypes/PaymentMethod" } }
     }
   },
   "required": ["customerId", "profile"],
