@@ -34,12 +34,21 @@ iterations. The industry has largely settled on "Draft 7" of JSON Schema, with
 subsequent releases seeing comparatively weak adoption. There's substantial
 frustration that many developers have with JSON Schema because they try to use
 it for scenarios that it was not designed for. JSON Schema is a powerful
-document validation tool, but it is not a data definition language.
+document validation tool, but it is not a data definition language. Frustration
+with JSON Schema is widespread across the industry—and yet it remains popular
+due to lack of good alternatives.
 
-_JSON Structure_ aims to address these different use cases and priorities while
-maintaining familiarity with JSON Schema's syntax. While JSON Schema focuses on
-and excels at document validation, JSON Structure focuses on being a strong data
-definition language.
+Apache Avro is an alternative that has gained traction in the data community
+because it's much easier to create tooling on top of. However, Avro's type
+system is limited and its syntax is unfamiliar to most developers.
+
+_JSON Structure_ aims to combine the tooling-friendliness of Avro with the
+familiar type definition shapes of JSON Schema while providing an overall
+broader type system and data documentation/qualification capabilities that
+provide richer context for AI/LLMs trying to understand data structures.
+
+While JSON Schema focuses on and excels at document validation, JSON Structure
+focuses on being a strong data definition language.
 
 There are two major use-case scenarios for schema languages in general:
 
@@ -955,11 +964,140 @@ composition keywords.
 The [JSON Structure Validation][JSTRUCT-VALIDATION] companion specification
 introduces additional validation rules for JSON data.
 
+## 8. SDK and Tooling Ecosystem
+
+A schema language without tooling remains theoretical. For developers to adopt
+JSON Structure, they need to be able to tell whether schemas are valid, whether
+documents conform to a given schema, and they need to be able to turn schemas
+into data structures they can code against.
+
+The JSON Structure SDKs provide native implementations for schema validation (is
+this schema well-formed?) and instance validation (does this JSON document
+conform to this schema?) across all major programming languages:
+
+| Language | Package | Install |
+|----------|---------|--------|
+| Python | [json-structure](https://pypi.org/project/json-structure/) | `pip install json-structure` |
+| .NET/C# | [JsonStructure](https://www.nuget.org/packages/JsonStructure/) | `dotnet add package JsonStructure` |
+| Java | [json-structure](https://central.sonatype.com/artifact/io.json-structure/json-structure) | Maven Central |
+| TypeScript/JS | [@aspect/json-structure](https://www.npmjs.com/package/@aspect/json-structure) | `npm install @aspect/json-structure` |
+| Go | [github.com/json-structure/sdk/go](https://github.com/json-structure/sdk) | `go get github.com/json-structure/sdk/go` |
+| Rust | [json-structure](https://crates.io/crates/json-structure) | `cargo add json-structure` |
+| C/C++ (C99) | Build from repo | CMake |
+
+For languages with runtime introspection (Java, .NET/C#, Python), the SDKs also
+include schema exporters that produce JSON Structure schemas from existing
+runtime data structures—useful for adopting JSON Structure incrementally in
+existing codebases.
+
+The SDK repository is at <https://github.com/json-structure/sdk>
+
+## 9. Visual Studio Code Extension
+
+The JSON Structure extension for Visual Studio Code, built on the TypeScript
+SDK, provides a first-class editing experience for `.struct.json` schema files:
+
+- **Schema validation**: Real-time feedback on schema syntax and structure
+- **Instance validation**: Validate JSON documents against JSON Structure schemas
+- **IntelliSense**: Auto-completion for keywords, types, and references
+- **Hover documentation**: Contextual help for all schema elements
+
+Install from the VS Code Marketplace or search for "JSON Structure" in the
+Extensions view.
+
+## 10. Structurize: Schema Conversion and Code Generation
+
+The **Structurize** tool (a persona of the Avrotize tool) enables robust,
+predictable conversion between numerous schema formats and generates code for
+multiple target languages. JSON Structure serves as a second "pivot" schema
+model for this tool, meaning you can convert _from_ many formats _to_ JSON
+Structure, and _from_ JSON Structure _to_ many targets—preserving the full
+richness of the type model.
+
+### Installation
+
+```bash
+pip install structurize
+# or
+pip install avrotize
+```
+
+For the moment, the tools have an identical set of commands, but they may
+eventually be split. There will eventually be a bundled installer (as for the
+Azure CLI) so that you don't need Python preinstalled.
+
+### Example Conversions
+
+| From | To | Command |
+|------|-----|--------|
+| JSON Structure | C# | `structurize jsonstruct2cs schema.struct.json --out Models.cs` |
+| JSON Structure | Python | `structurize jsonstruct2py schema.struct.json --out models.py` |
+| JSON Structure | Java | `structurize jsonstruct2java schema.struct.json --out-dir ./src` |
+| JSON Structure | Go | `structurize jsonstruct2go schema.struct.json --out models.go` |
+| JSON Structure | C++ | `structurize jsonstruct2cpp schema.struct.json --out models.hpp` |
+| JSON Structure | Protobuf | `structurize jsonstruct2proto schema.struct.json --out schema.proto` |
+| JSON Structure | PostgreSQL | `structurize jsonstruct2pgsql schema.struct.json --out schema.sql` |
+
+There are many more database dialects and target formats available. The full
+docs are in the [Avrotize repo README](https://github.com/clemensv/avrotize).
+
+### Chaining Conversions
+
+The tool is built such that you can pipe conversions, so you could go from ASN.1
+via Avro to JSON Structure to C# with minimal loss of type info:
+
+```bash
+# ASN.1 → Avro → JSON Structure → C#
+structurize asn2avro schema.asn | structurize avro2jsonstruct | structurize jsonstruct2cs --out Models.cs
+```
+
+## 11. Resources and Next Steps
+
+### Specifications (IETF Internet Drafts)
+
+All JSON Structure specifications are published as IETF Internet Drafts:
+
+- [JSON Structure Core][JSTRUCT-CORE] - The core schema language
+- [JSON Structure Import][JSTRUCT-IMPORT] - Importing types from other documents
+- [JSON Structure Alternate Names][JSTRUCT-ALTNAMES] - Alternate names and i18n
+- [JSON Structure Units][JSTRUCT-UNITS] - Symbols, scientific units, currencies
+- [JSON Structure Validation][JSTRUCT-VALIDATION] - Validation constraints
+- [JSON Structure Conditional Composition][JSTRUCT-COMPOSITION] - allOf, anyOf, oneOf, if/then/else
+
+All drafts are available at:
+<https://datatracker.ietf.org/doc/search?name=draft-vasters-json-structure>
+
+### SDK and Tools
+
+| Resource | Link |
+|----------|------|
+| SDK Repository | <https://github.com/json-structure/sdk> |
+| VS Code Extension | Search "JSON Structure" in VS Code Marketplace |
+| Structurize/Avrotize | `pip install structurize` or <https://github.com/clemensv/avrotize> |
+
+### Sample Schemas
+
+The [samples](./samples/) folder in this repository contains working examples
+organized by specification:
+
+- `samples/core/` - Core specification examples with validation scripts
+- `samples/import/` - Import specification examples
+
+### Getting Started
+
+1. **Install the VS Code extension** for editing support with validation and
+   IntelliSense
+2. **Install the SDK** for your language to validate schemas and instances
+   programmatically
+3. **Try the samples** to understand the schema patterns
+4. **Use Structurize** to convert existing schemas or generate code for your
+   target language
+
 ---
 
-[JSTRUCT-ALTNAMES]: https://github.com/json-structure/altername-names
+[JSTRUCT-ALTNAMES]: https://github.com/json-structure/alternate-names
 [JSTRUCT-COMPOSITION]: https://github.com/json-structure/conditional-composition
 [JSTRUCT-IMPORT]: https://github.com/json-structure/import
-[JSTRUCT-UNITS]:https://github.com/json-structure/units
+[JSTRUCT-UNITS]: https://github.com/json-structure/units
 [JSTRUCT-VALIDATION]: https://github.com/json-structure/validation
 [JSTRUCT-CORE]: https://github.com/json-structure/core
