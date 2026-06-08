@@ -913,6 +913,41 @@ In this example, the `value` property has a `unit` attribute that specifies the
 unit of measurement for the property. The unit of measurement is specified as a
 string value. In this case, the unit of measurement is "Pa" for Pascals.
 
+The `ucumUnit` keyword uses UCUM notation, which is widely adopted in
+healthcare (HL7 FHIR) and scientific computing. It can be used alone or
+alongside `unit` for systems that understand either notation.
+
+Here is an example that uses both `unit` and `ucumUnit`:
+
+```json
+{
+    "type": "number",
+    "unit": "m/s^2",
+    "ucumUnit": "m/s2",
+    "symbols": {
+        "default": "m/s²"
+    }
+}
+```
+
+In this example, the `unit` and `ucumUnit` attributes identify the same unit of
+measurement using two different notations.
+
+Here is an example of using `ucumUnit` by itself for a healthcare value:
+
+```json
+{
+    "type": "number",
+    "ucumUnit": "Cel",
+    "symbols": {
+        "default": "°C"
+    }
+}
+```
+
+In this example, the `ucumUnit` attribute uses the UCUM notation for degrees
+Celsius, and the `symbols` attribute provides a display symbol for the value.
+
 ### 6.4. Example: Using the `currency` Keyword
 
 The [JSON Structure Symbols, Scientific Units, and Currencies][JSTRUCT-UNITS]
