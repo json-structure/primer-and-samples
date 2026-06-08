@@ -337,6 +337,8 @@ The following documents are part of this JSON Structure proposal:
 - [JSON Structure Symbols, Scientific Units, and Currencies][JSTRUCT-UNITS]:
   Defines keywords for specifying symbols, scientific units, and currency codes
   on types and properties.
+- [JSON Structure Relations][JSTRUCT-RELATIONS]: Defines identity constraints
+  and inter-type relationships for schema types.
 - [JSON Structure Conditional Composition][JSTRUCT-COMPOSITION]: Defines a set
   of conditional composition rules for evaluating schemas.
 - [JSON Structure Validation][JSTRUCT-VALIDATION]: Specifies extensions to the
@@ -785,6 +787,7 @@ The feature identifiers for the companion specifications are:
   and types.
 - `JSONStructureUnits`: Symbols, scientific units, and currencies for numeric
   properties.
+- `JSONStructureRelations`: Identity constraints and inter-type relationships.
 - `JSONStructureImports`: Importing types from other schema documents.
 - `JSONStructureValidation`: Validation rules for JSON data.
 - `JSONStructureConditionalComposition`: Conditional composition and validation
@@ -975,6 +978,115 @@ In this example, the `value` property has a `currency` attribute that specifies
 the currency for the property. The currency is specified as a string value. In
 this case, the currency is "USD" for US Dollars.
 
+### 6.5. Example: Using the `identity` and `relations` Keywords
+
+The [JSON Structure Relations][JSTRUCT-RELATIONS] companion specification
+introduces the `identity` keyword to declare which properties uniquely identify
+instances of a type and the `relations` keyword to declare inter-type
+relationships.
+
+Here is an example of how to use the `identity` keyword:
+
+```json
+{
+    "type": "object",
+    "properties": {
+        "id": { "type": "uuid" },
+        "name": { "type": "string" }
+    },
+    "required": ["id", "name"],
+    "identity": ["id"]
+}
+```
+
+In this example, the `identity` attribute declares that the `id` property acts
+as the stable identifier for instances of the type.
+
+Here is an example of how to use the `relations` keyword:
+
+```json
+{
+    "$schema": "https://json-structure.org/meta/extended/v0/#",
+    "$uses": ["JSONStructureRelations"],
+    "$root": "#/definitions/Library",
+    "definitions": {
+        "Library": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "authors": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/Author" }
+                },
+                "books": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/Book" }
+                }
+            },
+            "required": ["name", "authors", "books"]
+        },
+        "Author": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "uuid" },
+                "name": { "type": "string" }
+            },
+            "required": ["id", "name"],
+            "identity": ["id"]
+        },
+        "Book": {
+            "type": "object",
+            "properties": {
+                "isbn": { "type": "string" },
+                "title": { "type": "string" }
+            },
+            "required": ["isbn", "title"],
+            "identity": ["isbn"],
+            "relations": {
+                "authors": {
+                    "cardinality": "multiple",
+                    "targettype": { "$ref": "#/definitions/Author" },
+                    "scope": "#/definitions/Library/properties/authors"
+                }
+            }
+        }
+    }
+}
+```
+
+In this example, the `Book` type declares an `authors` relationship to the
+`Author` type. The `targettype` attribute identifies the related type, the
+`cardinality` attribute declares whether the relationship yields a single target
+or multiple targets, and the optional `scope` attribute limits document-local
+resolution to a collection in the same document. If `scope` is omitted,
+processors can resolve relationship identities using an external catalog or
+application-defined lookup mechanism. A relation may also declare an optional
+`qualifiertype` to describe values that further qualify the relationship.
+
+Instances represent relationships by carrying identity references for the target
+instances, as shown here:
+
+```json
+{
+    "name": "City Library",
+    "authors": [
+        { "id": "123e4567-e89b-12d3-a456-426614174000", "name": "Alice" }
+    ],
+    "books": [
+        {
+            "isbn": "978-0-123456-78-9",
+            "title": "The Great Novel",
+            "authors": [
+                { "identity": "123e4567-e89b-12d3-a456-426614174000" }
+            ]
+        }
+    ]
+}
+```
+
+The relationship entry in the `Book` instance points to the `Author` instance by
+referencing the author's declared identity value.
+
 ## 7. Using Validation
 
 The companion specifications for conditional composition and validation provide
@@ -1095,6 +1207,7 @@ All JSON Structure specifications are published as IETF Internet Drafts:
 - [JSON Structure Import][JSTRUCT-IMPORT] - Importing types from other documents
 - [JSON Structure Alternate Names][JSTRUCT-ALTNAMES] - Alternate names and i18n
 - [JSON Structure Units][JSTRUCT-UNITS] - Symbols, scientific units, currencies
+- [JSON Structure Relations][JSTRUCT-RELATIONS] - Identity and relationship declarations
 - [JSON Structure Validation][JSTRUCT-VALIDATION] - Validation constraints
 - [JSON Structure Conditional Composition][JSTRUCT-COMPOSITION] - allOf, anyOf, oneOf, if/then/else
 
@@ -1133,5 +1246,6 @@ organized by specification:
 [JSTRUCT-COMPOSITION]: https://github.com/json-structure/conditional-composition
 [JSTRUCT-IMPORT]: https://github.com/json-structure/import
 [JSTRUCT-UNITS]: https://github.com/json-structure/units
+[JSTRUCT-RELATIONS]: https://github.com/json-structure/relations
 [JSTRUCT-VALIDATION]: https://github.com/json-structure/validation
 [JSTRUCT-CORE]: https://github.com/json-structure/core
