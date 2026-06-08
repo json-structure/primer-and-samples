@@ -122,7 +122,6 @@ JSON Structure is designed with the following principles in mind:
 ## 3. Key Concepts
 
 JSON Structure is designed to look and feel very much like the JSON Schema
-
 drafts you already know, but some rules have been tightened up to make it easier
 to understand and use. Therefore, existing JSON Schema documents may need to be
 updated to conform to the new rules.
