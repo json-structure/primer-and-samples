@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-structure.org/meta/relations/v0/#",
+  "$id": "https://schemas.example.com/relations/relation-single",
+  "$uses": ["JSONStructureRelations"],
+  "name": "FleetSchedule",
+  "description": "A single-cardinality relation. Every flight is flown by exactly one aircraft, and the relation instance is an object carrying the identity of that aircraft.",
+  "$root": "#/definitions/Schedule",
+  "definitions": {
+    "Aircraft": {
+      "type": "object",
+      "description": "An airframe in the operator's fleet",
+      "identity": ["registration"],
+      "properties": {
+        "registration": {
+          "type": "string",
+          "description": "Civil registration mark, for example D-AIMA"
+        },
+        "typeCode": {
+          "type": "string",
+          "description": "ICAO aircraft type designator"
+        },
+        "seats": {
+          "type": "int32",
+          "description": "Installed passenger seats"
+        }
+      },
+      "required": ["registration", "typeCode"]
+    },
+    "Flight": {
+      "type": "object",
+      "description": "A scheduled flight. The 'aircraft' relation is not a property: it is declared under 'relations' and appears in instances as an object holding the target identity.",
+      "identity": ["flightNumber", "departureDate"],
+      "relations": {
+        "aircraft": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Aircraft" },
+          "scope": "#/definitions/Schedule/properties/fleet"
+        }
+      },
+      "properties": {
+        "flightNumber": {
+          "type": "string",
+          "description": "IATA flight designator"
+        },
+        "departureDate": {
+          "type": "date",
+          "description": "Date of departure at the origin airport"
+        },
+        "origin": {
+          "type": "string",
+          "description": "IATA code of the origin airport"
+        },
+        "destination": {
+          "type": "string",
+          "description": "IATA code of the destination airport"
+        }
+      },
+      "required": ["flightNumber", "departureDate", "origin", "destination"]
+    },
+    "Schedule": {
+      "type": "object",
+      "description": "One operating day for one carrier",
+      "properties": {
+        "carrier": {
+          "type": "string",
+          "description": "IATA airline designator"
+        },
+        "fleet": {
+          "type": "array",
+          "description": "Aircraft available on the day",
+          "items": { "type": { "$ref": "#/definitions/Aircraft" } }
+        },
+        "flights": {
+          "type": "array",
+          "description": "Flights operated on the day",
+          "items": { "type": { "$ref": "#/definitions/Flight" } }
+        }
+      },
+      "required": ["carrier", "fleet", "flights"]
+    }
+  }
+}

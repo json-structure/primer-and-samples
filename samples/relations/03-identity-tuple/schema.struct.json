@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-structure.org/meta/relations/v0/#",
+  "$id": "https://schemas.example.com/relations/identity-tuple",
+  "$uses": ["JSONStructureRelations"],
+  "name": "SurveyGrid",
+  "description": "Identity on a tuple type. A tuple instance is an array of values in declared order, and its identity is drawn from the same named members, so a relation targeting it carries the identity values as an array.",
+  "$root": "#/definitions/Survey",
+  "definitions": {
+    "Station": {
+      "type": "tuple",
+      "name": "Station",
+      "description": "A survey station, transmitted positionally as [latitude, longitude]. Position identifies the station, so both members form the identity.",
+      "identity": ["latitude", "longitude"],
+      "properties": {
+        "latitude": {
+          "type": "double",
+          "description": "Latitude in decimal degrees, WGS 84"
+        },
+        "longitude": {
+          "type": "double",
+          "description": "Longitude in decimal degrees, WGS 84"
+        }
+      },
+      "tuple": ["latitude", "longitude"]
+    },
+    "Reading": {
+      "type": "object",
+      "description": "One measurement taken at a station",
+      "identity": ["readingId"],
+      "relations": {
+        "station": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Station" },
+          "scope": "#/definitions/Survey/properties/stations"
+        }
+      },
+      "properties": {
+        "readingId": {
+          "type": "string",
+          "description": "Identifier of the reading"
+        },
+        "takenAt": {
+          "type": "datetime",
+          "description": "Instant the reading was taken"
+        },
+        "depth": {
+          "type": "double",
+          "description": "Measured water depth in metres"
+        }
+      },
+      "required": ["readingId", "takenAt", "depth"]
+    },
+    "Survey": {
+      "type": "object",
+      "description": "A bathymetric survey over a fixed set of stations",
+      "properties": {
+        "vessel": {
+          "type": "string",
+          "description": "Name of the surveying vessel"
+        },
+        "stations": {
+          "type": "array",
+          "description": "The stations occupied during the survey",
+          "items": { "type": { "$ref": "#/definitions/Station" } }
+        },
+        "readings": {
+          "type": "array",
+          "description": "Readings, each taken at one station",
+          "items": { "type": { "$ref": "#/definitions/Reading" } }
+        }
+      },
+      "required": ["vessel", "stations", "readings"]
+    }
+  }
+}

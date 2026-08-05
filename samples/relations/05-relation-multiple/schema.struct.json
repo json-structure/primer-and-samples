@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-structure.org/meta/relations/v0/#",
+  "$id": "https://schemas.example.com/relations/relation-multiple",
+  "$uses": ["JSONStructureRelations"],
+  "name": "Discography",
+  "description": "A multiple-cardinality relation. A release may credit any number of artists, so the relation instance is an array of relation objects rather than a single object.",
+  "$root": "#/definitions/Label",
+  "definitions": {
+    "Artist": {
+      "type": "object",
+      "description": "A performing artist under contract",
+      "identity": ["artistId"],
+      "properties": {
+        "artistId": {
+          "type": "uuid",
+          "description": "Stable identifier of the artist"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name the artist records under"
+        }
+      },
+      "required": ["artistId", "name"]
+    },
+    "Release": {
+      "type": "object",
+      "description": "A released recording. 'performers' has cardinality 'multiple', so an instance carries an array, and an array of length zero is a valid statement that nobody is credited.",
+      "identity": ["catalogueNumber"],
+      "relations": {
+        "performers": {
+          "cardinality": "multiple",
+          "targettype": { "$ref": "#/definitions/Artist" },
+          "scope": "#/definitions/Label/properties/roster"
+        }
+      },
+      "properties": {
+        "catalogueNumber": {
+          "type": "string",
+          "description": "Label catalogue number"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the release"
+        },
+        "released": {
+          "type": "date",
+          "description": "Release date"
+        }
+      },
+      "required": ["catalogueNumber", "title", "released"]
+    },
+    "Label": {
+      "type": "object",
+      "description": "A record label, its roster, and its releases",
+      "properties": {
+        "labelName": {
+          "type": "string",
+          "description": "Name of the label"
+        },
+        "roster": {
+          "type": "array",
+          "description": "Artists signed to the label",
+          "items": { "type": { "$ref": "#/definitions/Artist" } }
+        },
+        "releases": {
+          "type": "array",
+          "description": "Releases issued by the label",
+          "items": { "type": { "$ref": "#/definitions/Release" } }
+        }
+      },
+      "required": ["labelName", "roster", "releases"]
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "siteCode": "ANR-07",
+  "bins": {
+    "aisle-a": { "binCode": "A-01-03", "capacityPallets": 24 },
+    "aisle-b": { "binCode": "B-02-11", "capacityPallets": 18 },
+    "aisle-c": { "binCode": "C-04-07", "capacityPallets": 36 }
+  },
+  "movements": [
+    {
+      "movementId": "mv-77120",
+      "pallets": 6,
+      "at": "2026-08-04T05:31:00Z",
+      "from": { "identity": "A-01-03" },
+      "to": { "identity": "C-04-07" }
+    },
+    {
+      "movementId": "mv-77121",
+      "pallets": 12,
+      "at": "2026-08-04T09:02:00Z",
+      "from": { "identity": "B-02-11" },
+      "to": { "identity": "A-01-03" }
+    }
+  ]
+}

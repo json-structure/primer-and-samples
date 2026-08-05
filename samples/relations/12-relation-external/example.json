@@ -1,0 +1,26 @@
+{
+  "batchId": "AR-2026-08-04",
+  "invoices": [
+    {
+      "invoiceNumber": "INV-2026-114093",
+      "issued": "2026-08-04",
+      "totalCents": 1849000,
+      "currency": "EUR",
+      "customer": { "identity": "CU-0004182" }
+    },
+    {
+      "invoiceNumber": "INV-2026-114094",
+      "issued": "2026-08-04",
+      "totalCents": 27350,
+      "currency": "EUR",
+      "customer": { "identity": "CU-0009917" }
+    },
+    {
+      "invoiceNumber": "INV-2026-114095",
+      "issued": "2026-08-04",
+      "totalCents": 640000,
+      "currency": "USD",
+      "customer": { "identity": "CU-0004182" }
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "editions": [
+    {
+      "isbn": "978-0-262-03384-8",
+      "edition": 3,
+      "title": "Introduction to Algorithms",
+      "published": "2009-07-31"
+    },
+    {
+      "isbn": "978-0-262-03384-8",
+      "edition": 4,
+      "title": "Introduction to Algorithms",
+      "published": "2022-04-05"
+    },
+    {
+      "isbn": "978-0-13-235088-4",
+      "edition": 1,
+      "title": "Clean Code",
+      "published": "2008-08-01"
+    }
+  ],
+  "reviews": [
+    {
+      "reviewId": "rev-1041",
+      "reviewer": "K. Adeyemi",
+      "stars": 5,
+      "subject": { "identity": ["978-0-262-03384-8", 4] }
+    },
+    {
+      "reviewId": "rev-1042",
+      "reviewer": "M. Hollander",
+      "stars": 4,
+      "subject": { "identity": ["978-0-262-03384-8", 3] }
+    },
+    {
+      "reviewId": "rev-1043",
+      "reviewer": "K. Adeyemi",
+      "stars": 3,
+      "subject": { "identity": ["978-0-13-235088-4", 1] }
+    }
+  ]
+}

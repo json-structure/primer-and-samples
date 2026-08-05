@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-structure.org/meta/relations/v0/#",
+  "$id": "https://schemas.example.com/relations/library-catalog",
+  "$uses": ["JSONStructureRelations"],
+  "name": "LibraryCatalog",
+  "description": "A lending library catalogue. Works, editions, authors, publishers, members and loans are all held in flat collections at the root, and every association between them is a relation. Nothing is duplicated and nothing is nested, so an edition can be revised, a member can be renamed, and a loan can be returned without touching any other record.",
+  "$root": "#/definitions/Catalog",
+  "definitions": {
+    "Author": {
+      "type": "object",
+      "description": "A person credited with writing a work",
+      "identity": ["authorId"],
+      "properties": {
+        "authorId": {
+          "type": "uuid",
+          "description": "Stable identifier of the author"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name as printed on the title page"
+        },
+        "born": {
+          "type": "int32",
+          "description": "Year of birth"
+        }
+      },
+      "required": ["authorId", "name"]
+    },
+    "Publisher": {
+      "type": "object",
+      "description": "An imprint that issues editions",
+      "identity": ["publisherId"],
+      "properties": {
+        "publisherId": {
+          "type": "string",
+          "description": "Identifier of the imprint"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the imprint"
+        },
+        "city": {
+          "type": "string",
+          "description": "City of publication"
+        }
+      },
+      "required": ["publisherId", "name"]
+    },
+    "Work": {
+      "type": "object",
+      "description": "An abstract work, independent of any particular printing. Authorship attaches to the work rather than to the edition, because a reprint does not change who wrote the book.",
+      "identity": ["workId"],
+      "relations": {
+        "authors": {
+          "cardinality": "multiple",
+          "targettype": { "$ref": "#/definitions/Author" },
+          "scope": "#/definitions/Catalog/properties/authors"
+        }
+      },
+      "properties": {
+        "workId": {
+          "type": "string",
+          "description": "Identifier of the work"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the work"
+        },
+        "originalLanguage": {
+          "type": "string",
+          "description": "BCP 47 tag for the language of first publication"
+        }
+      },
+      "required": ["workId", "title"]
+    },
+    "Edition": {
+      "type": "object",
+      "description": "A particular printing of a work. The ISBN identifies it, and it relates upward to the work and to the publisher.",
+      "identity": ["isbn"],
+      "relations": {
+        "work": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Work" },
+          "scope": "#/definitions/Catalog/properties/works"
+        },
+        "publisher": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Publisher" },
+          "scope": "#/definitions/Catalog/properties/publishers"
+        }
+      },
+      "properties": {
+        "isbn": {
+          "type": "string",
+          "description": "ISBN-13 of the edition"
+        },
+        "printing": {
+          "type": "int32",
+          "description": "Ordinal of the printing"
+        },
+        "published": {
+          "type": "date",
+          "description": "Publication date of this printing"
+        },
+        "pages": {
+          "type": "int32",
+          "description": "Page count"
+        }
+      },
+      "required": ["isbn", "published"]
+    },
+    "Copy": {
+      "type": "object",
+      "description": "A physical volume on a shelf. Several copies of the same edition may sit side by side, which is why the barcode rather than the ISBN identifies a copy.",
+      "identity": ["barcode"],
+      "relations": {
+        "edition": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Edition" },
+          "scope": "#/definitions/Catalog/properties/editions"
+        }
+      },
+      "properties": {
+        "barcode": {
+          "type": "string",
+          "description": "Barcode printed on the spine label"
+        },
+        "shelfmark": {
+          "type": "string",
+          "description": "Where the copy is shelved"
+        },
+        "acquired": {
+          "type": "date",
+          "description": "Date the copy entered the collection"
+        }
+      },
+      "required": ["barcode", "shelfmark"]
+    },
+    "Member": {
+      "type": "object",
+      "description": "A borrower",
+      "identity": ["memberNumber"],
+      "properties": {
+        "memberNumber": {
+          "type": "string",
+          "description": "Membership number"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the member"
+        },
+        "joined": {
+          "type": "date",
+          "description": "Date the membership began"
+        }
+      },
+      "required": ["memberNumber", "name", "joined"]
+    },
+    "Loan": {
+      "type": "object",
+      "description": "One copy in the hands of one member. Both ends are relations, so a loan record carries only the facts that belong to the loan itself.",
+      "identity": ["loanId"],
+      "relations": {
+        "copy": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Copy" },
+          "scope": "#/definitions/Catalog/properties/copies"
+        },
+        "borrower": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Member" },
+          "scope": "#/definitions/Catalog/properties/members"
+        }
+      },
+      "properties": {
+        "loanId": {
+          "type": "string",
+          "description": "Identifier of the loan"
+        },
+        "borrowed": {
+          "type": "date",
+          "description": "Date the copy left the library"
+        },
+        "due": {
+          "type": "date",
+          "description": "Date the copy is due back"
+        },
+        "returned": {
+          "type": "date",
+          "description": "Date the copy came back, absent while the loan is open"
+        }
+      },
+      "required": ["loanId", "borrowed", "due"]
+    },
+    "Catalog": {
+      "type": "object",
+      "description": "The whole catalogue as one document",
+      "properties": {
+        "library": {
+          "type": "string",
+          "description": "Name of the library"
+        },
+        "authors": {
+          "type": "array",
+          "description": "Every author referenced by a work",
+          "items": { "type": { "$ref": "#/definitions/Author" } }
+        },
+        "publishers": {
+          "type": "array",
+          "description": "Every publisher referenced by an edition",
+          "items": { "type": { "$ref": "#/definitions/Publisher" } }
+        },
+        "works": {
+          "type": "array",
+          "description": "Every catalogued work",
+          "items": { "type": { "$ref": "#/definitions/Work" } }
+        },
+        "editions": {
+          "type": "array",
+          "description": "Every catalogued edition",
+          "items": { "type": { "$ref": "#/definitions/Edition" } }
+        },
+        "copies": {
+          "type": "array",
+          "description": "Every physical volume held",
+          "items": { "type": { "$ref": "#/definitions/Copy" } }
+        },
+        "members": {
+          "type": "array",
+          "description": "Every member",
+          "items": { "type": { "$ref": "#/definitions/Member" } }
+        },
+        "loans": {
+          "type": "array",
+          "description": "Loans, open and closed",
+          "items": { "type": { "$ref": "#/definitions/Loan" } }
+        }
+      },
+      "required": [
+        "library",
+        "authors",
+        "publishers",
+        "works",
+        "editions",
+        "copies",
+        "members",
+        "loans"
+      ]
+    }
+  }
+}

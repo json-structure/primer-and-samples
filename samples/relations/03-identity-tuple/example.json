@@ -1,0 +1,28 @@
+{
+  "vessel": "RV Meteor",
+  "stations": [
+    [54.1783, 7.8917],
+    [54.1791, 7.9042],
+    [54.1806, 7.9163]
+  ],
+  "readings": [
+    {
+      "readingId": "r-0001",
+      "takenAt": "2026-05-12T06:14:00Z",
+      "depth": 31.4,
+      "station": { "identity": [54.1783, 7.8917] }
+    },
+    {
+      "readingId": "r-0002",
+      "takenAt": "2026-05-12T06:41:00Z",
+      "depth": 33.9,
+      "station": { "identity": [54.1791, 7.9042] }
+    },
+    {
+      "readingId": "r-0003",
+      "takenAt": "2026-05-12T07:08:00Z",
+      "depth": 36.2,
+      "station": { "identity": [54.1806, 7.9163] }
+    }
+  ]
+}

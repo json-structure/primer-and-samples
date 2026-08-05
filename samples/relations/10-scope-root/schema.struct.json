@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-structure.org/meta/relations/v0/#",
+  "$id": "https://schemas.example.com/relations/scope-root",
+  "$uses": ["JSONStructureRelations"],
+  "name": "ChartOfAccounts",
+  "description": "A relation scoped to the document root. When '$root' is itself a collection there is no named property to point at, so 'scope' is the pointer '#'.",
+  "$root": "#/definitions/Accounts",
+  "definitions": {
+    "Account": {
+      "type": "object",
+      "description": "A ledger account. Accounts form a tree, and the parent of an account is another account in the same root collection.",
+      "identity": ["code"],
+      "relations": {
+        "parent": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Account" },
+          "scope": "#"
+        }
+      },
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Account code"
+        },
+        "name": {
+          "type": "string",
+          "description": "Account name"
+        },
+        "postable": {
+          "type": "boolean",
+          "description": "Whether entries may be posted directly to this account"
+        }
+      },
+      "required": ["code", "name", "postable"]
+    },
+    "Accounts": {
+      "type": "array",
+      "description": "The whole chart of accounts, as a flat collection",
+      "items": { "type": { "$ref": "#/definitions/Account" } }
+    }
+  }
+}

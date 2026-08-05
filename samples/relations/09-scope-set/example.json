@@ -1,0 +1,24 @@
+{
+  "vocabulary": [
+    { "notation": "621.3", "label": "Electrical engineering" },
+    { "notation": "627.2", "label": "Harbour engineering" },
+    { "notation": "551.46", "label": "Oceanography" }
+  ],
+  "documents": [
+    {
+      "docId": "doc-2019-0447",
+      "title": "Shore power conversion at Quay 41",
+      "subjects": [
+        { "identity": "621.3" },
+        { "identity": "627.2" }
+      ]
+    },
+    {
+      "docId": "doc-2021-0113",
+      "title": "Tidal residuals in the Western Scheldt",
+      "subjects": [
+        { "identity": "551.46" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "period": "2026-Q3",
+  "customers": [
+    {
+      "customerNumber": "CU-0004182",
+      "legalName": "Haven Marine Supplies NV",
+      "country": "BE"
+    },
+    {
+      "customerNumber": "CU-0009917",
+      "legalName": "Nordsee Instrumente GmbH",
+      "country": "DE"
+    }
+  ],
+  "products": [
+    {
+      "sku": "WXT-536",
+      "name": "Compact weather transmitter",
+      "listPriceCents": 289000
+    },
+    {
+      "sku": "PARSIVEL-2",
+      "name": "Laser disdrometer",
+      "listPriceCents": 741500
+    },
+    {
+      "sku": "MAST-3M",
+      "name": "Three metre instrument mast",
+      "listPriceCents": 42900
+    }
+  ],
+  "carriers": [
+    { "scac": "DHLC", "name": "DHL Freight" },
+    { "scac": "GLSX", "name": "GLS Express" }
+  ],
+  "orders": [
+    {
+      "orderNumber": "SO-2026-08841",
+      "placed": "2026-07-14T09:12:00Z",
+      "currency": "EUR",
+      "status": "shipped",
+      "customer": { "identity": "CU-0004182" },
+      "lines": [
+        {
+          "identity": "WXT-536",
+          "qualifier": {
+            "lineNumber": 1,
+            "quantity": 4,
+            "unitPriceCents": 260100,
+            "discountPercent": 10.0
+          }
+        },
+        {
+          "identity": "MAST-3M",
+          "qualifier": {
+            "lineNumber": 2,
+            "quantity": 4,
+            "unitPriceCents": 42900
+          }
+        }
+      ]
+    },
+    {
+      "orderNumber": "SO-2026-08902",
+      "placed": "2026-07-28T14:40:00Z",
+      "currency": "EUR",
+      "status": "picking",
+      "customer": { "identity": "CU-0009917" },
+      "lines": [
+        {
+          "identity": "PARSIVEL-2",
+          "qualifier": {
+            "lineNumber": 1,
+            "quantity": 1,
+            "unitPriceCents": 741500
+          }
+        }
+      ]
+    },
+    {
+      "orderNumber": "SO-2026-08915",
+      "placed": "2026-07-30T07:05:00Z",
+      "currency": "EUR",
+      "status": "cancelled",
+      "customer": { "identity": "CU-0004182" },
+      "lines": []
+    }
+  ],
+  "shipments": [
+    {
+      "trackingNumber": "JD0002185994417",
+      "dispatched": "2026-07-17T16:20:00Z",
+      "weightKg": 63.4,
+      "order": { "identity": "SO-2026-08841" },
+      "carrier": { "identity": "DHLC" }
+    },
+    {
+      "trackingNumber": "JD0002185994512",
+      "dispatched": "2026-07-18T11:02:00Z",
+      "weightKg": 18.9,
+      "order": { "identity": "SO-2026-08841" },
+      "carrier": { "identity": "GLSX" }
+    }
+  ]
+}

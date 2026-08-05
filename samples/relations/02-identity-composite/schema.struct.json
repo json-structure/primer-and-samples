@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-structure.org/meta/relations/v0/#",
+  "$id": "https://schemas.example.com/relations/identity-composite",
+  "$uses": ["JSONStructureRelations"],
+  "name": "EditionCatalog",
+  "description": "A composite identity. An edition is identified by ISBN and edition number together, and a relation instance that targets it carries both values as an array, in the order the 'identity' keyword declares them.",
+  "$root": "#/definitions/Catalog",
+  "definitions": {
+    "Edition": {
+      "type": "object",
+      "description": "One printed edition of a work. Neither the ISBN nor the edition number identifies an edition on its own: the same ISBN is reused across printings, and every work has a first edition.",
+      "identity": ["isbn", "edition"],
+      "properties": {
+        "isbn": {
+          "type": "string",
+          "description": "ISBN-13 of the work"
+        },
+        "edition": {
+          "type": "int32",
+          "description": "Edition number, counting from 1"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title as printed on this edition"
+        },
+        "published": {
+          "type": "date",
+          "description": "Publication date of this edition"
+        }
+      },
+      "required": ["isbn", "edition", "title"]
+    },
+    "Review": {
+      "type": "object",
+      "description": "A review of one specific edition",
+      "identity": ["reviewId"],
+      "relations": {
+        "subject": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Edition" },
+          "scope": "#/definitions/Catalog/properties/editions"
+        }
+      },
+      "properties": {
+        "reviewId": {
+          "type": "string",
+          "description": "Identifier of the review"
+        },
+        "reviewer": {
+          "type": "string",
+          "description": "Name of the reviewer"
+        },
+        "stars": {
+          "type": "int32",
+          "description": "Rating from 1 to 5"
+        }
+      },
+      "required": ["reviewId", "reviewer", "stars"]
+    },
+    "Catalog": {
+      "type": "object",
+      "description": "Editions held by a bookseller, together with reviews of them",
+      "properties": {
+        "editions": {
+          "type": "array",
+          "description": "The editions in the catalog",
+          "items": { "type": { "$ref": "#/definitions/Edition" } }
+        },
+        "reviews": {
+          "type": "array",
+          "description": "Reviews, each pointing at one edition",
+          "items": { "type": { "$ref": "#/definitions/Review" } }
+        }
+      },
+      "required": ["editions", "reviews"]
+    }
+  }
+}

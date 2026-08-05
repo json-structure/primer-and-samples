@@ -1,0 +1,38 @@
+{
+  "planName": "Lock gate overhaul",
+  "tasks": [
+    {
+      "taskId": "t-010",
+      "title": "Dewater the chamber",
+      "durationDays": 3,
+      "dependsOn": []
+    },
+    {
+      "taskId": "t-020",
+      "title": "Survey gate hinges",
+      "durationDays": 2,
+      "dependsOn": [{ "identity": "t-010" }]
+    },
+    {
+      "taskId": "t-030",
+      "title": "Fabricate replacement seals",
+      "durationDays": 15,
+      "dependsOn": [{ "identity": "t-020" }]
+    },
+    {
+      "taskId": "t-040",
+      "title": "Repaint the chamber walls",
+      "durationDays": 6,
+      "dependsOn": [{ "identity": "t-010" }]
+    },
+    {
+      "taskId": "t-050",
+      "title": "Reflood and commission",
+      "durationDays": 2,
+      "dependsOn": [
+        { "identity": "t-030" },
+        { "identity": "t-040" }
+      ]
+    }
+  ]
+}

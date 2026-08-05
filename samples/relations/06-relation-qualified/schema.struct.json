@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-structure.org/meta/relations/v0/#",
+  "$id": "https://schemas.example.com/relations/relation-qualified",
+  "$uses": ["JSONStructureRelations"],
+  "name": "ProjectRegister",
+  "description": "A qualified relation. 'qualifiertype' names a type whose properties describe the relationship itself rather than either end of it, and those values appear under 'qualifier' in each relation instance.",
+  "$root": "#/definitions/Register",
+  "definitions": {
+    "Person": {
+      "type": "object",
+      "description": "Someone who can be assigned to a project",
+      "identity": ["personId"],
+      "properties": {
+        "personId": {
+          "type": "string",
+          "description": "Directory identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name"
+        }
+      },
+      "required": ["personId", "name"]
+    },
+    "Engagement": {
+      "type": "object",
+      "description": "Qualifier for a contribution. The role and the dates belong to the pairing of a person with a project, not to the person and not to the project, which is exactly what a qualifier type is for.",
+      "properties": {
+        "role": {
+          "type": "string",
+          "description": "Role the person holds on the project"
+        },
+        "startDate": {
+          "type": "date",
+          "description": "First day of the engagement"
+        },
+        "endDate": {
+          "type": "date",
+          "description": "Last day of the engagement, absent while it continues"
+        }
+      },
+      "required": ["role", "startDate"]
+    },
+    "Project": {
+      "type": "object",
+      "description": "A project and the people engaged on it",
+      "identity": ["projectId"],
+      "relations": {
+        "contributors": {
+          "cardinality": "multiple",
+          "targettype": { "$ref": "#/definitions/Person" },
+          "scope": "#/definitions/Register/properties/people",
+          "qualifiertype": { "$ref": "#/definitions/Engagement" }
+        }
+      },
+      "properties": {
+        "projectId": {
+          "type": "string",
+          "description": "Identifier of the project"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the project"
+        }
+      },
+      "required": ["projectId", "name"]
+    },
+    "Register": {
+      "type": "object",
+      "description": "The people and projects of one organisation",
+      "properties": {
+        "people": {
+          "type": "array",
+          "description": "Everyone in the directory",
+          "items": { "type": { "$ref": "#/definitions/Person" } }
+        },
+        "projects": {
+          "type": "array",
+          "description": "Every project on the books",
+          "items": { "type": { "$ref": "#/definitions/Project" } }
+        }
+      },
+      "required": ["people", "projects"]
+    }
+  }
+}

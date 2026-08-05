@@ -1,0 +1,30 @@
+{
+  "employees": [
+    { "badge": "E-118", "name": "Sanne de Vries" },
+    { "badge": "E-204", "name": "Marek Nowak" }
+  ],
+  "contractors": [
+    { "badge": "C-077", "name": "Aiko Tanabe" },
+    { "badge": "C-081", "name": "Diego Ferreira" }
+  ],
+  "tickets": [
+    {
+      "ticketId": "T-90311",
+      "summary": "Berth allocation service returns stale ETAs",
+      "opened": "2026-08-03T08:22:00Z",
+      "assignee": { "identity": "E-204" }
+    },
+    {
+      "ticketId": "T-90312",
+      "summary": "Tide gauge feed drops out overnight",
+      "opened": "2026-08-03T21:47:00Z",
+      "assignee": { "identity": "C-077" }
+    },
+    {
+      "ticketId": "T-90315",
+      "summary": "Duplicate AIS positions after failover",
+      "opened": "2026-08-04T11:05:00Z",
+      "assignee": { "identity": "E-118" }
+    }
+  ]
+}

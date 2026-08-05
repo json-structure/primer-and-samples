@@ -1,0 +1,28 @@
+[
+  { "code": "1000", "name": "Assets", "postable": false },
+  {
+    "code": "1100",
+    "name": "Current assets",
+    "postable": false,
+    "parent": { "identity": "1000" }
+  },
+  {
+    "code": "1110",
+    "name": "Cash at bank",
+    "postable": true,
+    "parent": { "identity": "1100" }
+  },
+  {
+    "code": "1120",
+    "name": "Trade receivables",
+    "postable": true,
+    "parent": { "identity": "1100" }
+  },
+  { "code": "2000", "name": "Liabilities", "postable": false },
+  {
+    "code": "2100",
+    "name": "Trade payables",
+    "postable": true,
+    "parent": { "identity": "2000" }
+  }
+]

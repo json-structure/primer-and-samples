@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-structure.org/meta/relations/v0/#",
+  "$id": "https://schemas.example.com/relations/relation-external",
+  "$uses": ["JSONStructureRelations"],
+  "name": "InvoiceBatch",
+  "description": "A relation without a scope. Omitting 'scope' says that the target is not carried in the same document: the identity is meaningful in some other system, and resolving it is the consumer's business.",
+  "$root": "#/definitions/Batch",
+  "definitions": {
+    "Customer": {
+      "type": "object",
+      "description": "A customer as held in the master data system. The type is declared here so the shape of the identity is known, but no collection of customers appears in this document.",
+      "identity": ["customerNumber"],
+      "properties": {
+        "customerNumber": {
+          "type": "string",
+          "description": "Customer number in the master data system"
+        },
+        "legalName": {
+          "type": "string",
+          "description": "Registered name of the customer"
+        }
+      },
+      "required": ["customerNumber", "legalName"]
+    },
+    "Invoice": {
+      "type": "object",
+      "description": "An invoice referring to a customer held elsewhere",
+      "identity": ["invoiceNumber"],
+      "relations": {
+        "customer": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Customer" }
+        }
+      },
+      "properties": {
+        "invoiceNumber": {
+          "type": "string",
+          "description": "Invoice number"
+        },
+        "issued": {
+          "type": "date",
+          "description": "Date of issue"
+        },
+        "totalCents": {
+          "type": "int32",
+          "description": "Invoice total in minor currency units"
+        },
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code"
+        }
+      },
+      "required": ["invoiceNumber", "issued", "totalCents", "currency"]
+    },
+    "Batch": {
+      "type": "object",
+      "description": "A batch of invoices handed to the ledger",
+      "properties": {
+        "batchId": {
+          "type": "string",
+          "description": "Identifier of the batch"
+        },
+        "invoices": {
+          "type": "array",
+          "description": "Invoices in the batch",
+          "items": { "type": { "$ref": "#/definitions/Invoice" } }
+        }
+      },
+      "required": ["batchId", "invoices"]
+    }
+  }
+}

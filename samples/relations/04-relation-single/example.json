@@ -1,0 +1,31 @@
+{
+  "carrier": "LH",
+  "fleet": [
+    { "registration": "D-AIMA", "typeCode": "A388", "seats": 509 },
+    { "registration": "D-AIXP", "typeCode": "A359", "seats": 293 },
+    { "registration": "D-ABYT", "typeCode": "B748", "seats": 364 }
+  ],
+  "flights": [
+    {
+      "flightNumber": "LH710",
+      "departureDate": "2026-08-05",
+      "origin": "FRA",
+      "destination": "HND",
+      "aircraft": { "identity": "D-AIXP" }
+    },
+    {
+      "flightNumber": "LH716",
+      "departureDate": "2026-08-05",
+      "origin": "MUC",
+      "destination": "HND",
+      "aircraft": { "identity": "D-ABYT" }
+    },
+    {
+      "flightNumber": "LH400",
+      "departureDate": "2026-08-05",
+      "origin": "FRA",
+      "destination": "JFK",
+      "aircraft": { "identity": "D-AIMA" }
+    }
+  ]
+}

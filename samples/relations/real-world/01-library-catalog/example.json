@@ -1,0 +1,137 @@
+{
+  "library": "Stadsbibliotheek Antwerpen",
+  "authors": [
+    {
+      "authorId": "3f1a9c22-8b47-4d51-9e30-71c2a5f80b14",
+      "name": "Ursula K. Le Guin",
+      "born": 1929
+    },
+    {
+      "authorId": "5c8e0d13-2a96-4f77-b1c4-93de6a204f85",
+      "name": "Italo Calvino",
+      "born": 1923
+    },
+    {
+      "authorId": "7d2b4e05-6c18-4a92-84f3-b0517c9de263",
+      "name": "William Weaver",
+      "born": 1923
+    }
+  ],
+  "publishers": [
+    {
+      "publisherId": "pub-gollancz",
+      "name": "Gollancz",
+      "city": "London"
+    },
+    {
+      "publisherId": "pub-harcourt",
+      "name": "Harcourt Brace Jovanovich",
+      "city": "New York"
+    }
+  ],
+  "works": [
+    {
+      "workId": "w-left-hand-of-darkness",
+      "title": "The Left Hand of Darkness",
+      "originalLanguage": "en",
+      "authors": [{ "identity": "3f1a9c22-8b47-4d51-9e30-71c2a5f80b14" }]
+    },
+    {
+      "workId": "w-invisible-cities",
+      "title": "Invisible Cities",
+      "originalLanguage": "it",
+      "authors": [
+        { "identity": "5c8e0d13-2a96-4f77-b1c4-93de6a204f85" },
+        { "identity": "7d2b4e05-6c18-4a92-84f3-b0517c9de263" }
+      ]
+    }
+  ],
+  "editions": [
+    {
+      "isbn": "9780575099999",
+      "printing": 1,
+      "published": "2017-03-16",
+      "pages": 304,
+      "work": { "identity": "w-left-hand-of-darkness" },
+      "publisher": { "identity": "pub-gollancz" }
+    },
+    {
+      "isbn": "9780575077331",
+      "printing": 4,
+      "published": "2006-09-14",
+      "pages": 288,
+      "work": { "identity": "w-left-hand-of-darkness" },
+      "publisher": { "identity": "pub-gollancz" }
+    },
+    {
+      "isbn": "9780156453806",
+      "printing": 1,
+      "published": "1978-05-01",
+      "pages": 165,
+      "work": { "identity": "w-invisible-cities" },
+      "publisher": { "identity": "pub-harcourt" }
+    }
+  ],
+  "copies": [
+    {
+      "barcode": "31234000112233",
+      "shelfmark": "SF LEG",
+      "acquired": "2017-06-02",
+      "edition": { "identity": "9780575099999" }
+    },
+    {
+      "barcode": "31234000112240",
+      "shelfmark": "SF LEG",
+      "acquired": "2017-06-02",
+      "edition": { "identity": "9780575099999" }
+    },
+    {
+      "barcode": "31234000098871",
+      "shelfmark": "SF LEG",
+      "acquired": "2007-01-18",
+      "edition": { "identity": "9780575077331" }
+    },
+    {
+      "barcode": "31234000044012",
+      "shelfmark": "853 CAL",
+      "acquired": "1994-11-07",
+      "edition": { "identity": "9780156453806" }
+    }
+  ],
+  "members": [
+    {
+      "memberNumber": "M-004112",
+      "name": "Lieve Vermeulen",
+      "joined": "2019-09-04"
+    },
+    {
+      "memberNumber": "M-009873",
+      "name": "Karim Belhadj",
+      "joined": "2024-02-19"
+    }
+  ],
+  "loans": [
+    {
+      "loanId": "L-2026-004417",
+      "borrowed": "2026-07-21",
+      "due": "2026-08-18",
+      "copy": { "identity": "31234000112233" },
+      "borrower": { "identity": "M-004112" }
+    },
+    {
+      "loanId": "L-2026-004501",
+      "borrowed": "2026-07-29",
+      "due": "2026-08-26",
+      "copy": { "identity": "31234000044012" },
+      "borrower": { "identity": "M-009873" }
+    },
+    {
+      "loanId": "L-2026-003988",
+      "borrowed": "2026-06-02",
+      "due": "2026-06-30",
+      "returned": "2026-06-27",
+      "copy": { "identity": "31234000098871" },
+      "borrower": { "identity": "M-004112" }
+    }
+  ]
+}

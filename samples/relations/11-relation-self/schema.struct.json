@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-structure.org/meta/relations/v0/#",
+  "$id": "https://schemas.example.com/relations/relation-self",
+  "$uses": ["JSONStructureRelations"],
+  "name": "WorkPlan",
+  "description": "A self-relation with multiple cardinality. A task depends on other tasks of the same type, drawn from the same collection, which is how a dependency graph is expressed without any recursive containment.",
+  "$root": "#/definitions/Plan",
+  "definitions": {
+    "Task": {
+      "type": "object",
+      "description": "A unit of work. 'dependsOn' points back at the same type, so the tasks stay a flat list and the graph lives in the relations rather than in nesting.",
+      "identity": ["taskId"],
+      "relations": {
+        "dependsOn": {
+          "cardinality": "multiple",
+          "targettype": { "$ref": "#/definitions/Task" },
+          "scope": "#/definitions/Plan/properties/tasks"
+        }
+      },
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "description": "Identifier of the task"
+        },
+        "title": {
+          "type": "string",
+          "description": "What the task delivers"
+        },
+        "durationDays": {
+          "type": "int32",
+          "description": "Estimated duration in working days"
+        }
+      },
+      "required": ["taskId", "title", "durationDays"]
+    },
+    "Plan": {
+      "type": "object",
+      "description": "A plan holding a flat list of tasks",
+      "properties": {
+        "planName": {
+          "type": "string",
+          "description": "Name of the plan"
+        },
+        "tasks": {
+          "type": "array",
+          "description": "Every task in the plan",
+          "items": { "type": { "$ref": "#/definitions/Task" } }
+        }
+      },
+      "required": ["planName", "tasks"]
+    }
+  }
+}

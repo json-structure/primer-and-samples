@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-structure.org/meta/relations/v0/#",
+  "$id": "https://schemas.example.com/relations/scope-multiple",
+  "$uses": ["JSONStructureRelations"],
+  "name": "SupportDesk",
+  "description": "A relation resolved against more than one collection. 'scope' is an array of pointers, and a resolver searches each of them in turn for an object whose identity matches.",
+  "$root": "#/definitions/Desk",
+  "definitions": {
+    "Agent": {
+      "type": "object",
+      "description": "Someone who can own a ticket. Employees and contractors are held in separate collections because they are administered differently, but either may be assigned work.",
+      "identity": ["badge"],
+      "properties": {
+        "badge": {
+          "type": "string",
+          "description": "Badge number, unique across the whole desk"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name"
+        }
+      },
+      "required": ["badge", "name"]
+    },
+    "Ticket": {
+      "type": "object",
+      "description": "A support ticket assigned to one agent",
+      "identity": ["ticketId"],
+      "relations": {
+        "assignee": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Agent" },
+          "scope": [
+            "#/definitions/Desk/properties/employees",
+            "#/definitions/Desk/properties/contractors"
+          ]
+        }
+      },
+      "properties": {
+        "ticketId": {
+          "type": "string",
+          "description": "Identifier of the ticket"
+        },
+        "summary": {
+          "type": "string",
+          "description": "One-line description of the problem"
+        },
+        "opened": {
+          "type": "datetime",
+          "description": "When the ticket was raised"
+        }
+      },
+      "required": ["ticketId", "summary", "opened"]
+    },
+    "Desk": {
+      "type": "object",
+      "description": "A support desk staffed from two pools",
+      "properties": {
+        "employees": {
+          "type": "array",
+          "description": "Agents on the payroll",
+          "items": { "type": { "$ref": "#/definitions/Agent" } }
+        },
+        "contractors": {
+          "type": "array",
+          "description": "Agents engaged through an agency",
+          "items": { "type": { "$ref": "#/definitions/Agent" } }
+        },
+        "tickets": {
+          "type": "array",
+          "description": "Open tickets",
+          "items": { "type": { "$ref": "#/definitions/Ticket" } }
+        }
+      },
+      "required": ["employees", "contractors", "tickets"]
+    }
+  }
+}

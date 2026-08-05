@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-structure.org/meta/relations/v0/#",
+  "$id": "https://schemas.example.com/relations/scope-set",
+  "$uses": ["JSONStructureRelations"],
+  "name": "SubjectIndex",
+  "description": "A relation scoped to a set. A set holds each member once, which suits a controlled vocabulary: the collection itself guarantees that no two entries share an identity.",
+  "$root": "#/definitions/Index",
+  "definitions": {
+    "Topic": {
+      "type": "object",
+      "description": "A subject heading from a controlled vocabulary",
+      "identity": ["notation"],
+      "properties": {
+        "notation": {
+          "type": "string",
+          "description": "Classification notation, for example 621.3"
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable heading"
+        }
+      },
+      "required": ["notation", "label"]
+    },
+    "Document": {
+      "type": "object",
+      "description": "An indexed document classified under any number of headings",
+      "identity": ["docId"],
+      "relations": {
+        "subjects": {
+          "cardinality": "multiple",
+          "targettype": { "$ref": "#/definitions/Topic" },
+          "scope": "#/definitions/Index/properties/vocabulary"
+        }
+      },
+      "properties": {
+        "docId": {
+          "type": "string",
+          "description": "Identifier of the document"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the document"
+        }
+      },
+      "required": ["docId", "title"]
+    },
+    "Index": {
+      "type": "object",
+      "description": "A subject index over a document collection",
+      "properties": {
+        "vocabulary": {
+          "type": "set",
+          "description": "The controlled vocabulary, each heading appearing once",
+          "items": { "type": { "$ref": "#/definitions/Topic" } }
+        },
+        "documents": {
+          "type": "array",
+          "description": "The indexed documents",
+          "items": { "type": { "$ref": "#/definitions/Document" } }
+        }
+      },
+      "required": ["vocabulary", "documents"]
+    }
+  }
+}

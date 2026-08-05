@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-structure.org/meta/relations/v0/#",
+  "$id": "https://schemas.example.com/relations/scope-map",
+  "$uses": ["JSONStructureRelations"],
+  "name": "WarehouseLayout",
+  "description": "A relation scoped to a map. When the scope pointer names a map, a resolver searches the map's values, not its keys, so the identity in a relation instance is matched against the identity properties of the value objects.",
+  "$root": "#/definitions/Warehouse",
+  "definitions": {
+    "Bin": {
+      "type": "object",
+      "description": "A storage location. Bins are held in a map keyed by aisle for fast lookup, but the identity of a bin is its own code, which is what relations carry.",
+      "identity": ["binCode"],
+      "properties": {
+        "binCode": {
+          "type": "string",
+          "description": "Bin code, unique across the warehouse"
+        },
+        "capacityPallets": {
+          "type": "int32",
+          "description": "How many pallets the bin holds"
+        }
+      },
+      "required": ["binCode", "capacityPallets"]
+    },
+    "Movement": {
+      "type": "object",
+      "description": "A pallet moved from one bin to another",
+      "identity": ["movementId"],
+      "relations": {
+        "from": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Bin" },
+          "scope": "#/definitions/Warehouse/properties/bins"
+        },
+        "to": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Bin" },
+          "scope": "#/definitions/Warehouse/properties/bins"
+        }
+      },
+      "properties": {
+        "movementId": {
+          "type": "string",
+          "description": "Identifier of the movement"
+        },
+        "pallets": {
+          "type": "int32",
+          "description": "Number of pallets moved"
+        },
+        "at": {
+          "type": "datetime",
+          "description": "When the movement was recorded"
+        }
+      },
+      "required": ["movementId", "pallets", "at"]
+    },
+    "Warehouse": {
+      "type": "object",
+      "description": "A warehouse, its bins, and the movements between them",
+      "properties": {
+        "siteCode": {
+          "type": "string",
+          "description": "Site code of the warehouse"
+        },
+        "bins": {
+          "type": "map",
+          "description": "Bins keyed by aisle designation",
+          "values": { "type": { "$ref": "#/definitions/Bin" } }
+        },
+        "movements": {
+          "type": "array",
+          "description": "Recorded pallet movements",
+          "items": { "type": { "$ref": "#/definitions/Movement" } }
+        }
+      },
+      "required": ["siteCode", "bins", "movements"]
+    }
+  }
+}

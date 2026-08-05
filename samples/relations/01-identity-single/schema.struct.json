@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-structure.org/meta/relations/v0/#",
+  "$id": "https://schemas.example.com/relations/identity-single",
+  "$uses": ["JSONStructureRelations"],
+  "name": "SensorRegistry",
+  "description": "A single-property identity. Each sensor is uniquely identified by its serial number within the registry that contains it.",
+  "$root": "#/definitions/Registry",
+  "definitions": {
+    "Sensor": {
+      "type": "object",
+      "description": "A field sensor. The identity scope is the 'sensors' array of the registry, so serial numbers need only be unique within one registry document.",
+      "identity": ["serialNumber"],
+      "properties": {
+        "serialNumber": {
+          "type": "string",
+          "description": "Manufacturer serial number"
+        },
+        "model": {
+          "type": "string",
+          "description": "Model designation"
+        },
+        "installedAt": {
+          "type": "date",
+          "description": "Date the sensor was commissioned"
+        }
+      },
+      "required": ["serialNumber", "model"]
+    },
+    "Registry": {
+      "type": "object",
+      "description": "An inventory of deployed sensors",
+      "properties": {
+        "site": {
+          "type": "string",
+          "description": "Name of the site the registry covers"
+        },
+        "sensors": {
+          "type": "array",
+          "description": "The sensors deployed at the site",
+          "items": { "type": { "$ref": "#/definitions/Sensor" } }
+        }
+      },
+      "required": ["site", "sensors"]
+    }
+  }
+}

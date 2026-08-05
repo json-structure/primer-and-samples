@@ -1,0 +1,51 @@
+{
+  "people": [
+    { "personId": "p-0121", "name": "Ines Wolter" },
+    { "personId": "p-0344", "name": "Tomas Ekstrom" },
+    { "personId": "p-0902", "name": "Rachel Nkemelu" }
+  ],
+  "projects": [
+    {
+      "projectId": "proj-quay-rebuild",
+      "name": "Quay 41 Rebuild",
+      "contributors": [
+        {
+          "identity": "p-0121",
+          "qualifier": {
+            "role": "Lead Engineer",
+            "startDate": "2025-02-03"
+          }
+        },
+        {
+          "identity": "p-0344",
+          "qualifier": {
+            "role": "Surveyor",
+            "startDate": "2025-02-17",
+            "endDate": "2025-09-30"
+          }
+        }
+      ]
+    },
+    {
+      "projectId": "proj-lock-telemetry",
+      "name": "Lock Telemetry Upgrade",
+      "contributors": [
+        {
+          "identity": "p-0902",
+          "qualifier": {
+            "role": "Lead Engineer",
+            "startDate": "2026-01-12"
+          }
+        },
+        {
+          "identity": "p-0121",
+          "qualifier": {
+            "role": "Reviewer",
+            "startDate": "2026-03-02",
+            "endDate": "2026-04-30"
+          }
+        }
+      ]
+    }
+  ]
+}

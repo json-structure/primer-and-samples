@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-structure.org/meta/relations/v0/#",
+  "$id": "https://schemas.example.com/relations/order-management",
+  "$uses": ["JSONStructureRelations"],
+  "name": "OrderManagement",
+  "description": "An order book. The classic line-item problem is expressed as a qualified relation: an order relates to many products, and the quantity and the price agreed at the time of sale qualify the pairing rather than belonging to the order or to the product. Shipments relate to the order and to a carrier held in the same document.",
+  "$root": "#/definitions/OrderBook",
+  "definitions": {
+    "Customer": {
+      "type": "object",
+      "description": "A buying account",
+      "identity": ["customerNumber"],
+      "properties": {
+        "customerNumber": {
+          "type": "string",
+          "description": "Account number"
+        },
+        "legalName": {
+          "type": "string",
+          "description": "Registered name"
+        },
+        "country": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code"
+        }
+      },
+      "required": ["customerNumber", "legalName", "country"]
+    },
+    "Product": {
+      "type": "object",
+      "description": "A sellable item. The list price lives here; the price actually charged lives on the line, because a catalogue reprice must not rewrite history.",
+      "identity": ["sku"],
+      "properties": {
+        "sku": {
+          "type": "string",
+          "description": "Stock keeping unit"
+        },
+        "name": {
+          "type": "string",
+          "description": "Product name"
+        },
+        "listPriceCents": {
+          "type": "int32",
+          "description": "Current list price in minor currency units"
+        }
+      },
+      "required": ["sku", "name", "listPriceCents"]
+    },
+    "Carrier": {
+      "type": "object",
+      "description": "A freight carrier",
+      "identity": ["scac"],
+      "properties": {
+        "scac": {
+          "type": "string",
+          "description": "Standard Carrier Alpha Code"
+        },
+        "name": {
+          "type": "string",
+          "description": "Carrier name"
+        }
+      },
+      "required": ["scac", "name"]
+    },
+    "OrderLine": {
+      "type": "object",
+      "description": "Qualifier for the relation between an order and a product. It records how many were bought and what was charged, both of which describe the transaction and not the catalogue.",
+      "properties": {
+        "lineNumber": {
+          "type": "int32",
+          "description": "Position of the line on the order"
+        },
+        "quantity": {
+          "type": "int32",
+          "description": "Units ordered"
+        },
+        "unitPriceCents": {
+          "type": "int32",
+          "description": "Price agreed per unit, in minor currency units"
+        },
+        "discountPercent": {
+          "type": "double",
+          "description": "Discount applied to the list price"
+        }
+      },
+      "required": ["lineNumber", "quantity", "unitPriceCents"]
+    },
+    "Order": {
+      "type": "object",
+      "description": "A customer order",
+      "identity": ["orderNumber"],
+      "relations": {
+        "customer": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Customer" },
+          "scope": "#/definitions/OrderBook/properties/customers"
+        },
+        "lines": {
+          "cardinality": "multiple",
+          "targettype": { "$ref": "#/definitions/Product" },
+          "scope": "#/definitions/OrderBook/properties/products",
+          "qualifiertype": { "$ref": "#/definitions/OrderLine" }
+        }
+      },
+      "properties": {
+        "orderNumber": {
+          "type": "string",
+          "description": "Order number"
+        },
+        "placed": {
+          "type": "datetime",
+          "description": "When the order was accepted"
+        },
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code for every amount on the order"
+        },
+        "status": {
+          "type": "string",
+          "description": "Order status",
+          "enum": ["open", "picking", "shipped", "cancelled"]
+        }
+      },
+      "required": ["orderNumber", "placed", "currency", "status"]
+    },
+    "Shipment": {
+      "type": "object",
+      "description": "Goods dispatched against an order",
+      "identity": ["trackingNumber"],
+      "relations": {
+        "order": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Order" },
+          "scope": "#/definitions/OrderBook/properties/orders"
+        },
+        "carrier": {
+          "cardinality": "single",
+          "targettype": { "$ref": "#/definitions/Carrier" },
+          "scope": "#/definitions/OrderBook/properties/carriers"
+        }
+      },
+      "properties": {
+        "trackingNumber": {
+          "type": "string",
+          "description": "Carrier tracking number"
+        },
+        "dispatched": {
+          "type": "datetime",
+          "description": "When the shipment left the warehouse"
+        },
+        "weightKg": {
+          "type": "double",
+          "description": "Gross weight in kilograms"
+        }
+      },
+      "required": ["trackingNumber", "dispatched"]
+    },
+    "OrderBook": {
+      "type": "object",
+      "description": "One trading period",
+      "properties": {
+        "period": {
+          "type": "string",
+          "description": "Period the extract covers"
+        },
+        "customers": {
+          "type": "array",
+          "description": "Customers with activity in the period",
+          "items": { "type": { "$ref": "#/definitions/Customer" } }
+        },
+        "products": {
+          "type": "array",
+          "description": "Products ordered in the period",
+          "items": { "type": { "$ref": "#/definitions/Product" } }
+        },
+        "carriers": {
+          "type": "array",
+          "description": "Carriers used in the period",
+          "items": { "type": { "$ref": "#/definitions/Carrier" } }
+        },
+        "orders": {
+          "type": "array",
+          "description": "Orders placed in the period",
+          "items": { "type": { "$ref": "#/definitions/Order" } }
+        },
+        "shipments": {
+          "type": "array",
+          "description": "Shipments dispatched in the period",
+          "items": { "type": { "$ref": "#/definitions/Shipment" } }
+        }
+      },
+      "required": [
+        "period",
+        "customers",
+        "products",
+        "carriers",
+        "orders",
+        "shipments"
+      ]
+    }
+  }
+}
