@@ -1,0 +1,43 @@
+{
+  "$schema": "https://schemas.example.org/semantic-annotations/15-station-network-telemetry",
+  "networkId": "PNWAQM-001",
+  "batchIssueTime": "2026-07-28T14:03:22Z",
+  "readings": [
+    {
+      "stationId": "SEA-001",
+      "periodStart": "2026-07-28T13:00:00Z",
+      "periodEnd": "2026-07-28T14:00:00Z",
+      "observedAt": "2026-07-28T14:00:00Z",
+      "producedAt": "2026-07-28T14:01:14Z",
+      "position": {
+        "lon": -122.335,
+        "lat": 47.608
+      },
+      "observingSystem": "FRM-88101-SN44291",
+      "airTemperatureMean": 24.3,
+      "pm25HourlyMean": 6.8,
+      "precipitationAccumulation": 0.0,
+      "windSpeedInstant": 2.4,
+      "dataQuality": "good",
+      "recordStatus": "provisional"
+    },
+    {
+      "stationId": "TAC-001",
+      "periodStart": "2026-07-28T13:00:00Z",
+      "periodEnd": "2026-07-28T14:00:00Z",
+      "observedAt": "2026-07-28T14:00:00Z",
+      "producedAt": "2026-07-28T14:02:07Z",
+      "position": {
+        "lon": -122.440,
+        "lat": 47.253
+      },
+      "observingSystem": "FRM-88101-SN44298",
+      "airTemperatureMean": 23.1,
+      "pm25HourlyMean": 9.2,
+      "precipitationAccumulation": 0.0,
+      "windSpeedInstant": 3.1,
+      "dataQuality": "good",
+      "recordStatus": "provisional"
+    }
+  ]
+}

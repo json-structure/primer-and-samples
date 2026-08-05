@@ -1,0 +1,13 @@
+{
+  "time_tag": "2026-07-29T09:41:00Z",
+  "satellite": 19,
+  "begin_time": "2026-07-29T09:12:00Z",
+  "begin_class": "C2.1",
+  "max_time": "2026-07-29T09:27:00Z",
+  "max_class": "M1.8",
+  "max_xrlong": 1.8e-5,
+  "max_ratio": 0.031,
+  "current_int_xrlong": 0.0142,
+  "end_time": "2026-07-29T09:39:00Z",
+  "end_class": "C6.4"
+}

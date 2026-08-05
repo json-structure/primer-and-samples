@@ -1,0 +1,22 @@
+{
+  "region_id": 1,
+  "dnoregion": "Scottish Hydro Electric Power Distribution",
+  "shortname": "North Scotland",
+  "period_from": "2026-07-30T11:30:00Z",
+  "period_to": "2026-07-30T12:00:00Z",
+  "published_at": "2026-07-30T09:30:00Z",
+  "forecast_lead": "PT2H",
+  "forecast": 18,
+  "actual": 21,
+  "index": "very low",
+  "biomass_pct": 1.8,
+  "coal_pct": 0.0,
+  "gas_pct": 4.1,
+  "hydro_pct": 15.2,
+  "imports_pct": 12.0,
+  "nuclear_pct": 0.0,
+  "oil_pct": 0.0,
+  "other_pct": 0.5,
+  "solar_pct": 3.9,
+  "wind_pct": 62.5
+}

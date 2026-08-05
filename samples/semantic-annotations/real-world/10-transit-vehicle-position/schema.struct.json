@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/10-transit-vehicle-position",
+  "$uses": ["JSONStructureSemanticAnnotations"],
+  "name": "VehiclePosition",
+  "description": "Normalized payload for one SIRI 2.0 VehicleActivity element emitted by a configured provider feed. The bridge emits one event per monitored vehicle activity in each poll cycle, keyed by the stable operator code and vehicle reference. Derived from the SIRI feeder schema published in the xRegistry catalogue. The sample demonstrates the scheduledTime and actualTime pair that carries the real-time content of a transit feed: the aimed departure and aimed arrival of the monitored journey are scheduled positions, the expected arrival recomputed by the AVL system is the actual position, and the instant at which the AVL system recorded the vehicle activity is the phenomenon time of the position fix. It further demonstrates a coordinateReferenceSystem binding over the reported longitude and latitude in CRS84 axis order, the monitored vehicle as the feature of interest, measured observationValue members for the kinematic channels, a status member for the monitoring flag, an effectiveTimeEnd for the staleness horizon, and a fixed cadence matching the SIRI Vehicle Monitoring poll interval.",
+  "type": "object",
+  "concepts": [
+    {
+      "reference": "http://vocab.gtfs.org/terms#Trip",
+      "kind": "rdfs-class"
+    }
+  ],
+  "observedProperty": {
+    "reference": "https://catalog.example.org/observable-properties/transit-vehicle-position/v1",
+    "kind": "example-catalog"
+  },
+  "coordinateReferenceSystem": {
+    "reference": "http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+    "kind": "ogc-crs",
+    "coordinates": ["longitude", "latitude"]
+  },
+  "properties": {
+    "operator_ref": {
+      "type": "string",
+      "description": "Operator identifier from `MonitoredVehicleJourney/OperatorRef`. The exact coding scheme depends on the configured provider, but the value remains the stable operator identity used for reference records, CloudEvents subjects, Kafka keys, MQTT topic segments, and AMQP routing properties.",
+      "concepts": [
+        {
+          "reference": "http://vocab.gtfs.org/terms#agency",
+          "kind": "rdf-property"
+        }
+      ]
+    },
+    "vehicle_ref": {
+      "type": "string",
+      "description": "Operator-scoped vehicle identifier from `MonitoredVehicleJourney/VehicleRef`. Usually the fleet number or run identifier configured in the operator AVL system. Combined with `operator_ref` it forms the stable vehicle identity for CloudEvents subjects and transport routing, and it identifies the vehicle whose position, heading and journey progress this record describes.",
+      "semanticRole": "featureOfInterest",
+      "concepts": [
+        {
+          "reference": "http://purl.org/dc/terms/identifier",
+          "kind": "dcterms-property"
+        }
+      ]
+    },
+    "line_ref": {
+      "type": ["string", "null"],
+      "description": "Service or route identifier from `MonitoredVehicleJourney/LineRef`. Providers use this value to align the monitored vehicle journey with published line or trip definitions. Null when the source omits a line identifier for the monitored journey.",
+      "concepts": [
+        {
+          "reference": "http://vocab.gtfs.org/terms#route",
+          "kind": "rdf-property"
+        }
+      ]
+    },
+    "direction_ref": {
+      "type": ["string", "null"],
+      "description": "Direction label from `MonitoredVehicleJourney/DirectionRef`, such as `inbound` or `outbound`. Providers use this together with line and dated journey references to align live positions with the scheduled journey pattern."
+    },
+    "published_line_name": {
+      "type": ["string", "null"],
+      "description": "Public-facing route label from `MonitoredVehicleJourney/PublishedLineName`, for example `T12`. This is the human-readable service number or line name shown to passengers."
+    },
+    "vehicle_journey_ref": {
+      "type": ["string", "null"],
+      "description": "Vehicle journey identifier from `MonitoredVehicleJourney/VehicleJourneyRef` used within the operator AVL system to refer to the monitored trip instance.",
+      "concepts": [
+        {
+          "reference": "http://vocab.gtfs.org/terms#trip",
+          "kind": "rdf-property"
+        }
+      ]
+    },
+    "dated_vehicle_journey_ref": {
+      "type": ["string", "null"],
+      "description": "Dated journey identifier from `MonitoredVehicleJourney/FramedVehicleJourneyRef/DatedVehicleJourneyRef`. This value disambiguates the scheduled journey instance within the service day published by the provider."
+    },
+    "origin_ref": {
+      "type": ["string", "null"],
+      "description": "Stop reference from `MonitoredVehicleJourney/OriginRef` naming the first advertised stop of the monitored journey. Null when the provider omits the origin stop code.",
+      "concepts": [
+        {
+          "reference": "http://vocab.gtfs.org/terms#stop",
+          "kind": "rdf-property"
+        }
+      ]
+    },
+    "destination_ref": {
+      "type": ["string", "null"],
+      "description": "Stop reference from `MonitoredVehicleJourney/DestinationRef` naming the last advertised stop of the monitored journey.",
+      "concepts": [
+        {
+          "reference": "http://vocab.gtfs.org/terms#stop",
+          "kind": "rdf-property"
+        }
+      ]
+    },
+    "destination_name": {
+      "type": ["string", "null"],
+      "description": "Human-readable stop name from `MonitoredVehicleJourney/DestinationName` for the final advertised destination of the monitored journey."
+    },
+    "longitude": {
+      "type": "double",
+      "description": "WGS84 longitude from `MonitoredVehicleJourney/VehicleLocation/Longitude` expressed in decimal degrees. Positive values are east of Greenwich. Omitted when the AVL feed does not provide a usable vehicle location.",
+      "unit": "deg",
+      "symbol": "°",
+      "minimum": -180,
+      "maximum": 180,
+      "semanticRole": "observationValue",
+      "derivation": "measured",
+      "phenomenonTimeRelation": "instant",
+      "concepts": [
+        {
+          "reference": "http://www.w3.org/2003/01/geo/wgs84_pos#long",
+          "kind": "rdf-property"
+        }
+      ]
+    },
+    "latitude": {
+      "type": "double",
+      "description": "WGS84 latitude from `MonitoredVehicleJourney/VehicleLocation/Latitude` expressed in decimal degrees. Positive values are north of the equator. Omitted when the AVL feed does not provide a usable vehicle location.",
+      "unit": "deg",
+      "symbol": "°",
+      "minimum": -90,
+      "maximum": 90,
+      "semanticRole": "observationValue",
+      "derivation": "measured",
+      "phenomenonTimeRelation": "instant",
+      "concepts": [
+        {
+          "reference": "http://www.w3.org/2003/01/geo/wgs84_pos#lat",
+          "kind": "rdf-property"
+        }
+      ]
+    },
+    "bearing": {
+      "type": "integer",
+      "description": "Vehicle heading from `MonitoredVehicleJourney/Bearing` in whole degrees clockwise from true north. Omitted when the AVL producer omits heading information.",
+      "unit": "deg",
+      "symbol": "°",
+      "minimum": 0,
+      "maximum": 360,
+      "semanticRole": "observationValue",
+      "derivation": "measured",
+      "phenomenonTimeRelation": "instant",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Angle",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "monitored": {
+      "type": "boolean",
+      "description": "Monitoring flag from `MonitoredVehicleJourney/Monitored`: true when the journey is being tracked in real time by the operator AVL system, false when the reported position and times fall back to the published schedule.",
+      "semanticRole": "status"
+    },
+    "recorded_at_time": {
+      "type": "datetime",
+      "description": "Timestamp from `VehicleActivity/RecordedAtTime` stating when the AVL system recorded this vehicle activity snapshot. Encoded as an ISO 8601 / RFC 3339 date-time string with an explicit UTC offset. It is the instant to which the reported location and heading apply.",
+      "semanticRole": "phenomenonTime",
+      "cadence": {
+        "kind": "fixed",
+        "period": "PT30S"
+      }
+    },
+    "valid_until_time": {
+      "type": ["datetime", "null"],
+      "description": "Expiry timestamp from `VehicleActivity/ValidUntilTime` after which consumers should treat the vehicle activity as stale if it has not been refreshed by a newer message.",
+      "semanticRole": "effectiveTimeEnd"
+    },
+    "origin_aimed_departure_time": {
+      "type": ["datetime", "null"],
+      "description": "Scheduled departure time from `MonitoredVehicleJourney/OriginAimedDepartureTime` for the origin stop of the monitored journey, encoded as an ISO 8601 / RFC 3339 date-time string.",
+      "semanticRole": "scheduledTime"
+    },
+    "destination_aimed_arrival_time": {
+      "type": ["datetime", "null"],
+      "description": "Scheduled arrival time from `MonitoredVehicleJourney/DestinationAimedArrivalTime` for the final advertised destination of the monitored journey, taken from the published timetable and unaffected by the live position.",
+      "semanticRole": "scheduledTime"
+    },
+    "expected_arrival_time": {
+      "type": ["datetime", "null"],
+      "description": "Arrival time at the final advertised destination from `MonitoredVehicleJourney/MonitoredCall/ExpectedArrivalTime`, recomputed by the operator AVL system from the observed position and the remaining running time. It is the realised counterpart of `destination_aimed_arrival_time`; the difference between the two is the reported delay. Null when the journey is not monitored.",
+      "semanticRole": "actualTime"
+    }
+  },
+  "required": [
+    "operator_ref",
+    "vehicle_ref",
+    "line_ref",
+    "direction_ref",
+    "published_line_name",
+    "vehicle_journey_ref",
+    "dated_vehicle_journey_ref",
+    "origin_ref",
+    "destination_ref",
+    "destination_name",
+    "monitored",
+    "recorded_at_time",
+    "valid_until_time",
+    "origin_aimed_departure_time",
+    "destination_aimed_arrival_time",
+    "expected_arrival_time"
+  ],
+  "additionalProperties": false
+}

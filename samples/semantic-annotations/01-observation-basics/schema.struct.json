@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/01-observation-basics",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureAlternateNames"],
+  "name": "RiverGaugingObservation",
+  "description": "A water-level reading from a river gauging station. Demonstrates observedProperty on the record type and the semanticRole values featureOfInterest, observingProcedure, observationValue, resultQuality, phenomenonTime, and resultTime.",
+  "type": "object",
+  "observedProperty": {
+    "reference": "https://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html#water_surface_height_above_reference_datum",
+    "kind": "cf-standard-name"
+  },
+  "properties": {
+    "stationId": {
+      "type": "string",
+      "description": "National identifier of the gauging station whose water level is observed.",
+      "semanticRole": "featureOfInterest"
+    },
+    "sensor": {
+      "type": "uri",
+      "description": "Instrument catalogue URI identifying the sensor and measurement procedure used to produce this reading.",
+      "semanticRole": "observingProcedure"
+    },
+    "waterLevel": {
+      "type": "double",
+      "description": "Height of the water surface above the station datum.",
+      "unit": "m",
+      "semanticRole": "observationValue"
+    },
+    "qualityFlag": {
+      "type": "string",
+      "description": "Quality classification assigned to this water-level reading by the data-processing system.",
+      "enum": ["provisional", "validated", "estimated", "suspect"],
+      "altenums": {
+        "lang:en": {
+          "provisional": "Provisional",
+          "validated": "Validated",
+          "estimated": "Estimated",
+          "suspect": "Suspect"
+        },
+        "description": {
+          "provisional": "Automatically ingested and not yet reviewed; the value may change.",
+          "validated": "Reviewed against the station record and accepted as final.",
+          "estimated": "Filled by the processing system from neighbouring readings rather than measured.",
+          "suspect": "Failed an automated range or rate-of-change test and should not be used without review."
+        }
+      },
+      "semanticRole": "resultQuality"
+    },
+    "measuredAt": {
+      "type": "datetime",
+      "description": "Instant at which the stated water level applied at the station.",
+      "semanticRole": "phenomenonTime"
+    },
+    "publishedAt": {
+      "type": "datetime",
+      "description": "Instant at which the result became available from the data-processing system.",
+      "semanticRole": "resultTime"
+    }
+  },
+  "required": ["stationId", "sensor", "waterLevel", "qualityFlag", "measuredAt", "publishedAt"],
+  "additionalProperties": false
+}

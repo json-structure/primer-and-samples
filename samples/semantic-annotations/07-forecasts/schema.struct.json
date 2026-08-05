@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/07-forecasts",
+  "$uses": ["JSONStructureSemanticAnnotations"],
+  "name": "RiverStageForecastBulletin",
+  "description": "A forecast bulletin for a river gauging station containing several lead-time entries. A forecast is an observation whose result time precedes its phenomenon time; the phenomenon-time roles used in each entry are the same as for any other observation, and nothing about those roles restricts them to positions that have already elapsed. The cadence on the bulletin issue time describes expected producer behaviour across successive bulletins; it does not assert that a successor bulletin exists or that any phenomenon-time window is complete.",
+  "type": "object",
+  "observedProperty": {
+    "reference": "https://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html#water_surface_height_above_reference_datum",
+    "kind": "cf-standard-name"
+  },
+  "properties": {
+    "bulletinId": {
+      "type": "uuid",
+      "description": "Unique identifier for this bulletin."
+    },
+    "stationId": {
+      "type": "string",
+      "description": "Identifier of the gauging station whose stage is forecast.",
+      "semanticRole": "featureOfInterest"
+    },
+    "issuedAt": {
+      "type": "datetime",
+      "description": "Temporal position when this bulletin was issued. This is the forecast-specific result time; it precedes the phenomenon-time windows of every entry in the bulletin. A cadence of PT6H states the expected issuance interval; it does not prove that a successor bulletin will exist.",
+      "semanticRole": "forecastIssueTime",
+      "cadence": {
+        "kind": "fixed",
+        "period": "PT6H"
+      }
+    },
+    "forecasts": {
+      "type": "array",
+      "description": "Sequence of forecast entries, one per lead time, in ascending lead-duration order.",
+      "items": {
+        "type": "object",
+        "description": "One forecast entry stating predicted river stage over a phenomenon-time window. The phenomenonTimeStart and phenomenonTimeEnd roles identify what the entry is about, using the same roles as for any non-forecast interval observation.",
+        "properties": {
+          "windowStart": {
+            "type": "datetime",
+            "description": "Start of the phenomenon-time period this entry describes.",
+            "semanticRole": "phenomenonTimeStart"
+          },
+          "windowEnd": {
+            "type": "datetime",
+            "description": "End of the phenomenon-time period this entry describes.",
+            "semanticRole": "phenomenonTimeEnd"
+          },
+          "leadDuration": {
+            "type": "duration",
+            "description": "Duration from the bulletin issue instant to the start of the phenomenon-time window this entry describes.",
+            "semanticRole": "forecastLeadDuration"
+          },
+          "predictedStage": {
+            "type": "double",
+            "unit": "m",
+            "description": "Predicted mean river stage over the phenomenon-time window, produced by a hydrological ensemble model.",
+            "semanticRole": "observationValue",
+            "derivation": "modeled",
+            "phenomenonTimeRelation": "interval"
+          }
+        },
+        "required": [
+          "windowStart",
+          "windowEnd",
+          "leadDuration",
+          "predictedStage"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "bulletinId",
+    "stationId",
+    "issuedAt",
+    "forecasts"
+  ],
+  "additionalProperties": false
+}

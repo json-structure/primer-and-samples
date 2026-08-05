@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/12-bikeshare-station-status",
+  "$uses": ["JSONStructureSemanticAnnotations"],
+  "name": "StationStatus",
+  "description": "Near-real-time station availability data from the GBFS `station_status.json` feed. Each record reports the current inventory of rentable vehicles and available docks together with boolean operating flags and the upstream `last_reported` timestamp for the station. Derived from the GBFS bikeshare feeder schema published in the xRegistry catalogue. The sample demonstrates event-driven publication and counted quantities: an onChange cadence on the station report time, count statistics on the vehicle and dock inventories, status members for the installed, renting and returning flags, the station as the feature of interest, the distinction between the phenomenon time at which the operator backend last observed the station and the result time at which the feed document was assembled, and a temporalReferenceSystem binding for the POSIX second counts that carry both.",
+  "type": "object",
+  "concepts": [
+    {
+      "reference": "http://www.w3.org/ns/sosa/Observation",
+      "kind": "owl-class"
+    }
+  ],
+  "observedProperty": {
+    "reference": "https://catalog.example.org/observable-properties/bikeshare-station-availability/v1",
+    "kind": "example-catalog"
+  },
+  "properties": {
+    "system_id": {
+      "type": "string",
+      "description": "Stable identifier for the GBFS system that publishes this station status record."
+    },
+    "station_id": {
+      "type": "string",
+      "description": "Stable station identifier from the `station_id` field in `station_status.json`, matching the corresponding `StationInformation` event. It identifies the docking station whose inventory and operating state this record describes.",
+      "semanticRole": "featureOfInterest",
+      "concepts": [
+        {
+          "reference": "http://purl.org/dc/terms/identifier",
+          "kind": "dcterms-property"
+        }
+      ]
+    },
+    "num_bikes_available": {
+      "type": "integer",
+      "description": "Current number of rentable bikes or vehicles available at the station from the `num_bikes_available` field in `station_status.json`. It is a count over the vehicles present and rentable at the station at the reported instant.",
+      "minimum": 0,
+      "semanticRole": "observationValue",
+      "phenomenonTimeRelation": "untilNext",
+      "derivation": "statistic",
+      "statistic": "count",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Count",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "num_docks_available": {
+      "type": ["integer", "null"],
+      "description": "Current number of empty docks or parking spaces available for return at the station from `num_docks_available`. Some operators omit this field, in which case the bridge emits null. It is a count over the docks free to accept a return at the reported instant.",
+      "semanticRole": "observationValue",
+      "phenomenonTimeRelation": "untilNext",
+      "derivation": "statistic",
+      "statistic": "count",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Count",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "num_ebikes_available": {
+      "type": ["integer", "null"],
+      "description": "Current number of electric bikes available at the station from `num_ebikes_available` when the operator distinguishes e-bikes from the aggregate bike count. It is a count over a subset of the vehicles counted by `num_bikes_available`.",
+      "semanticRole": "observationValue",
+      "phenomenonTimeRelation": "untilNext",
+      "derivation": "statistic",
+      "statistic": "count",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Count",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "is_installed": {
+      "type": "boolean",
+      "description": "Boolean flag indicating whether the station is physically installed, normalized from the GBFS `is_installed` value.",
+      "semanticRole": "status"
+    },
+    "is_renting": {
+      "type": "boolean",
+      "description": "Boolean flag indicating whether the station is currently accepting rentals, normalized from the GBFS `is_renting` value.",
+      "semanticRole": "status"
+    },
+    "is_returning": {
+      "type": "boolean",
+      "description": "Boolean flag indicating whether the station is currently accepting vehicle returns, normalized from the GBFS `is_returning` value.",
+      "semanticRole": "status"
+    },
+    "last_reported": {
+      "type": "integer",
+      "description": "POSIX timestamp from the GBFS `last_reported` field representing when the operator backend last received a status update for this station. It is the instant to which the reported inventory and operating flags apply, and the operator advances it only when the reported state of the station changes.",
+      "unit": "s",
+      "minimum": 0,
+      "semanticRole": "phenomenonTime",
+      "cadence": {
+        "kind": "onChange"
+      },
+      "temporalReferenceSystem": {
+        "reference": "http://www.opengis.net/def/crs/OGC/0/UnixTime",
+        "kind": "ogc-temporal-crs",
+        "sortOrder": "forward"
+      }
+    },
+    "last_updated": {
+      "type": "integer",
+      "description": "POSIX timestamp from the GBFS `last_updated` field at the head of the `station_status.json` document, representing when the publisher last assembled the feed. It is the instant at which this record became available to consumers and never precedes `last_reported`.",
+      "unit": "s",
+      "minimum": 0,
+      "semanticRole": "resultTime",
+      "temporalReferenceSystem": {
+        "reference": "http://www.opengis.net/def/crs/OGC/0/UnixTime",
+        "kind": "ogc-temporal-crs",
+        "sortOrder": "forward"
+      }
+    }
+  },
+  "required": [
+    "system_id",
+    "station_id",
+    "num_bikes_available",
+    "is_installed",
+    "is_renting",
+    "is_returning",
+    "last_reported",
+    "last_updated"
+  ],
+  "additionalProperties": false
+}

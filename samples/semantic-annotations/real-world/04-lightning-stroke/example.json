@@ -1,0 +1,22 @@
+{
+  "source_id": 1,
+  "stroke_id": "5581324",
+  "event_time": "2026-07-29T14:23:41.317Z",
+  "position": {
+    "latitude": 51.2417,
+    "longitude": 6.7853
+  },
+  "accuracy_diameter_m": 3200.0,
+  "detector_participations": [
+    { "station_id": 1284, "status": 0 },
+    { "station_id": 2317, "status": 0 },
+    { "station_id": 916, "status": 2 },
+    { "station_id": 3045, "status": 0 },
+    { "station_id": 1770, "status": 0 },
+    { "station_id": 2688, "status": 1 }
+  ],
+  "server_id": 3,
+  "server_delay_ms": 1180,
+  "geohash5": "u1hcv",
+  "geohash7": "u1hcvxq"
+}

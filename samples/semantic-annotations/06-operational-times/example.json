@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.example.org/semantic-annotations/06-operational-times",
+  "runId": "f3a8c2e1-9d7b-4f5a-b6e0-2c4d8e6f1a3b",
+  "samplingStation": "USGS-07010000",
+  "scheduledSampleTime": "2026-07-18T08:00:00Z",
+  "actualSampleTime": "2026-07-18T08:14:33Z",
+  "sampledAt": "2026-07-18T08:14:33Z",
+  "analysisCompletedAt": "2026-07-18T16:45:00Z",
+  "warehouseLoadedAt": "2026-07-18T17:03:22Z",
+  "specificConductance": 412.5,
+  "runStatus": "ingested"
+}

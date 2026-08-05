@@ -1,0 +1,18 @@
+{
+  "station_id": "41001",
+  "latitude": 34.724,
+  "longitude": -72.317,
+  "timestamp": "2026-07-30T11:50:00Z",
+  "wind_direction": 212.0,
+  "wind_speed": 7.2,
+  "gust": 9.3,
+  "wave_height": 1.8,
+  "dominant_wave_period": 8.3,
+  "average_wave_period": 5.9,
+  "mean_wave_direction": 205.0,
+  "pressure": 1016.4,
+  "air_temperature": 26.1,
+  "water_temperature": 27.4,
+  "dewpoint": 22.8,
+  "pressure_tendency": -0.7
+}

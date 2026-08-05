@@ -1,0 +1,338 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/15-pollen-forecast",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureAlternateNames"],
+  "name": "PollenForecast",
+  "description": "A forecast from Germany's Deutscher Wetterdienst (DWD) for one area or station. It carries pollen exposure forecasts by region and plant type for the period published by the upstream source. Derived from the dwd-pollenflug feeder schema published in the xRegistry catalogue. The upstream record is flat: it carries three columns per taxon, named today, tomorrow and the day after, so the lead time is encoded in the property name and cannot be annotated. The sample restructures that record into a bulletin header plus an array of one entry per lead, which is the intended demonstration: the lead is then a value carried once per entry and takes forecastLeadDuration, and each entry states the phenomenon-time day it describes with phenomenonTimeStart and phenomenonTimeEnd. The issue timestamp takes forecastIssueTime and carries a fixed daily cadence at the DWD issue rate; the announced next issue takes scheduledTime; the window during which the bulletin is in force takes effectiveTimeStart and effectiveTimeEnd, which is a different axis from the days the forecast describes. The severity index values are produced by the DWD medical-meteorology model and are therefore modeled, and each result member names its pollen taxon with observedProperty.",
+  "type": "object",
+  "properties": {
+    "region_id": {
+      "type": "string",
+      "description": "Unique numeric identifier for the forecast area. Same identity model as Region: uses partregion_id when the area is a sub-region, otherwise uses the main region_id. The forecast area is the feature the bulletin is about.",
+      "semanticRole": "featureOfInterest",
+      "concepts": [
+        {
+          "reference": "http://purl.org/dc/terms/spatial",
+          "kind": "dcterms-property"
+        }
+      ]
+    },
+    "region_name": {
+      "type": "string",
+      "description": "Display name of the forecast area. Uses partregion_name when available, otherwise region_name."
+    },
+    "sender": {
+      "type": "string",
+      "description": "Issuing organization as stated in the DWD API response, typically 'Deutscher Wetterdienst - Medizin-Meteorologie'."
+    },
+    "last_update": {
+      "type": "datetime",
+      "description": "Timestamp of the last forecast update as published by DWD. The upstream value is a string carrying the German suffix 'Uhr', for example '2026-07-27 11:00 Uhr'; it is normalized here to a temporal position so that the forecast-issue role has a value whose type encodes one. This is the forecast-specific result time and precedes the phenomenon-time day of every entry in the bulletin. DWD issues the pollen bulletin once a day; the cadence states that expected issuance interval and does not assert that a successor bulletin exists.",
+      "semanticRole": "forecastIssueTime",
+      "cadence": {
+        "kind": "fixed",
+        "period": "P1D"
+      }
+    },
+    "next_update": {
+      "type": "datetime",
+      "description": "Timestamp of the next expected forecast update as published by DWD, normalized from the upstream 'Uhr' string form. It is the planned position of a future issuance activity and states nothing about the phenomenon or about this result.",
+      "semanticRole": "scheduledTime"
+    },
+    "valid_from": {
+      "type": "datetime",
+      "description": "Start of the period during which this bulletin is in force and its use is intended. This axis is independent of the days the forecast describes: the bulletin is superseded at the next issuance whether or not the pollen days it covers have elapsed.",
+      "semanticRole": "effectiveTimeStart"
+    },
+    "valid_until": {
+      "type": "datetime",
+      "description": "End of the period during which this bulletin is in force. It does not bound any forecast day and does not state that the third-day entry has expired.",
+      "semanticRole": "effectiveTimeEnd"
+    },
+    "forecasts": {
+      "type": "array",
+      "description": "Sequence of forecast entries, one per lead, in ascending lead-duration order. The upstream feed carries these as today, tomorrow and day-after column groups on a single flat record; they are lifted into entries here so that the lead can be stated once per entry as a value rather than being buried in property names.",
+      "items": {
+        "type": "object",
+        "description": "One forecast entry stating the modeled pollen exposure index for every reported taxon over one calendar day in the forecast area.",
+        "properties": {
+          "lead_duration": {
+            "type": "duration",
+            "description": "Duration from the bulletin issue instant to the start of the day this entry describes. P0D is the upstream 'today' column group, P1D is 'tomorrow', and P2D is 'the day after tomorrow'.",
+            "semanticRole": "forecastLeadDuration"
+          },
+          "day_start": {
+            "type": "datetime",
+            "description": "Start of the phenomenon-time day this entry describes, in the local time of the forecast area.",
+            "semanticRole": "phenomenonTimeStart"
+          },
+          "day_end": {
+            "type": "datetime",
+            "description": "End of the phenomenon-time day this entry describes.",
+            "semanticRole": "phenomenonTimeEnd"
+          },
+          "hazel": {
+            "type": "string",
+            "description": "Pollen intensity for Hasel (hazel) on the DWD seven-step index. The index is produced by the DWD medical-meteorology forecast model from phenological, emission and dispersion inputs; it is not counted at a trap. A taxon the bulletin does not report for this area and day is omitted.",
+            "enum": ["0", "0-1", "1", "1-2", "2", "2-3", "3"],
+            "altenums": {
+              "lang:en": {
+                "0": "None",
+                "0-1": "None to Low",
+                "1": "Low",
+                "1-2": "Low to Medium",
+                "2": "Medium",
+                "2-3": "Medium to High",
+                "3": "High"
+              },
+              "description": {
+                "0": "No pollen load expected.",
+                "0-1": "Between no load and a low load.",
+                "1": "Low load; sensitised people may notice symptoms.",
+                "1-2": "Between a low and a medium load.",
+                "2": "Medium load; most sensitised people notice symptoms.",
+                "2-3": "Between a medium and a high load.",
+                "3": "High load; sensitised people can expect strong symptoms."
+              }
+            },
+            "semanticRole": "observationValue",
+            "derivation": "modeled",
+            "phenomenonTimeRelation": "interval",
+            "observedProperty": {
+              "reference": "https://species.wikimedia.org/wiki/Corylus",
+              "kind": "wikispecies-taxon"
+            }
+          },
+          "alder": {
+            "type": "string",
+            "description": "Pollen intensity for Erle (alder), on the same seven-step index and from the same model.",
+            "enum": ["0", "0-1", "1", "1-2", "2", "2-3", "3"],
+            "altenums": {
+              "lang:en": {
+                "0": "None",
+                "0-1": "None to Low",
+                "1": "Low",
+                "1-2": "Low to Medium",
+                "2": "Medium",
+                "2-3": "Medium to High",
+                "3": "High"
+              },
+              "description": {
+                "0": "No pollen load expected.",
+                "0-1": "Between no load and a low load.",
+                "1": "Low load; sensitised people may notice symptoms.",
+                "1-2": "Between a low and a medium load.",
+                "2": "Medium load; most sensitised people notice symptoms.",
+                "2-3": "Between a medium and a high load.",
+                "3": "High load; sensitised people can expect strong symptoms."
+              }
+            },
+            "semanticRole": "observationValue",
+            "derivation": "modeled",
+            "phenomenonTimeRelation": "interval",
+            "observedProperty": {
+              "reference": "https://species.wikimedia.org/wiki/Alnus",
+              "kind": "wikispecies-taxon"
+            }
+          },
+          "birch": {
+            "type": "string",
+            "description": "Pollen intensity for Birke (birch), on the same seven-step index and from the same model.",
+            "enum": ["0", "0-1", "1", "1-2", "2", "2-3", "3"],
+            "altenums": {
+              "lang:en": {
+                "0": "None",
+                "0-1": "None to Low",
+                "1": "Low",
+                "1-2": "Low to Medium",
+                "2": "Medium",
+                "2-3": "Medium to High",
+                "3": "High"
+              },
+              "description": {
+                "0": "No pollen load expected.",
+                "0-1": "Between no load and a low load.",
+                "1": "Low load; sensitised people may notice symptoms.",
+                "1-2": "Between a low and a medium load.",
+                "2": "Medium load; most sensitised people notice symptoms.",
+                "2-3": "Between a medium and a high load.",
+                "3": "High load; sensitised people can expect strong symptoms."
+              }
+            },
+            "semanticRole": "observationValue",
+            "derivation": "modeled",
+            "phenomenonTimeRelation": "interval",
+            "observedProperty": {
+              "reference": "https://species.wikimedia.org/wiki/Betula",
+              "kind": "wikispecies-taxon"
+            }
+          },
+          "ash": {
+            "type": "string",
+            "description": "Pollen intensity for Esche (ash), on the same seven-step index and from the same model.",
+            "enum": ["0", "0-1", "1", "1-2", "2", "2-3", "3"],
+            "altenums": {
+              "lang:en": {
+                "0": "None",
+                "0-1": "None to Low",
+                "1": "Low",
+                "1-2": "Low to Medium",
+                "2": "Medium",
+                "2-3": "Medium to High",
+                "3": "High"
+              },
+              "description": {
+                "0": "No pollen load expected.",
+                "0-1": "Between no load and a low load.",
+                "1": "Low load; sensitised people may notice symptoms.",
+                "1-2": "Between a low and a medium load.",
+                "2": "Medium load; most sensitised people notice symptoms.",
+                "2-3": "Between a medium and a high load.",
+                "3": "High load; sensitised people can expect strong symptoms."
+              }
+            },
+            "semanticRole": "observationValue",
+            "derivation": "modeled",
+            "phenomenonTimeRelation": "interval",
+            "observedProperty": {
+              "reference": "https://species.wikimedia.org/wiki/Fraxinus",
+              "kind": "wikispecies-taxon"
+            }
+          },
+          "grasses": {
+            "type": "string",
+            "description": "Pollen intensity for Gräser (grasses), on the same seven-step index and from the same model. In the upstream API this field is named 'Graeser'.",
+            "enum": ["0", "0-1", "1", "1-2", "2", "2-3", "3"],
+            "altenums": {
+              "lang:en": {
+                "0": "None",
+                "0-1": "None to Low",
+                "1": "Low",
+                "1-2": "Low to Medium",
+                "2": "Medium",
+                "2-3": "Medium to High",
+                "3": "High"
+              },
+              "description": {
+                "0": "No pollen load expected.",
+                "0-1": "Between no load and a low load.",
+                "1": "Low load; sensitised people may notice symptoms.",
+                "1-2": "Between a low and a medium load.",
+                "2": "Medium load; most sensitised people notice symptoms.",
+                "2-3": "Between a medium and a high load.",
+                "3": "High load; sensitised people can expect strong symptoms."
+              }
+            },
+            "semanticRole": "observationValue",
+            "derivation": "modeled",
+            "phenomenonTimeRelation": "interval",
+            "observedProperty": {
+              "reference": "https://species.wikimedia.org/wiki/Poaceae",
+              "kind": "wikispecies-taxon"
+            }
+          },
+          "rye": {
+            "type": "string",
+            "description": "Pollen intensity for Roggen (rye), on the same seven-step index and from the same model.",
+            "enum": ["0", "0-1", "1", "1-2", "2", "2-3", "3"],
+            "altenums": {
+              "lang:en": {
+                "0": "None",
+                "0-1": "None to Low",
+                "1": "Low",
+                "1-2": "Low to Medium",
+                "2": "Medium",
+                "2-3": "Medium to High",
+                "3": "High"
+              },
+              "description": {
+                "0": "No pollen load expected.",
+                "0-1": "Between no load and a low load.",
+                "1": "Low load; sensitised people may notice symptoms.",
+                "1-2": "Between a low and a medium load.",
+                "2": "Medium load; most sensitised people notice symptoms.",
+                "2-3": "Between a medium and a high load.",
+                "3": "High load; sensitised people can expect strong symptoms."
+              }
+            },
+            "semanticRole": "observationValue",
+            "derivation": "modeled",
+            "phenomenonTimeRelation": "interval",
+            "observedProperty": {
+              "reference": "https://species.wikimedia.org/wiki/Secale_cereale",
+              "kind": "wikispecies-taxon"
+            }
+          },
+          "mugwort": {
+            "type": "string",
+            "description": "Pollen intensity for Beifuß (mugwort), on the same seven-step index and from the same model. In the upstream API this field is named 'Beifuss'.",
+            "enum": ["0", "0-1", "1", "1-2", "2", "2-3", "3"],
+            "altenums": {
+              "lang:en": {
+                "0": "None",
+                "0-1": "None to Low",
+                "1": "Low",
+                "1-2": "Low to Medium",
+                "2": "Medium",
+                "2-3": "Medium to High",
+                "3": "High"
+              },
+              "description": {
+                "0": "No pollen load expected.",
+                "0-1": "Between no load and a low load.",
+                "1": "Low load; sensitised people may notice symptoms.",
+                "1-2": "Between a low and a medium load.",
+                "2": "Medium load; most sensitised people notice symptoms.",
+                "2-3": "Between a medium and a high load.",
+                "3": "High load; sensitised people can expect strong symptoms."
+              }
+            },
+            "semanticRole": "observationValue",
+            "derivation": "modeled",
+            "phenomenonTimeRelation": "interval",
+            "observedProperty": {
+              "reference": "https://species.wikimedia.org/wiki/Artemisia",
+              "kind": "wikispecies-taxon"
+            }
+          },
+          "ragweed": {
+            "type": "string",
+            "description": "Pollen intensity for Ambrosia (ragweed), on the same seven-step index and from the same model.",
+            "enum": ["0", "0-1", "1", "1-2", "2", "2-3", "3"],
+            "altenums": {
+              "lang:en": {
+                "0": "None",
+                "0-1": "None to Low",
+                "1": "Low",
+                "1-2": "Low to Medium",
+                "2": "Medium",
+                "2-3": "Medium to High",
+                "3": "High"
+              },
+              "description": {
+                "0": "No pollen load expected.",
+                "0-1": "Between no load and a low load.",
+                "1": "Low load; sensitised people may notice symptoms.",
+                "1-2": "Between a low and a medium load.",
+                "2": "Medium load; most sensitised people notice symptoms.",
+                "2-3": "Between a medium and a high load.",
+                "3": "High load; sensitised people can expect strong symptoms."
+              }
+            },
+            "semanticRole": "observationValue",
+            "derivation": "modeled",
+            "phenomenonTimeRelation": "interval",
+            "observedProperty": {
+              "reference": "https://species.wikimedia.org/wiki/Ambrosia",
+              "kind": "wikispecies-taxon"
+            }
+          }
+        },
+        "required": ["lead_duration", "day_start", "day_end"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["region_id", "region_name", "last_update", "next_update", "valid_from", "valid_until", "forecasts"],
+  "additionalProperties": false
+}

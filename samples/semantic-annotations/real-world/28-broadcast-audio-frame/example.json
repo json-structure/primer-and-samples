@@ -1,0 +1,13 @@
+{
+  "frame_index": "480000",
+  "main_l": 0.1273,
+  "main_r": 0.1319,
+  "main_c": 0.0642,
+  "main_lfe": 0.0088,
+  "main_ls": 0.0417,
+  "main_rs": 0.0455,
+  "commentary_l": 0.2011,
+  "commentary_r": 0.1984,
+  "programme_loudness": -23.0,
+  "sample_rate": 48000
+}

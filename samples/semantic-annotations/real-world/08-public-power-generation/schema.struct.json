@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/08-public-power-generation",
+  "$uses": ["JSONStructureSemanticAnnotations"],
+  "name": "PublicPower",
+  "description": "Net electricity generation by fuel type for a given country at a specific 15-minute interval. Sourced from the Energy-Charts /public_power endpoint (Fraunhofer ISE) which aggregates ENTSO-E transparency platform data. Each record represents one timestamp in the parallel-array response, with individual production types flattened into named fields in megawatts (MW). Negative values for hydro pumped storage consumption and cross-border trading indicate consumption or export. Derived from the energy-charts feeder schema published in the xRegistry catalogue. The sample demonstrates interval-integrated quantities: every production type is the mean power sustained across the quarter-hourly market time unit rather than an instantaneous reading, so each carries phenomenonTimeRelation interval with derivation statistic and statistic mean, while load is the total of all consumption in the market area and carries statistic sum, and residual load and the renewable share are deterministic calculations of the other members and carry derivation calculated. The interval boundaries are flattened into phenomenonTimeStart and phenomenonTimeEnd, the bidding-zone country code is the featureOfInterest, the record and each result member bind a QUDT quantity kind through observedProperty, and the interval start carries a fixed quarter-hourly cadence. Every result member is optional; a production type that the market area does not report is omitted from the record rather than nulled.",
+  "type": "object",
+  "observedProperty": {
+    "reference": "http://qudt.org/vocab/quantitykind/Power",
+    "kind": "qudt-quantity-kind"
+  },
+  "properties": {
+    "country": {
+      "type": "string",
+      "description": "ISO 3166-1 alpha-2 country code identifying the electricity market area (e.g. 'de' for Germany, 'fr' for France). Used as the query parameter in the Energy-Charts API. It identifies the bidding zone whose generation and load are reported by this record.",
+      "semanticRole": "featureOfInterest",
+      "concepts": [
+        {
+          "reference": "http://purl.org/dc/terms/identifier",
+          "kind": "dcterms-property"
+        }
+      ]
+    },
+    "timestamp": {
+      "type": "datetime",
+      "description": "UTC timestamp derived from the unix_seconds value returned by the Energy-Charts API. Marks the start of the 15-minute measurement interval. Intervals tile the day without gaps, so the producer is expected to publish one record per market area per quarter-hour slot.",
+      "semanticRole": "phenomenonTimeStart",
+      "cadence": {
+        "kind": "fixed",
+        "period": "PT15M"
+      }
+    },
+    "interval_end": {
+      "type": "datetime",
+      "description": "UTC timestamp marking the end of the 15-minute measurement interval. The interval is half-open: the end instant belongs to the following market time unit.",
+      "semanticRole": "phenomenonTimeEnd"
+    },
+    "biomass_mw": {
+      "type": "double",
+      "description": "Net generation from biomass power plants (MW). Includes solid biomass, biogas, and bioliquids. Corresponds to the 'Biomass' production type. The reported value is the mean power sustained across the quarter-hourly market time unit.",
+      "unit": "MW",
+      "symbol": "MW",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "fossil_brown_coal_lignite_mw": {
+      "type": "double",
+      "description": "Net generation from brown coal (lignite) power plants (MW). Lignite is a low-grade coal with high moisture content used primarily in Germany. Corresponds to the 'Fossil brown coal / lignite' production type. The reported value is the mean power sustained across the quarter-hourly market time unit.",
+      "unit": "MW",
+      "symbol": "MW",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "fossil_hard_coal_mw": {
+      "type": "double",
+      "description": "Net generation from hard coal power plants (MW). Hard coal (anthracite/bituminous) has higher energy density than lignite. Corresponds to the 'Fossil hard coal' production type. The reported value is the mean power sustained across the quarter-hourly market time unit.",
+      "unit": "MW",
+      "symbol": "MW",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "fossil_gas_mw": {
+      "type": "double",
+      "description": "Net generation from natural gas power plants (MW). Includes combined-cycle gas turbines (CCGT) and open-cycle gas turbines (OCGT). Corresponds to the 'Fossil gas' production type. The reported value is the mean power sustained across the quarter-hourly market time unit.",
+      "unit": "MW",
+      "symbol": "MW",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "nuclear_mw": {
+      "type": "double",
+      "description": "Net generation from nuclear power plants (MW). Not present for all countries (e.g. absent for Germany after nuclear phase-out). Corresponds to the 'Nuclear' production type when available. The reported value is the mean power sustained across the quarter-hourly market time unit.",
+      "unit": "MW",
+      "symbol": "MW",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "hydro_run_of_river_mw": {
+      "type": "double",
+      "description": "Net generation from run-of-river hydroelectric plants (MW). These plants generate electricity from the natural flow of rivers without significant storage. Corresponds to the 'Hydro Run-of-River' production type. The reported value is the mean power sustained across the quarter-hourly market time unit.",
+      "unit": "MW",
+      "symbol": "MW",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "hydro_water_reservoir_mw": {
+      "type": "double",
+      "description": "Net generation from reservoir hydroelectric plants (MW). These plants store water behind a dam and release it to generate electricity on demand. Corresponds to the 'Hydro water reservoir' production type. The reported value is the mean power sustained across the quarter-hourly market time unit.",
+      "unit": "MW",
+      "symbol": "MW",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "hydro_pumped_storage_mw": {
+      "type": "double",
+      "description": "Net generation from pumped-storage hydroelectric plants when generating (MW). Positive values indicate the plant is releasing stored water to generate electricity. Corresponds to the 'Hydro pumped storage' (generation) production type. The reported value is the mean power sustained across the quarter-hourly market time unit.",
+      "unit": "MW",
+      "symbol": "MW",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "hydro_pumped_storage_consumption_mw": {
+      "type": "double",
+      "description": "Net power consumed by pumped-storage hydroelectric plants (MW). Values are typically negative, indicating the plant is pumping water uphill (consuming electricity). Corresponds to the 'Hydro pumped storage consumption' production type. The reported value is the mean power sustained across the quarter-hourly market time unit.",
+      "unit": "MW",
+      "symbol": "MW",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "wind_offshore_mw": {
+      "type": "double",
+      "description": "Net generation from offshore wind turbines (MW). Offshore wind farms are located in bodies of water, typically on the continental shelf. Corresponds to the 'Wind offshore' production type. The reported value is the mean power sustained across the quarter-hourly market time unit.",
+      "unit": "MW",
+      "symbol": "MW",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "wind_onshore_mw": {
+      "type": "double",
+      "description": "Net generation from onshore wind turbines (MW). Onshore wind farms are located on land. Corresponds to the 'Wind onshore' production type. The reported value is the mean power sustained across the quarter-hourly market time unit.",
+      "unit": "MW",
+      "symbol": "MW",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "solar_mw": {
+      "type": "double",
+      "description": "Net generation from solar photovoltaic (PV) and concentrated solar power (CSP) plants (MW). Corresponds to the 'Solar' production type. The reported value is the mean power sustained across the quarter-hourly market time unit.",
+      "unit": "MW",
+      "symbol": "MW",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "cross_border_electricity_trading_mw": {
+      "type": "double",
+      "description": "Net cross-border electricity exchange (MW). Positive values indicate net imports; negative values indicate net exports. Corresponds to the 'Cross border electricity trading' production type. The reported value is the mean power sustained across the quarter-hourly market time unit.",
+      "unit": "MW",
+      "symbol": "MW",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "load_mw": {
+      "type": "double",
+      "description": "Total electricity grid load (demand) for the country (MW). Represents the total of all electricity consumption in the market area across the quarter-hourly market time unit. Corresponds to the 'Load' production type. The summary function is a total over the set of metered consumption in the bidding zone, which is what distinguishes this member from the per-production-type means; it is not an additional average of them.",
+      "unit": "MW",
+      "symbol": "MW",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "sum",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "residual_load_mw": {
+      "type": "double",
+      "description": "Residual load (MW). Calculated as total load minus generation from variable renewable sources (wind and solar). A high residual load indicates that conventional or dispatchable power plants must cover most of the demand. Corresponds to the 'Residual load' production type. The subtraction is a deterministic calculation that no named summary function describes.",
+      "unit": "MW",
+      "symbol": "MW",
+      "semanticRole": "observationValue",
+      "derivation": "calculated",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "renewable_share_of_generation_pct": {
+      "type": "double",
+      "description": "Percentage of total electricity generation that comes from renewable sources (0-100). Calculated by dividing renewable generation by total generation over the same market time unit. Corresponds to the 'Renewable share of generation' production type. The ratio is a deterministic calculation that no named summary function describes.",
+      "unit": "%",
+      "semanticRole": "observationValue",
+      "derivation": "calculated",
+      "phenomenonTimeRelation": "interval",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/DimensionlessRatio",
+        "kind": "qudt-quantity-kind"
+      }
+    }
+  },
+  "required": [
+    "country",
+    "timestamp",
+    "interval_end"
+  ],
+  "additionalProperties": false
+}

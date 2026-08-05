@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/13-coordinate-reference-systems",
+  "$uses": ["JSONStructureSemanticAnnotations"],
+  "name": "MonitoringStationRecord",
+  "description": "A hydrological monitoring station record demonstrating three coordinate reference system bindings. Two nested objects carry the same horizontal position under two different encodings — OGC CRS84 (longitude-first axis order) and EPSG:4326 (latitude-first axis order) — so that the axis-order contrast is explicit in each coordinates array. The enclosing record carries the EPSG:5703 NAVD88 vertical CRS binding for the station benchmark elevation. Because an object or tuple may carry at most one coordinateReferenceSystem annotation, any second coordinate binding must be modelled as a nested object; both horizontal position objects are nested here for exactly that reason.",
+  "type": "object",
+  "coordinateReferenceSystem": {
+    "reference": "http://www.opengis.net/def/crs/EPSG/0/5703",
+    "kind": "ogc-crs",
+    "coordinates": ["benchmarkElevation"]
+  },
+  "properties": {
+    "stationId": {
+      "type": "string",
+      "description": "USGS or agency-assigned station identifier"
+    },
+    "stationName": {
+      "type": "string",
+      "description": "Human-readable name of the monitoring station"
+    },
+    "reportedAt": {
+      "type": "datetime",
+      "description": "RFC 3339 date-time at which this record was published"
+    },
+    "benchmarkElevation": {
+      "type": "double",
+      "unit": "m",
+      "description": "Station benchmark elevation in metres. The axis direction and datum origin are established by the referenced EPSG:5703 definition; this annotation identifies the binding and does not authorize comparison with heights in other vertical datums."
+    },
+    "crs84Position": {
+      "type": "object",
+      "description": "Horizontal position encoded in OGC CRS84. Axis 1 of CRS84 is longitude (degrees East) and axis 2 is latitude (degrees North), so the coordinates array maps lon to axis 1 and lat to axis 2. The numeric values in an instance are identical to those in epsg4326Position; the coordinates array is the sole record of which property supplies which axis.",
+      "coordinateReferenceSystem": {
+        "reference": "http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+        "kind": "ogc-crs",
+        "coordinates": ["lon", "lat"]
+      },
+      "properties": {
+        "lon": {
+          "type": "double",
+          "unit": "deg",
+          "description": "Geodetic longitude in decimal degrees, positive East of the prime meridian"
+        },
+        "lat": {
+          "type": "double",
+          "unit": "deg",
+          "description": "Geodetic latitude in decimal degrees, positive North of the equator"
+        }
+      },
+      "required": ["lon", "lat"],
+      "additionalProperties": false
+    },
+    "epsg4326Position": {
+      "type": "object",
+      "description": "The same physical point encoded in EPSG:4326. Axis 1 of EPSG:4326 is latitude (degrees North) and axis 2 is longitude (degrees East), which is the reverse of CRS84. The coordinates array therefore maps lat to axis 1 and lon to axis 2. The numeric values of lat and lon are the same as in crs84Position; only the axis assignment stated by coordinates differs.",
+      "coordinateReferenceSystem": {
+        "reference": "http://www.opengis.net/def/crs/EPSG/0/4326",
+        "kind": "ogc-crs",
+        "coordinates": ["lat", "lon"]
+      },
+      "properties": {
+        "lat": {
+          "type": "double",
+          "unit": "deg",
+          "description": "Geodetic latitude in decimal degrees, positive North of the equator"
+        },
+        "lon": {
+          "type": "double",
+          "unit": "deg",
+          "description": "Geodetic longitude in decimal degrees, positive East of the prime meridian"
+        }
+      },
+      "required": ["lat", "lon"],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "stationId",
+    "stationName",
+    "reportedAt",
+    "benchmarkElevation",
+    "crs84Position",
+    "epsg4326Position"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/11-route-travel-time",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureAlternateNames"],
+  "name": "RouteTravelTimeObservation",
+  "description": "Travel time observation for a road segment from the Dutch NDW DATEX II traveltime feed. Contains the actual measured travel time and the static free-flow reference time for a route measurement site. Derived from the NDW road-traffic feeder schemas published in the xRegistry catalogue; the TravelTimeObservation record and the geometry of the corresponding RouteMeasurementSite reference record are deliberately merged into a single record here, because a linear reference is only checkable when the identifier of the linear element and the offsets along it travel with the result. The sample demonstrates a linearReferenceSystem binding of kind lrs-network over the road identifier, the start and end offsets and the carriageway direction, an interval phenomenonTimeRelation against the phenomenonTimeStart and phenomenonTimeEnd boundaries of the aggregation window, a mean statistic derivation on the travel time, resultQuality members for the supplier confidence figures, and a fixed cadence matching the one-minute NDW publication rate.",
+  "type": "object",
+  "concepts": [
+    {
+      "reference": "http://datex2.eu/schema/3/roadTrafficData#TravelTimeData",
+      "kind": "datex2-complex-type"
+    }
+  ],
+  "observedProperty": {
+    "reference": "https://catalog.example.org/observable-properties/route-travel-time/v1",
+    "kind": "example-catalog"
+  },
+  "linearReferenceSystem": {
+    "reference": "https://www.nationaalwegenbestand.nl/",
+    "kind": "lrs-network",
+    "linearElement": "road_name",
+    "measure": "start_offset",
+    "measureEnd": "end_offset",
+    "direction": "carriageway_direction"
+  },
+  "properties": {
+    "measurement_site_id": {
+      "type": "string",
+      "description": "Unique identifier of the NDW route measurement site, from the DATEX II measurementSiteReference id attribute. It identifies the road section whose travel time is observed.",
+      "semanticRole": "featureOfInterest",
+      "concepts": [
+        {
+          "reference": "http://purl.org/dc/terms/identifier",
+          "kind": "dcterms-property"
+        }
+      ]
+    },
+    "name": {
+      "type": ["string", "null"],
+      "description": "Human-readable name of the route measurement site from the DATEX II measurementSiteName element."
+    },
+    "measurement_site_type": {
+      "type": ["string", "null"],
+      "description": "Measurement method type, from the DATEX II measurementEquipmentTypeUsed element. Example values: detectLoop, floatingCar. It states the procedure by which the travel time for the section was obtained.",
+      "semanticRole": "observingProcedure"
+    },
+    "road_name": {
+      "type": "string",
+      "description": "Road identifier for the route section, from the DATEX II road reference of the measurement site record. Example values: A1, A10, N44. It identifies the linear element of the national road network along which the section is measured.",
+      "examples": ["A10", "A1", "N44"]
+    },
+    "carriageway_direction": {
+      "type": "string",
+      "description": "Carriageway of the identified road along which the section runs, using the direction vocabulary of the national road network. It qualifies the direction of travel and does not alter the increasing-measure direction of the network.",
+      "enum": ["positive", "negative"],
+      "altenums": {
+        "lang:en": {
+          "positive": "Positive Direction",
+          "negative": "Negative Direction"
+        },
+        "description": {
+          "positive": "The carriageway on which travel runs in the direction of increasing measure along the linear element.",
+          "negative": "The carriageway on which travel runs in the direction of decreasing measure along the linear element."
+        }
+      }
+    },
+    "start_offset": {
+      "type": "double",
+      "description": "Distance in metres from the origin of the identified road to the start of the measured section, as maintained by the national road network register.",
+      "unit": "m"
+    },
+    "end_offset": {
+      "type": "double",
+      "description": "Distance in metres from the origin of the identified road to the end of the measured section, expressed in the same measure as start_offset.",
+      "unit": "m"
+    },
+    "length_metres": {
+      "type": "double",
+      "description": "Length of the route section in metres, from the DATEX II length element. It is the length of the driven carriageway and need not equal the difference of the two offsets where the register and the carriageway geometry diverge.",
+      "unit": "m"
+    },
+    "period": {
+      "type": "int32",
+      "description": "Measurement aggregation period in seconds, from the DATEX II measurementSpecificCharacteristics period element. It is the nominal length of the window bounded by period_start and period_end.",
+      "unit": "s"
+    },
+    "period_start": {
+      "type": "datetime",
+      "description": "Instant at which the aggregation window over which the travel time was computed opens, derived from measurement_time and the declared period.",
+      "semanticRole": "phenomenonTimeStart"
+    },
+    "period_end": {
+      "type": "datetime",
+      "description": "Instant at which the aggregation window over which the travel time was computed closes. The window is half-open and does not include this instant.",
+      "semanticRole": "phenomenonTimeEnd"
+    },
+    "measurement_time": {
+      "type": "datetime",
+      "description": "Timestamp of the measurement in ISO 8601 UTC format, from the DATEX II measurementTimeDefault element. It is the instant at which the aggregated result became available from the NDW publication service.",
+      "semanticRole": "resultTime",
+      "cadence": {
+        "kind": "fixed",
+        "period": "PT1M"
+      }
+    },
+    "duration": {
+      "type": "double",
+      "description": "Measured travel time in seconds for the route section, from the DATEX II travelTime/duration element. It is the mean travel time over the vehicles observed in the aggregation window. Omitted if the upstream value was negative (invalid).",
+      "unit": "s",
+      "semanticRole": "observationValue",
+      "phenomenonTimeRelation": "interval",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Time",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "reference_duration": {
+      "type": "double",
+      "description": "Free-flow reference travel time in seconds for the route section, from the DATEX II basicDataReferenceValue/travelTimeData/travelTime/duration extension element. It is a static property of the section and is not recomputed for each aggregation window. Omitted if not provided.",
+      "unit": "s",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Time",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "free_flow_ratio": {
+      "type": "double",
+      "description": "Ratio of duration to reference_duration for the section, computed by the consumer-facing bridge from the two travel times carried in this record. A value of one means the section ran at the free-flow reference time over the window; larger values indicate congestion.",
+      "minimum": 0,
+      "semanticRole": "observationValue",
+      "phenomenonTimeRelation": "interval",
+      "derivation": "calculated"
+    },
+    "accuracy": {
+      "type": "double",
+      "description": "Accuracy percentage of the travel time measurement as a value between 0 and 100, from the DATEX II travelTime accuracy attribute.",
+      "unit": "%",
+      "minimum": 0,
+      "maximum": 100,
+      "semanticRole": "resultQuality"
+    },
+    "data_quality": {
+      "type": "double",
+      "description": "Supplier-calculated data quality score as a value between 0 and 100, from the DATEX II supplierCalculatedDataQuality attribute. It expresses the confidence of the supplier in the computation method applied over the window.",
+      "unit": "%",
+      "minimum": 0,
+      "maximum": 100,
+      "semanticRole": "resultQuality"
+    },
+    "number_of_input_values": {
+      "type": "int32",
+      "description": "Number of input observations used to compute the travel time, from the DATEX II numberOfInputValuesUsed attribute. It qualifies the result by stating the size of the sample the mean was taken over.",
+      "minimum": 0,
+      "semanticRole": "resultQuality"
+    }
+  },
+  "required": ["measurement_site_id", "name", "measurement_site_type", "road_name", "carriageway_direction", "start_offset", "end_offset", "period_start", "period_end", "measurement_time"],
+  "additionalProperties": false
+}

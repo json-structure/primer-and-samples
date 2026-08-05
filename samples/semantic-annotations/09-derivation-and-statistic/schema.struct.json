@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/09-derivation-and-statistic",
+  "$uses": ["JSONStructureSemanticAnnotations"],
+  "name": "DailyWeatherSummary",
+  "description": "Daily weather summary for a meteorological station, demonstrating the biconditional between derivation and statistic: a statistic keyword MUST be present when and only when derivation is 'statistic'. Temperature extremes and the daily mean are statistics over the 24-hour period; precipitation total is a sum statistic over an accumulation period; station pressure at the end-of-day snapshot is a direct measurement; dew-point depression at the snapshot is a calculated value; and the following-day precipitation probability is a modeled value. The two temporal axes are independent: dayStart and dayEnd bound the period-based statistics and the accumulation, while snapshotTime is the instant for point readings.",
+  "type": "object",
+  "properties": {
+    "stationId": {
+      "type": "string",
+      "description": "WMO station number of the observing station.",
+      "semanticRole": "featureOfInterest"
+    },
+    "dayStart": {
+      "type": "datetime",
+      "description": "Start of the 24-hour summary period (00:00 UTC), inclusive.",
+      "semanticRole": "phenomenonTimeStart"
+    },
+    "dayEnd": {
+      "type": "datetime",
+      "description": "End of the 24-hour summary period (00:00 UTC the following day), exclusive.",
+      "semanticRole": "phenomenonTimeEnd"
+    },
+    "snapshotTime": {
+      "type": "datetime",
+      "description": "Fixed-hour observation instant used for end-of-day point readings (23:00 UTC).",
+      "semanticRole": "phenomenonTime"
+    },
+    "summaryPublishedAt": {
+      "type": "datetime",
+      "description": "Instant at which this daily summary was computed and published.",
+      "semanticRole": "resultTime"
+    },
+    "temperatureMax": {
+      "type": "double",
+      "unit": "Cel",
+      "description": "Greatest air temperature recorded during the 24-hour period. The value was produced by applying the maximum function to the set of minute-interval temperature readings.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "maximum",
+      "phenomenonTimeRelation": "interval"
+    },
+    "temperatureMin": {
+      "type": "double",
+      "unit": "Cel",
+      "description": "Least air temperature recorded during the 24-hour period. The value was produced by applying the minimum function to the set of minute-interval temperature readings.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "minimum",
+      "phenomenonTimeRelation": "interval"
+    },
+    "temperatureMean": {
+      "type": "double",
+      "unit": "Cel",
+      "description": "Arithmetic mean air temperature over the 24-hour period. The value was produced by applying the mean function to the set of minute-interval temperature readings.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval"
+    },
+    "precipitationTotal": {
+      "type": "double",
+      "unit": "mm",
+      "description": "Total liquid-equivalent precipitation accumulated over the 24-hour period. The value was produced by applying the sum function to the set of minute-interval tipping-bucket gauge increments.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "sum",
+      "phenomenonTimeRelation": "accumulation"
+    },
+    "pressureAtSnapshot": {
+      "type": "double",
+      "unit": "hPa",
+      "description": "Station-level atmospheric pressure at the 23:00 UTC snapshot instant, produced directly by a digital barometric transducer without post-hoc computation.",
+      "semanticRole": "observationValue",
+      "derivation": "measured",
+      "phenomenonTimeRelation": "instant"
+    },
+    "dewPointDepression": {
+      "type": "double",
+      "unit": "Cel",
+      "description": "Difference between the dry-bulb temperature and the dew-point temperature at the 23:00 UTC snapshot instant. Computed from dry-bulb and relative-humidity sensor readings using the Magnus approximation specified in WMO No. 8 (2018 edition) Annex 4.B. Because the result combines two sensor channels by a deterministic formula, and that formula is not a named statistic function, the derivation is 'calculated'.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated",
+      "phenomenonTimeRelation": "instant"
+    },
+    "precipitationProbabilityNextDay": {
+      "type": "double",
+      "unit": "1",
+      "description": "Model-derived probability that liquid-equivalent precipitation will equal or exceed 1 mm during the following calendar day, produced by a numerical weather prediction ensemble post-processed with calibrated probability matching.",
+      "semanticRole": "observationValue",
+      "derivation": "modeled"
+    }
+  },
+  "required": [
+    "stationId",
+    "dayStart",
+    "dayEnd",
+    "snapshotTime",
+    "summaryPublishedAt",
+    "temperatureMax",
+    "temperatureMin",
+    "temperatureMean",
+    "precipitationTotal",
+    "pressureAtSnapshot",
+    "dewPointDepression",
+    "precipitationProbabilityNextDay"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://schemas.example.org/semantic-annotations/12-temporal-reference-systems",
+  "observation_id": "a3f8c2e1-4b97-4d6a-8e03-1c2d5f7a9b04",
+  "facility_id": "CERN-LHC-B1-IR5",
+  "archive_time_s": "1785420001",
+  "beam_clock": {
+    "ordinal": "R0042/F0007/T000000012345",
+    "run": 42,
+    "fill": 7,
+    "turn": "12345"
+  },
+  "beam_intensity": 0.142
+}

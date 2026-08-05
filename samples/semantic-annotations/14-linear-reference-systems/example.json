@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schemas.example.org/semantic-annotations/14-linear-reference-systems",
+  "incidentId": "a3c7e2b0-1f34-4f5a-b678-9d012345abcd",
+  "reportedAt": "2026-07-28T09:45:00Z",
+  "incidentType": "debris-on-roadway",
+  "wsdotLocation": {
+    "routeId": "002",
+    "arm": 17.35,
+    "inventoryDirection": "increase"
+  },
+  "legacyMark": {
+    "segmentCode": "SR002-N-017",
+    "chainage": 1205.0,
+    "heading": "forward"
+  }
+}

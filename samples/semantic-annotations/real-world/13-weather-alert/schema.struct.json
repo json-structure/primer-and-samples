@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/13-weather-alert",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureAlternateNames"],
+  "name": "WeatherAlert",
+  "description": "A weather or non-weather alert from the US National Weather Service, distributed through the Integrated Public Alert and Warning System (IPAWS). Follows the CAP (Common Alerting Protocol) standard. Derived from the nws-alerts feeder schema published in the xRegistry catalogue. The sample demonstrates the separation of the two independent temporal axes that CAP carries: the hazard itself is bounded by onset and ends, which take phenomenonTimeStart and phenomenonTimeEnd, while the bulletin is in force between effective and expires, which take effectiveTimeStart and effectiveTimeEnd. A warning in force for eighteen hours may concern a phenomenon lasting minutes, and neither pair bounds the other. The sent time is the resultTime and carries an irregular cadence because alerts are issued as hazards arise rather than on a schedule. The CAP status and message-type fields take semanticRole status because they state how the record is to be treated; severity, certainty and urgency are assessments of the hazard rather than of the record and are deliberately left unannotated.",
+  "type": "object",
+  "concepts": [
+    {
+      "reference": "https://schema.org/SpecialAnnouncement",
+      "kind": "rdfs-class"
+    },
+    {
+      "reference": "urn:oasis:names:tc:emergency:cap:1.2",
+      "kind": "cap-namespace"
+    }
+  ],
+  "properties": {
+    "alert_id": {
+      "type": "string",
+      "description": "The unique URN-based identifier for the alert (e.g., 'urn:oid:2.49.0.1.840.0.xxx'). Stable across the lifecycle of the alert.",
+      "concepts": [
+        {
+          "reference": "http://purl.org/dc/terms/identifier",
+          "kind": "dcterms-property"
+        }
+      ]
+    },
+    "event": {
+      "type": "string",
+      "description": "The type of weather event (e.g., 'Tornado Warning', 'Flood Watch', 'Heat Advisory')."
+    },
+    "category": {
+      "type": "string",
+      "description": "The CAP alert category (e.g., 'Met' for meteorological)."
+    },
+    "area_desc": {
+      "type": "string",
+      "description": "A textual description of the affected geographic area (e.g., county names). This is prose accompanying the zone identifiers and is not itself the identity of the affected feature.",
+      "concepts": [
+        {
+          "reference": "http://purl.org/dc/terms/spatial",
+          "kind": "dcterms-property"
+        }
+      ]
+    },
+    "ugc_codes": {
+      "type": "string",
+      "description": "Semicolon-separated UGC (Universal Geographic Code) zone identifiers (e.g., 'MDC031', 'TXZ001'). The zone set is the feature the alert is about; the hazard assessment carried by this record is stated for those zones and for no other area.",
+      "semanticRole": "featureOfInterest"
+    },
+    "same_codes": {
+      "type": "string",
+      "description": "Semicolon-separated SAME (Specific Area Message Encoding) codes identifying affected counties/zones. Used by the Emergency Alert System (EAS)."
+    },
+    "sent": {
+      "type": "datetime",
+      "description": "The date and time when the alert was sent, in ISO-8601 format. This is the instant at which the bulletin became available from the issuing office, and it is independent of both the period the bulletin is in force and the period the hazard occupies. Alerts are issued as hazards arise, so no regular issuance period can be stated.",
+      "semanticRole": "resultTime",
+      "cadence": {
+        "kind": "irregular"
+      }
+    },
+    "effective": {
+      "type": "datetime",
+      "description": "The date and time when the alert becomes effective. This opens the period during which the bulletin is in force and is intended to be acted on; it does not bound the hazard.",
+      "semanticRole": "effectiveTimeStart"
+    },
+    "expires": {
+      "type": "datetime",
+      "description": "The date and time when the alert expires. This closes the period during which the bulletin is in force; a hazard may continue past it and be carried forward by a successor bulletin.",
+      "semanticRole": "effectiveTimeEnd"
+    },
+    "onset": {
+      "type": "datetime",
+      "description": "The expected date and time of onset of the weather event. This opens the phenomenon-time period, which is the period of the world the alert describes.",
+      "semanticRole": "phenomenonTimeStart"
+    },
+    "ends": {
+      "type": "datetime",
+      "description": "The expected end time of the weather event. This closes the phenomenon-time period and is independent of the expiry of the bulletin.",
+      "semanticRole": "phenomenonTimeEnd"
+    },
+    "status": {
+      "type": "string",
+      "description": "The CAP alert status. It states how the record is to be treated by a receiving system rather than anything about the hazard, so it carries the status role.",
+      "enum": ["Actual", "Exercise", "System", "Test", "Draft"],
+      "altenums": {
+        "lang:en": {
+          "Actual": "Actual",
+          "Exercise": "Exercise",
+          "System": "System",
+          "Test": "Test",
+          "Draft": "Draft"
+        },
+        "description": {
+          "Actual": "Actionable by all targeted recipients.",
+          "Exercise": "Actionable only by designated exercise participants.",
+          "System": "Carries an alert-network internal function and is not a public message.",
+          "Test": "Technical testing only; all recipients disregard.",
+          "Draft": "A preliminary template or draft, not actionable in its current form."
+        }
+      },
+      "semanticRole": "status"
+    },
+    "message_type": {
+      "type": "string",
+      "description": "The CAP message type. It states the standing of this record in the publication lifecycle, so it carries the status role. A record may be reissued as an update with an unchanged hazard assessment.",
+      "enum": ["Alert", "Update", "Cancel", "Ack", "Error"],
+      "altenums": {
+        "lang:en": {
+          "Alert": "Alert",
+          "Update": "Update",
+          "Cancel": "Cancel",
+          "Ack": "Acknowledgement",
+          "Error": "Error"
+        },
+        "description": {
+          "Alert": "Initial information requiring attention by targeted recipients.",
+          "Update": "Updates and supersedes the earlier messages this record references.",
+          "Cancel": "Cancels the earlier messages this record references.",
+          "Ack": "Acknowledges receipt and acceptance of the messages this record references.",
+          "Error": "Rejects the message this record references and states the error."
+        }
+      },
+      "semanticRole": "status"
+    },
+    "severity": {
+      "type": "string",
+      "description": "The CAP severity level. This is an assessment of the hazard rather than a statement about the standing of the record, so it is left unannotated: it is neither a status nor a quality flag on a result.",
+      "enum": ["Extreme", "Severe", "Moderate", "Minor", "Unknown"],
+      "altenums": {
+        "lang:en": {
+          "Extreme": "Extreme",
+          "Severe": "Severe",
+          "Moderate": "Moderate",
+          "Minor": "Minor",
+          "Unknown": "Unknown"
+        },
+        "description": {
+          "Extreme": "Extraordinary threat to life or property.",
+          "Severe": "Significant threat to life or property.",
+          "Moderate": "Possible threat to life or property.",
+          "Minor": "Minimal to no known threat to life or property.",
+          "Unknown": "The severity of the hazard is not known."
+        }
+      }
+    },
+    "certainty": {
+      "type": "string",
+      "description": "The CAP certainty level. This is an assessment of how likely the hazard is to occur and is left unannotated; it is not the quality of a measured result.",
+      "enum": ["Observed", "Likely", "Possible", "Unlikely", "Unknown"],
+      "altenums": {
+        "lang:en": {
+          "Observed": "Observed",
+          "Likely": "Likely",
+          "Possible": "Possible",
+          "Unlikely": "Unlikely",
+          "Unknown": "Unknown"
+        },
+        "description": {
+          "Observed": "Determined to have occurred or to be ongoing.",
+          "Likely": "Probability greater than about fifty percent.",
+          "Possible": "Probability of about fifty percent or less.",
+          "Unlikely": "Not expected to occur; probability near zero.",
+          "Unknown": "The certainty of the hazard is not known."
+        }
+      }
+    },
+    "urgency": {
+      "type": "string",
+      "description": "The CAP urgency level. This states how soon responsive action should be taken and is left unannotated; it is a property of the hazard and its response, not of the record.",
+      "enum": ["Immediate", "Expected", "Future", "Past", "Unknown"],
+      "altenums": {
+        "lang:en": {
+          "Immediate": "Immediate",
+          "Expected": "Expected",
+          "Future": "Future",
+          "Past": "Past",
+          "Unknown": "Unknown"
+        },
+        "description": {
+          "Immediate": "Responsive action should be taken immediately.",
+          "Expected": "Responsive action should be taken within the next hour.",
+          "Future": "Responsive action should be taken in the near future.",
+          "Past": "Responsive action is no longer required.",
+          "Unknown": "The urgency of the hazard is not known."
+        }
+      }
+    },
+    "response": {
+      "type": "string",
+      "description": "The recommended response type (e.g., 'Shelter', 'Evacuate', 'None')."
+    },
+    "sender_name": {
+      "type": "string",
+      "description": "The human-readable name of the sender (e.g., 'NWS Tulsa OK')."
+    },
+    "headline": {
+      "type": "string",
+      "description": "A brief headline summarizing the alert.",
+      "concepts": [
+        {
+          "reference": "https://schema.org/headline",
+          "kind": "rdf-property"
+        }
+      ]
+    },
+    "description": {
+      "type": "string",
+      "description": "The full textual description of the alert.",
+      "concepts": [
+        {
+          "reference": "http://purl.org/dc/terms/description",
+          "kind": "dcterms-property"
+        }
+      ]
+    },
+    "instruction": {
+      "type": "string",
+      "description": "Recommended protective actions."
+    },
+    "vtec": {
+      "type": "string",
+      "description": "The P-VTEC (Valid Time Event Code) string for NWS event tracking."
+    },
+    "web": {
+      "type": "string",
+      "description": "A URL to the full alert details.",
+      "concepts": [
+        {
+          "reference": "https://schema.org/url",
+          "kind": "rdf-property"
+        }
+      ]
+    }
+  },
+  "required": ["alert_id", "event", "severity", "urgency", "certainty", "sent", "status", "message_type"],
+  "additionalProperties": false
+}

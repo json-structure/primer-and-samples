@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/28-broadcast-audio-frame",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureUnits"],
+  "name": "BroadcastProgramSampleFrame",
+  "description": "One multichannel sample frame of a television programme delivered with a main mix and a separate commentary pair, modelled on the channel-based delivery conventions of ITU-R BS.2051 and the Audio Definition Model rather than on any one live feed. The sample exists because a row of audio numbers is not sound until something states which loudspeaker each drives, what the numbers stand relative to, and whether they are amplitudes or a companded encoding; and because one programme routinely carries more than one group of channels, here a five-channel-with-low-frequency-effects main mix and a two-channel commentary bed that a viewer can mix in or out. It demonstrates `audioChannels` as an array of channel groups over one record, each group binding its members in the order its layout declares them and stating the level its samples stand relative to and the encoding they carry; each group names a different configuration of the same recommendation by a fragment on the recommendation URI, the 0+5+0 system for the main mix and the 0+2+0 system for the commentary. It also demonstrates that programme loudness is not a per-sample reference but a measured value of its own, carried in `programme_loudness` beside the samples rather than inside `audioChannels`. The frame counter is bound to a sample-clock meta-type through `temporalReferenceSystem` and given a fixed one-sample `cadence`, and the sampling rate that turns frames into seconds is carried in `sample_rate`, so a consumer can place every frame on a timeline without assuming a conventional rate.",
+  "type": "object",
+  "audioChannels": [
+    {
+      "reference": "https://www.itu.int/rec/R-REC-BS.2051/en#0+5+0",
+      "kind": "itu",
+      "channels": ["main_l", "main_r", "main_c", "main_lfe", "main_ls", "main_rs"],
+      "levelReference": "fullScale",
+      "encoding": "linear"
+    },
+    {
+      "reference": "https://www.itu.int/rec/R-REC-BS.2051/en#0+2+0",
+      "kind": "itu",
+      "channels": ["commentary_l", "commentary_r"],
+      "levelReference": "fullScale",
+      "encoding": "linear"
+    }
+  ],
+  "properties": {
+    "frame_index": {
+      "type": "int64",
+      "description": "Position of this sample frame in the programme, counted in audio samples from the start of the delivery. It is a temporal position on the sample clock the AudioSampleClock meta-type defines; seconds from the start are this value divided by `sample_rate`, and successive frames are one sample apart.",
+      "semanticRole": "phenomenonTime",
+      "temporalReferenceSystem": {
+        "reference": { "$ref": "#/definitions/AudioSampleClock" },
+        "kind": "type",
+        "sortOrder": "forward"
+      },
+      "cadence": {
+        "kind": "fixed",
+        "period": 1
+      }
+    },
+    "main_l": {
+      "type": "double",
+      "description": "Front-left sample of the main mix.",
+      "semanticRole": "observationValue"
+    },
+    "main_r": {
+      "type": "double",
+      "description": "Front-right sample of the main mix.",
+      "semanticRole": "observationValue"
+    },
+    "main_c": {
+      "type": "double",
+      "description": "Front-centre sample of the main mix.",
+      "semanticRole": "observationValue"
+    },
+    "main_lfe": {
+      "type": "double",
+      "description": "Low-frequency-effects sample of the main mix. It is one of the channels the 0+5+0 layout defines, in the position that layout assigns it, and is not inferred from its name.",
+      "semanticRole": "observationValue"
+    },
+    "main_ls": {
+      "type": "double",
+      "description": "Left-surround sample of the main mix.",
+      "semanticRole": "observationValue"
+    },
+    "main_rs": {
+      "type": "double",
+      "description": "Right-surround sample of the main mix.",
+      "semanticRole": "observationValue"
+    },
+    "commentary_l": {
+      "type": "double",
+      "description": "Left sample of the stereo commentary bed.",
+      "semanticRole": "observationValue"
+    },
+    "commentary_r": {
+      "type": "double",
+      "description": "Right sample of the stereo commentary bed.",
+      "semanticRole": "observationValue"
+    },
+    "programme_loudness": {
+      "type": "double",
+      "unit": "LUFS",
+      "description": "Integrated programme loudness to ITU-R BS.1770, in loudness units relative to full scale. It is a measured value of the whole programme, not a reference the channel samples stand against, which is why it is a member of its own rather than part of `audioChannels`.",
+      "semanticRole": "observationValue"
+    },
+    "sample_rate": {
+      "type": "int32",
+      "unit": "Hz",
+      "description": "Sampling rate of every channel, in hertz. It converts the frame counter to elapsed time \u2014 seconds from the start are `frame_index` divided by this value \u2014 and is the reciprocal of the fixed one-sample cadence declared on `frame_index`. It is carried rather than assumed, because a delivery may be at 44100, 48000, or 96000 Hz and the frame counter is uninterpretable as time without it."
+    }
+  },
+  "required": [
+    "frame_index",
+    "sample_rate",
+    "main_l",
+    "main_r",
+    "main_c",
+    "main_lfe",
+    "main_ls",
+    "main_rs",
+    "commentary_l",
+    "commentary_r"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "AudioSampleClock": {
+      "name": "AudioSampleClock",
+      "type": "object",
+      "description": "Meta-type for the programme sample clock. A position is a count of audio samples from the start of the delivery, and seconds from the start are that count divided by the sampling rate the record carries in `sample_rate`. Positions increase with time, so the ordering is forward, and successive frames are exactly one sample apart. The regime is declared because a bare frame count is uninterpretable as time without the rate, and this schema supplies the rate rather than leaving a conventional value to be assumed. Nothing in the annotations binds `sample_rate` to this clock; the binding is stated here and nowhere else.",
+      "properties": {
+        "sample_count": {
+          "type": "int64",
+          "description": "Count of audio samples from the start of the delivery.",
+          "referenceRole": "position"
+        }
+      },
+      "required": ["sample_count"],
+      "additionalProperties": false
+    }
+  }
+}

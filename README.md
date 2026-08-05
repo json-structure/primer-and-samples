@@ -28,6 +28,16 @@ understanding the motivation behind JSON Structure and its key features.
 The samples folder contains sample implementations and associated test suites
 targeting the JSON Structure Core specification. 
 
+### Semantic and Reference-System Annotations
+
+The [samples/semantic-annotations](./samples/semantic-annotations) folder holds
+forty-three worked examples of the
+[Semantic and Reference-System Annotations](https://json-structure.github.io/semantic-annotations/draft-vasters-json-structure-semantic-annotations.html)
+extension: fifteen teaching samples that introduce the annotations one theme at
+a time, and twenty-eight
+[real-world samples](./samples/semantic-annotations/real-world) that annotate
+schemas published by live open-data feeds and standing reference datasets.
+
 ### Python
 
 The [samples/py](./samples/py) folder contains sample Python implementations for

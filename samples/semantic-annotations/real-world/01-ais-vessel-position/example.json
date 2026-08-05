@@ -1,0 +1,19 @@
+{
+  "UserID": 244630123,
+  "TimeReceived": "2026-07-30T11:42:09Z",
+  "Timestamp": 7,
+  "Valid": true,
+  "Latitude": 51.9042,
+  "Longitude": 4.0117,
+  "PositionAccuracy": false,
+  "Raim": true,
+  "Sog": 6.4,
+  "Cog": 287.3,
+  "TrueHeading": 285,
+  "AssignedMode": false,
+  "ClassBUnit": true,
+  "ClassBDisplay": true,
+  "ClassBDsc": true,
+  "ClassBBand": true,
+  "ClassBMsg22": true
+}

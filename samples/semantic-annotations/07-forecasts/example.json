@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schemas.example.org/semantic-annotations/07-forecasts",
+  "bulletinId": "f7a3c2d1-0b4e-4f89-9a12-3e5678901bcd",
+  "stationId": "USGS-09380000",
+  "issuedAt": "2026-07-30T06:00:00Z",
+  "forecasts": [
+    {
+      "windowStart": "2026-07-30T12:00:00Z",
+      "windowEnd": "2026-07-30T18:00:00Z",
+      "leadDuration": "PT6H",
+      "predictedStage": 3.81
+    },
+    {
+      "windowStart": "2026-07-30T18:00:00Z",
+      "windowEnd": "2026-07-31T00:00:00Z",
+      "leadDuration": "PT12H",
+      "predictedStage": 4.17
+    },
+    {
+      "windowStart": "2026-07-31T00:00:00Z",
+      "windowEnd": "2026-07-31T06:00:00Z",
+      "leadDuration": "PT18H",
+      "predictedStage": 4.53
+    },
+    {
+      "windowStart": "2026-07-31T06:00:00Z",
+      "windowEnd": "2026-07-31T12:00:00Z",
+      "leadDuration": "PT24H",
+      "predictedStage": 4.88
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/11-cadence",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureAlternateNames"],
+  "name": "SensorGatewayMessage",
+  "description": "Mixed sensor gateway payload demonstrating all three cadence kind values. Each channel carries its own temporal position annotated with the cadence that describes expected producer behaviour for that channel. Cadence is not a delivery guarantee, a service-level objective, or a completeness assertion: it does not assert that every position has a record, that records arrive in order, or that any particular successor observation exists.",
+  "type": "object",
+  "properties": {
+    "gateway_id": {
+      "type": "string",
+      "description": "Identifier of the gateway device that assembled and transmitted this message."
+    },
+    "temperature": {
+      "type": "object",
+      "description": "Temperature channel. The producer is expected to emit one reading every five minutes. cadence fixed with period PT5M describes this expectation; it does not guarantee that any particular five-minute slot has a record or that records arrive without gap.",
+      "properties": {
+        "measured_at": {
+          "type": "datetime",
+          "description": "Instant at which the ambient temperature was sampled by the channel sensor.",
+          "semanticRole": "phenomenonTime",
+          "cadence": {
+            "kind": "fixed",
+            "period": "PT5M"
+          }
+        },
+        "value": {
+          "type": "double",
+          "unit": "Cel",
+          "description": "Ambient temperature at the sensor location at measured_at.",
+          "semanticRole": "observationValue",
+          "derivation": "measured"
+        }
+      },
+      "required": ["measured_at", "value"],
+      "additionalProperties": false
+    },
+    "event_channel": {
+      "type": "object",
+      "description": "Asynchronous event detection channel. The producer emits a record when a discrete event is detected; there is no regular period. cadence irregular means no period is declared and none should be inferred: consecutive positions may be seconds or hours apart.",
+      "properties": {
+        "detected_at": {
+          "type": "datetime",
+          "description": "Instant at which the event was detected by the channel sensor.",
+          "semanticRole": "phenomenonTime",
+          "cadence": {
+            "kind": "irregular"
+          }
+        },
+        "event_code": {
+          "type": "string",
+          "description": "Classification code identifying the type of detected event.",
+          "enum": ["threshold_exceeded", "sensor_fault", "power_cycle", "external_trigger"],
+          "altenums": {
+            "lang:en": {
+              "threshold_exceeded": "Threshold Exceeded",
+              "sensor_fault": "Sensor Fault",
+              "power_cycle": "Power Cycle",
+              "external_trigger": "External Trigger"
+            },
+            "description": {
+              "threshold_exceeded": "A monitored quantity crossed a configured limit.",
+              "sensor_fault": "The instrument reported a self-diagnosed failure.",
+              "power_cycle": "The logger restarted, so the series before and after this event may not be continuous.",
+              "external_trigger": "An operator or an external system requested a report."
+            }
+          },
+          "semanticRole": "observationValue"
+        }
+      },
+      "required": ["detected_at", "event_code"],
+      "additionalProperties": false
+    },
+    "valve_state": {
+      "type": "object",
+      "description": "Valve position channel. The producer emits a record only when the valve state changes; no record is emitted when state is unchanged. cadence onChange means absence of a record between two consecutive positions does not imply that the state was absent or unknown during that gap.",
+      "properties": {
+        "changed_at": {
+          "type": "datetime",
+          "description": "Instant at which the valve state transition was observed.",
+          "semanticRole": "phenomenonTime",
+          "cadence": {
+            "kind": "onChange"
+          }
+        },
+        "state": {
+          "type": "string",
+          "description": "Valve position reported after the transition.",
+          "enum": ["open", "closed", "fault"],
+          "altenums": {
+            "lang:en": {
+              "open": "Open",
+              "closed": "Closed",
+              "fault": "Fault"
+            },
+            "description": {
+              "open": "The valve reached the fully open position.",
+              "closed": "The valve reached the fully closed position.",
+              "fault": "The valve did not reach a commanded position within the expected travel time."
+            }
+          },
+          "semanticRole": "observationValue"
+        }
+      },
+      "required": ["changed_at", "state"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["gateway_id", "temperature", "event_channel", "valve_state"],
+  "additionalProperties": false
+}

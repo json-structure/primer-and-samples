@@ -1,0 +1,11 @@
+{
+  "$schema": "https://schemas.example.org/semantic-annotations/03-sampling-features",
+  "monitoringStation": "EA-WQ-TRENT-042",
+  "waterSampleId": "SAMP-2026-06-10-0742",
+  "riverReach": "GB04020008",
+  "analyticalMethod": "ISO 13395:1996",
+  "nitrateN": 4.3,
+  "qualityFlag": "good",
+  "samplingTime": "2026-06-10T07:42:00Z",
+  "analysisCompletedAt": "2026-06-10T13:55:00Z"
+}

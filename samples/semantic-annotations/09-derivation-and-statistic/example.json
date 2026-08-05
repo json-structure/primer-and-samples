@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schemas.example.org/semantic-annotations/09-derivation-and-statistic",
+  "stationId": "WMO-10704",
+  "dayStart": "2026-07-29T00:00:00Z",
+  "dayEnd": "2026-07-30T00:00:00Z",
+  "snapshotTime": "2026-07-29T23:00:00Z",
+  "summaryPublishedAt": "2026-07-30T00:05:12Z",
+  "temperatureMax": 28.4,
+  "temperatureMin": 14.7,
+  "temperatureMean": 21.1,
+  "precipitationTotal": 3.2,
+  "pressureAtSnapshot": 1012.4,
+  "dewPointDepression": 9.3,
+  "precipitationProbabilityNextDay": 0.35
+}

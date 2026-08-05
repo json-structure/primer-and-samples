@@ -1,0 +1,20 @@
+{
+  "country": "de",
+  "timestamp": "2026-07-30T11:00:00Z",
+  "interval_end": "2026-07-30T11:15:00Z",
+  "biomass_mw": 4600.0,
+  "fossil_brown_coal_lignite_mw": 6200.0,
+  "fossil_hard_coal_mw": 1900.0,
+  "fossil_gas_mw": 5800.0,
+  "hydro_run_of_river_mw": 1800.0,
+  "hydro_water_reservoir_mw": 400.0,
+  "hydro_pumped_storage_mw": 300.0,
+  "hydro_pumped_storage_consumption_mw": -2100.0,
+  "wind_offshore_mw": 3100.0,
+  "wind_onshore_mw": 8200.0,
+  "solar_mw": 32500.0,
+  "cross_border_electricity_trading_mw": -4200.0,
+  "load_mw": 58200.0,
+  "residual_load_mw": 14400.0,
+  "renewable_share_of_generation_pct": 78.1
+}

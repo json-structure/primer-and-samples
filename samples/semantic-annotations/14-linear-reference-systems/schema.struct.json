@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/14-linear-reference-systems",
+  "$uses": ["JSONStructureSemanticAnnotations"],
+  "name": "RoadwayIncidentLocation",
+  "description": "A roadway incident record demonstrating both linearReferenceSystem kinds. The wsdotLocation property binds the incident to the WSDOT State Route network using kind lrs-network. The legacyMark property binds to an internal agency road reference system using kind type, referencing a meta-type in definitions whose members declare their referenceRole. Property names in each annotated object differ from the meta-type member names; the linearReferenceSystem annotation establishes the mapping by name.",
+  "type": "object",
+  "properties": {
+    "incidentId": {
+      "type": "uuid",
+      "description": "Unique identifier for this incident record"
+    },
+    "reportedAt": {
+      "type": "datetime",
+      "description": "RFC 3339 date-time when the incident was reported"
+    },
+    "incidentType": {
+      "type": "string",
+      "description": "Classification of the incident, such as debris-on-roadway or accident"
+    },
+    "wsdotLocation": {
+      "type": "object",
+      "description": "Location in the WSDOT State Route linear reference system. The referenced URI is the ArcGIS Feature Service layer that publishes the network geometry and associated metadata; it is a live data-service endpoint rather than a dedicated semantic definition resource, and its stability and content are governed by WSDOT operational practice. The arm property carries the Accumulated Route Mileage (ARM) measured from the route origin. ARM is maintained independently from State Route Milepost (SRM) stationing; the two can diverge after a segment has been realigned since its milepost markers were set, and a consumer that requires SRM stationing must obtain the conversion from the WSDOT data service.",
+      "linearReferenceSystem": {
+        "reference": "https://data.wsdot.wa.gov/arcgis/rest/services/Shared/LRSData/FeatureServer/9",
+        "kind": "lrs-network",
+        "linearElement": "routeId",
+        "measure": "arm",
+        "direction": "inventoryDirection"
+      },
+      "properties": {
+        "routeId": {
+          "type": "string",
+          "description": "WSDOT State Route identifier, padded to three digits, for example 005 for Interstate 5 or 002 for US Route 2"
+        },
+        "arm": {
+          "type": "double",
+          "unit": "mi",
+          "ucumUnit": "[mi_i]",
+          "description": "Accumulated Route Mileage from the route origin, expressed in international miles as maintained by the WSDOT LRS"
+        },
+        "inventoryDirection": {
+          "type": "string",
+          "description": "Direction of travel relative to the route inventory direction, using the vocabulary published by the WSDOT data service"
+        }
+      },
+      "required": ["routeId", "arm", "inventoryDirection"],
+      "additionalProperties": false
+    },
+    "legacyMark": {
+      "type": "object",
+      "description": "Location expressed in the internal agency road reference system defined by the LegacyRoutePosition meta-type. The linearElement, measure, and direction values in the annotation name properties of this object; those properties map onto the routeSegment, offset, and travelDirection members of the meta-type by their shared referenceRole values. The annotation mapping, not the property names, is authoritative.",
+      "linearReferenceSystem": {
+        "reference": { "$ref": "#/definitions/LegacyRoutePosition" },
+        "kind": "type",
+        "linearElement": "segmentCode",
+        "measure": "chainage",
+        "direction": "heading"
+      },
+      "properties": {
+        "segmentCode": {
+          "type": "string",
+          "description": "Agency road segment identifier from the internal network registry"
+        },
+        "chainage": {
+          "type": "double",
+          "unit": "m",
+          "description": "Distance in metres from the segment origin along the route, as defined by LegacyRoutePosition"
+        },
+        "heading": {
+          "type": "string",
+          "description": "Direction of travel along the segment using the vocabulary defined by the LegacyRoutePosition meta-type"
+        }
+      },
+      "required": ["segmentCode", "chainage"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["incidentId", "reportedAt", "incidentType", "wsdotLocation"],
+  "additionalProperties": false,
+  "definitions": {
+    "LegacyRoutePosition": {
+      "name": "LegacyRoutePosition",
+      "type": "object",
+      "description": "Meta-type for the internal agency road linear reference system. The measure origin is the start of each segment and the increasing-measure direction follows the digitising direction of the segment geometry. Segments are identified by codes assigned in the internal network register. The direction vocabulary uses 'forward' for travel in the digitising direction and 'reverse' for travel against it.",
+      "properties": {
+        "routeSegment": {
+          "type": "string",
+          "description": "Identifies the linear element: a segment code in the internal road network register",
+          "referenceRole": "linearElement"
+        },
+        "offset": {
+          "type": "double",
+          "unit": "m",
+          "description": "Carries the measure: distance in metres from the segment origin along the digitising direction",
+          "referenceRole": "measure"
+        },
+        "travelDirection": {
+          "type": "string",
+          "description": "Qualifies direction: forward or reverse relative to the digitising direction of the segment",
+          "referenceRole": "direction"
+        }
+      },
+      "required": ["routeSegment", "offset"],
+      "additionalProperties": false
+    }
+  }
+}

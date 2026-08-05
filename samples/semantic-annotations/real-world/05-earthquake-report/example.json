@@ -1,0 +1,26 @@
+{
+  "event_id": "20260729143207",
+  "serial": 2,
+  "report_id": "20260729143207_2",
+  "info_type": "ISSUED",
+  "origin_datetime": "2026-07-29T14:32:07Z",
+  "report_datetime": "2026-07-29T14:38:00Z",
+  "control_datetime": "2026-07-29T14:38:12Z",
+  "title_jp": "震源・震度に関する情報",
+  "title_en": "Information on Seismic Intensity and Epicenter",
+  "epicenter_area_code": "290",
+  "epicenter_area_jp": "宮城県沖",
+  "latitude": 38.3,
+  "longitude": 141.9,
+  "depth_km": 50.0,
+  "magnitude": 5.4,
+  "max_intensity": "4",
+  "bulletin_type": "VXSE53",
+  "detail_url": "https://www.jma.go.jp/bosai/quake/data/20260729143800_20260729143207_VXSE53_1.json",
+  "affected_prefectures": [
+    { "code": "400", "max_intensity": "4" },
+    { "code": "410", "max_intensity": "3" },
+    { "code": "300", "max_intensity": "2" }
+  ],
+  "tsunami_possible": false
+}

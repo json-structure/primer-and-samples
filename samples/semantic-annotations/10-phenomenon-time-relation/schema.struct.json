@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/10-phenomenon-time-relation",
+  "$uses": ["JSONStructureSemanticAnnotations"],
+  "name": "WeatherStationReport",
+  "description": "Automatic weather station report demonstrating all four phenomenonTimeRelation values. The record carries both an instantaneous observation time (observed_at, role phenomenonTime) for instant and untilNext readings, and an hourly window boundary pair (window_start / window_end, roles phenomenonTimeStart / phenomenonTimeEnd) for interval and accumulation results. The summary window is the half-open period [window_start, window_end); by convention window_end equals observed_at so the instantaneous sample coincides with the window close.",
+  "type": "object",
+  "properties": {
+    "station_id": {
+      "type": "string",
+      "description": "WMO station identifier for the reporting automatic weather station.",
+      "semanticRole": "featureOfInterest"
+    },
+    "observed_at": {
+      "type": "datetime",
+      "description": "Instant at which the station completed this observation cycle. Serves as the phenomenonTime anchor for instant and untilNext readings.",
+      "semanticRole": "phenomenonTime"
+    },
+    "window_start": {
+      "type": "datetime",
+      "description": "Start of the preceding hourly summary window. The window is half-open [window_start, window_end): the start instant is included and the end instant is excluded. Used as phenomenonTimeStart for interval and accumulation results.",
+      "semanticRole": "phenomenonTimeStart"
+    },
+    "window_end": {
+      "type": "datetime",
+      "description": "End of the preceding hourly summary window. By station convention this equals observed_at. Used as phenomenonTimeEnd for interval and accumulation results. The window excludes this instant.",
+      "semanticRole": "phenomenonTimeEnd"
+    },
+    "result_time": {
+      "type": "datetime",
+      "description": "Time at which this report became available for distribution, typically a few seconds after observed_at.",
+      "semanticRole": "resultTime"
+    },
+    "air_pressure": {
+      "type": "double",
+      "unit": "hPa",
+      "description": "Instantaneous station-level barometric pressure. phenomenonTimeRelation instant: the value applies exactly at observed_at; it implies no continuation beyond that single instant.",
+      "semanticRole": "observationValue",
+      "derivation": "measured",
+      "phenomenonTimeRelation": "instant"
+    },
+    "air_temperature": {
+      "type": "double",
+      "unit": "Cel",
+      "description": "Air temperature at shelter height. phenomenonTimeRelation untilNext: the value applies from observed_at until the next actual compatible observation sharing the same station identifier, procedure, value type, and unit binding. Cadence describes expected recurrence but does not prove that a successor observation exists; without one the support end is unknown.",
+      "semanticRole": "observationValue",
+      "derivation": "measured",
+      "phenomenonTimeRelation": "untilNext"
+    },
+    "wind_speed_mean": {
+      "type": "double",
+      "unit": "m/s",
+      "description": "Mean wind speed over the hourly window. phenomenonTimeRelation interval: the value characterizes the half-open phenomenon-time period [window_start, window_end). The statistic summarizes the values in that extent; it does not assert complete coverage or authorize summation with adjacent windows.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval"
+    },
+    "precipitation_total": {
+      "type": "double",
+      "unit": "mm",
+      "description": "Total liquid precipitation accumulated over the hourly window. phenomenonTimeRelation accumulation: the value is the sum of precipitation collected during the half-open period [window_start, window_end). Where phenomenonTimeRelation is accumulation, statistic must be sum.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "sum",
+      "phenomenonTimeRelation": "accumulation"
+    }
+  },
+  "required": [
+    "station_id",
+    "observed_at",
+    "window_start",
+    "window_end",
+    "result_time",
+    "air_pressure",
+    "air_temperature",
+    "wind_speed_mean",
+    "precipitation_total"
+  ],
+  "additionalProperties": false
+}

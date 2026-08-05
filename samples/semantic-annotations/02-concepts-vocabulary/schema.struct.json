@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/02-concepts-vocabulary",
+  "$uses": ["JSONStructureSemanticAnnotations"],
+  "name": "MarineSpecimenMeasurement",
+  "description": "A total-length measurement taken from a marine biology specimen. Demonstrates the concepts keyword on both a type definition and properties, covering all seven kind values of the closed enumeration: rdfs-class and owl-class on the type, and rdf-property, dcterms-property, owl-object-property, owl-datatype-property, and skos-concept on properties. Also illustrates that skos-concept may appear on a property node even though the class kinds may not. Note that no entry restates something an annotation on the same node already asserts: the record is not labelled sosa:Observation, because observedProperty already makes it an observation record, and the result member is not labelled sosa:hasSimpleResult, because semanticRole already gives it that part. The sosa:Sampling binding is not redundant, because the record also documents the collection act that produced the specimen, which observedProperty does not imply.",
+  "type": "object",
+  "concepts": [
+    {
+      "reference": "http://rs.tdwg.org/dwc/terms/Occurrence",
+      "kind": "rdfs-class"
+    },
+    {
+      "reference": "http://www.w3.org/ns/sosa/Sampling",
+      "kind": "owl-class"
+    }
+  ],
+  "observedProperty": {
+    "reference": "https://catalog.example.org/observable-properties/specimen-total-length/v1",
+    "kind": "example-catalog"
+  },
+  "properties": {
+    "specimenId": {
+      "type": "string",
+      "description": "Unique identifier assigned to the specimen at the time of collection.",
+      "semanticRole": "featureOfInterest",
+      "concepts": [
+        {
+          "reference": "http://purl.org/dc/terms/identifier",
+          "kind": "dcterms-property"
+        },
+        {
+          "reference": "http://www.w3.org/2004/02/skos/core#notation",
+          "kind": "owl-datatype-property"
+        }
+      ]
+    },
+    "scientificName": {
+      "type": "string",
+      "description": "Accepted scientific name of the taxon to which this specimen belongs, following the applicable nomenclature code.",
+      "concepts": [
+        {
+          "reference": "http://rs.tdwg.org/dwc/terms/scientificName",
+          "kind": "rdf-property"
+        }
+      ]
+    },
+    "collectedBy": {
+      "type": "uri",
+      "description": "URI of the person or organisation responsible for collecting the specimen.",
+      "concepts": [
+        {
+          "reference": "http://www.w3.org/ns/prov#wasAttributedTo",
+          "kind": "owl-object-property"
+        }
+      ]
+    },
+    "totalLength": {
+      "type": "double",
+      "description": "Total length of the specimen measured from snout tip to end of caudal fin.",
+      "unit": "mm",
+      "semanticRole": "observationValue",
+      "concepts": [
+        {
+          "reference": "http://qudt.org/vocab/quantitykind/Length",
+          "kind": "skos-concept"
+        }
+      ]
+    },
+    "collectedAt": {
+      "type": "datetime",
+      "description": "Time at which the specimen was collected from the water.",
+      "semanticRole": "phenomenonTime",
+      "concepts": [
+        {
+          "reference": "http://purl.org/dc/terms/created",
+          "kind": "dcterms-property"
+        }
+      ]
+    },
+    "recordedAt": {
+      "type": "datetime",
+      "description": "Time at which the length measurement was entered into the laboratory record system.",
+      "semanticRole": "resultTime"
+    }
+  },
+  "required": [
+    "specimenId",
+    "scientificName",
+    "collectedBy",
+    "totalLength",
+    "collectedAt",
+    "recordedAt"
+  ],
+  "additionalProperties": false
+}

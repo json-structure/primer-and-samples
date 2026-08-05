@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/04-lightning-stroke",
+  "$uses": ["JSONStructureSemanticAnnotations"],
+  "name": "LightningStroke",
+  "description": "One located lightning stroke from the public LightningMaps / Blitzortung live websocket feed. The stroke identity is the tuple of source_id and stroke_id because the upstream browser client tracks the last seen stroke id separately for each source stream. Derived from the blitzortung feeder schema published in the xRegistry catalogue. The sample demonstrates a geolocated instantaneous event: an irregular cadence on the stroke time, a temporal reference system binding for an ISO-8601 timestamp carried as a plain string, the located position grouped so that it can carry one horizontal coordinate reference system binding together with derivation 'calculated' and phenomenonTimeRelation 'instant', an estimated accuracy diameter and the set of contributing detectors both carried as result quality, and two geohash encodings marked as calculated because the bridge derives them from the located position.",
+  "type": "object",
+  "concepts": [
+    {
+      "reference": "http://purl.org/dc/dcmitype/Event",
+      "kind": "rdfs-class"
+    }
+  ],
+  "observedProperty": {
+    "reference": "https://catalog.example.org/observable-properties/lightning-stroke-location/v1",
+    "kind": "example-catalog"
+  },
+  "properties": {
+    "source_id": {
+      "type": "int32",
+      "description": "Upstream live-source identifier from the src field. The public LightningMaps websocket treats stroke ids as source-scoped, so this field is part of the stable event identity.",
+      "minimum": 0
+    },
+    "stroke_id": {
+      "type": "string",
+      "description": "Source-scoped stroke identifier from the upstream id field, stringified so the Kafka key and CloudEvents subject can be resolved directly from the payload.",
+      "concepts": [
+        {
+          "reference": "http://purl.org/dc/terms/identifier",
+          "kind": "dcterms-property"
+        }
+      ]
+    },
+    "event_time": {
+      "type": "string",
+      "description": "ISO-8601 UTC timestamp derived from the upstream time field, which the public live websocket emits in Unix epoch milliseconds. This is the instant at which the stroke discharged, so it is the phenomenon time of the record. Strokes are not scheduled, so successive values carry no period. Because the position is transported as a plain string rather than a Core datetime, the Gregorian ISO-8601 temporal reference system is stated explicitly.",
+      "semanticRole": "phenomenonTime",
+      "temporalReferenceSystem": {
+        "reference": "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian",
+        "kind": "ogc-trs"
+      },
+      "cadence": {
+        "kind": "irregular"
+      }
+    },
+    "position": {
+      "type": "object",
+      "description": "Located position of the lightning stroke. The upstream lat and lon fields are grouped into one object so that the pair carries a single horizontal coordinate reference system binding and one observation result, rather than two independent results. The position is not measured directly: the Blitzortung network computes it from the time of arrival of the sferic at the participating detectors, so the derivation is 'calculated'. The result applies at the sibling event_time instant.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated",
+      "phenomenonTimeRelation": "instant",
+      "coordinateReferenceSystem": {
+        "reference": "http://www.opengis.net/def/crs/EPSG/0/4326",
+        "kind": "ogc-crs",
+        "coordinates": ["latitude", "longitude"]
+      },
+      "properties": {
+        "latitude": {
+          "type": "double",
+          "description": "Latitude of the located lightning stroke in decimal degrees from the upstream lat field.",
+          "minimum": -90.0,
+          "maximum": 90.0,
+          "unit": "deg",
+          "symbol": "°",
+          "concepts": [
+            {
+              "reference": "http://www.w3.org/2003/01/geo/wgs84_pos#lat",
+              "kind": "rdf-property"
+            }
+          ]
+        },
+        "longitude": {
+          "type": "double",
+          "description": "Longitude of the located lightning stroke in decimal degrees from the upstream lon field.",
+          "minimum": -180.0,
+          "maximum": 180.0,
+          "unit": "deg",
+          "symbol": "°",
+          "concepts": [
+            {
+              "reference": "http://www.w3.org/2003/01/geo/wgs84_pos#long",
+              "kind": "rdf-property"
+            }
+          ]
+        }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "accuracy_diameter_m": {
+      "type": "double",
+      "description": "Estimated accuracy diameter in meters from the upstream dev field. The public LightningMaps client renders an accuracy circle with radius dev/2, which indicates the value is expressed as a diameter rather than a raw algorithm score. The value qualifies the located position rather than being a result in its own right, and the upstream wording states that it is an estimate rather than a measurement. The member is omitted when the upstream batch does not report it.",
+      "minimum": 0.0,
+      "unit": "m",
+      "semanticRole": "resultQuality",
+      "derivation": "estimated"
+    },
+    "detector_participations": {
+      "type": "array",
+      "description": "Detector participation entries expanded from the upstream sta object when the client asks the public live feed to include station details. An empty array means the upstream batch did not include detector participation details for this stroke. The number of contributing detectors qualifies the time-of-arrival solution that produced the position, so the member is carried as a result quality projection rather than as a result.",
+      "semanticRole": "resultQuality",
+      "items": {
+        "type": {
+          "$ref": "#/definitions/DetectorParticipation"
+        }
+      }
+    },
+    "server_id": {
+      "type": ["int32", "null"],
+      "description": "Upstream server identifier from the srv field that produced the current live batch. The public documentation reviewed during implementation does not publish a stable human-readable enumeration for these ids.",
+      "minimum": 0
+    },
+    "server_delay_ms": {
+      "type": "int32",
+      "description": "Delay between the upstream server receiving or computing the stroke and sending it to the live client, in milliseconds, from the public del field. The member is omitted when the upstream batch does not report it.",
+      "minimum": 0,
+      "unit": "ms"
+    },
+    "geohash5": {
+      "type": "string",
+      "pattern": "^[0-9b-hjkmnp-z]{5}$",
+      "description": "5-character geohash of the located stroke (~40 km cell at the equator), derived in the bridge from latitude and longitude. Used as the {geohash5} MQTT topic segment for geographic wildcards. The value is not reported by the upstream feed; the bridge computes it from the located position.",
+      "derivation": "calculated"
+    },
+    "geohash7": {
+      "type": "string",
+      "pattern": "^[0-9b-hjkmnp-z]{7}$",
+      "description": "7-character geohash of the located stroke (~153 m cell), derived from latitude and longitude. Used as the {geohash7} MQTT topic segment for fine-grained geographic wildcards. The value is not reported by the upstream feed; the bridge computes it from the located position.",
+      "derivation": "calculated"
+    }
+  },
+  "required": [
+    "source_id",
+    "stroke_id",
+    "event_time",
+    "position",
+    "detector_participations",
+    "geohash5",
+    "geohash7"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "DetectorParticipation": {
+      "name": "DetectorParticipation",
+      "type": "object",
+      "description": "One detector entry expanded from the upstream sta object on a live stroke. The public feed exposes integer status flags per station, but the public documentation does not currently publish a bit-level meaning for those status codes, so this contract preserves the upstream integer verbatim.",
+      "concepts": [
+        {
+          "reference": "http://www.w3.org/ns/sosa/Sensor",
+          "kind": "owl-class"
+        }
+      ],
+      "properties": {
+        "station_id": {
+          "type": "int32",
+          "description": "Detector station identifier from the key of the upstream sta object.",
+          "minimum": 0,
+          "concepts": [
+            {
+              "reference": "http://purl.org/dc/terms/identifier",
+              "kind": "dcterms-property"
+            }
+          ]
+        },
+        "status": {
+          "type": "int32",
+          "description": "Opaque integer status flag from the value of the upstream sta object. The public live feed exposes the value, but the public documentation reviewed during implementation does not publish a stable bit-level interpretation.",
+          "minimum": 0
+        }
+      },
+      "required": ["station_id", "status"],
+      "additionalProperties": false
+    }
+  }
+}

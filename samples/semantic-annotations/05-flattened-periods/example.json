@@ -1,0 +1,11 @@
+{
+  "$schema": "https://schemas.example.org/semantic-annotations/05-flattened-periods",
+  "advisoryId": "c4a1e9d7-2b3f-4a5c-8e6d-0f7b9a3c2e1d",
+  "monitoringSite": "EPA-AQS-060371201",
+  "averagingWindowStart": "2026-07-22T09:00:00Z",
+  "averagingWindowEnd": "2026-07-22T10:00:00Z",
+  "advisoryEffectiveAt": "2026-07-22T10:30:00Z",
+  "advisoryExpiresAt": "2026-07-22T22:00:00Z",
+  "meanPm25": 68.4,
+  "aqiCategory": "unhealthy-sensitive"
+}

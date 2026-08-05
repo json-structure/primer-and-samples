@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/05-flattened-periods",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureAlternateNames"],
+  "name": "AirQualityAdvisory",
+  "description": "An air-quality advisory carrying two independent time axes as flattened period-boundary pairs. phenomenonTimeStart and phenomenonTimeEnd bound the one-hour averaging window over which the mean PM2.5 concentration was computed — this is the period of the world the result is about. effectiveTimeStart and effectiveTimeEnd bound the period during which the advisory is in force — this is the period the record is meant to be acted on. The two axes are independent: the phenomenon window is fixed by the measurement schedule, while the advisory window is set by the issuing authority and may span several averaging windows. Note: the periods that this specification pairs with phenomenonTimeRelation use the half-open convention [start,end); averagingWindowEnd is therefore excluded from the phenomenon window under that convention.",
+  "type": "object",
+  "observedProperty": {
+    "reference": "https://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html#mass_concentration_of_pm2p5_ambient_aerosol_particles_in_air",
+    "kind": "cf-standard-name"
+  },
+  "properties": {
+    "advisoryId": {
+      "type": "uuid",
+      "description": "Unique identifier for this advisory record."
+    },
+    "monitoringSite": {
+      "type": "string",
+      "description": "Identifier of the air-quality monitoring site at which PM2.5 was measured.",
+      "semanticRole": "featureOfInterest"
+    },
+    "averagingWindowStart": {
+      "type": "datetime",
+      "description": "Start of the one-hour averaging window over which the mean PM2.5 concentration was computed. Together with averagingWindowEnd, this forms the phenomenon-time period: the window of the world the result is about. This specification pairs phenomenonTimeStart/End with phenomenonTimeRelation using half-open [start,end) periods, so the start instant is included in the window.",
+      "semanticRole": "phenomenonTimeStart"
+    },
+    "averagingWindowEnd": {
+      "type": "datetime",
+      "description": "End of the one-hour averaging window. Under the half-open [start,end) convention that this specification pairs with phenomenonTimeRelation, this instant is excluded from the phenomenon window.",
+      "semanticRole": "phenomenonTimeEnd"
+    },
+    "advisoryEffectiveAt": {
+      "type": "datetime",
+      "description": "Start of the period during which this advisory is in force. effectiveTimeStart and effectiveTimeEnd form an axis independent of the phenomenon-time axis; the advisory window is set by the issuing authority and may extend well beyond the one-hour averaging window that produced the result.",
+      "semanticRole": "effectiveTimeStart"
+    },
+    "advisoryExpiresAt": {
+      "type": "datetime",
+      "description": "End of the period during which this advisory is in force.",
+      "semanticRole": "effectiveTimeEnd"
+    },
+    "meanPm25": {
+      "type": "double",
+      "unit": "ug/m3",
+      "description": "Arithmetic mean of PM2.5 mass concentration over the one-hour averaging window.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean"
+    },
+    "aqiCategory": {
+      "type": "string",
+      "description": "Air Quality Index category assigned to this advisory by the issuing authority.",
+      "enum": ["good", "moderate", "unhealthy-sensitive", "unhealthy", "very-unhealthy", "hazardous"],
+      "altenums": {
+        "lang:en": {
+          "good": "Good",
+          "moderate": "Moderate",
+          "unhealthy-sensitive": "Unhealthy for Sensitive Groups",
+          "unhealthy": "Unhealthy",
+          "very-unhealthy": "Very Unhealthy",
+          "hazardous": "Hazardous"
+        },
+        "description": {
+          "good": "Air quality is satisfactory and poses little or no risk.",
+          "moderate": "Air quality is acceptable, but there is a risk for people unusually sensitive to air pollution.",
+          "unhealthy-sensitive": "Members of sensitive groups may experience health effects; the general public is unlikely to be affected.",
+          "unhealthy": "Some members of the general public may experience health effects; sensitive groups may experience more serious ones.",
+          "very-unhealthy": "Health alert: the risk of health effects is increased for everyone.",
+          "hazardous": "Health warning of emergency conditions; everyone is more likely to be affected."
+        }
+      }
+    }
+  },
+  "required": ["advisoryId", "monitoringSite", "averagingWindowStart", "averagingWindowEnd", "advisoryEffectiveAt", "advisoryExpiresAt", "meanPm25", "aqiCategory"],
+  "additionalProperties": false
+}

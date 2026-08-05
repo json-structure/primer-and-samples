@@ -1,0 +1,9 @@
+{
+  "$schema": "https://schemas.example.org/semantic-annotations/01-observation-basics",
+  "stationId": "USGS-12149000",
+  "sensor": "https://vocab.nerc.ac.uk/collection/L22/current/TOOL1248/",
+  "waterLevel": 2.47,
+  "qualityFlag": "validated",
+  "measuredAt": "2026-06-15T14:30:00Z",
+  "publishedAt": "2026-06-15T14:30:04Z"
+}

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/04-temporal-roles",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureAlternateNames"],
+  "name": "FloodWarningBulletin",
+  "description": "A flood-warning bulletin showing three observation-time roles side by side. phenomenonTime marks the instant the flood peak applied to the river at the gauge — a temporal property of the flood event itself. resultTime marks the instant the bulletin became available for distribution — a temporal property of the observation result. effectiveTime, carried on a nested period object, marks the window during which the bulletin is in force and operators are expected to act on it — a temporal property of the bulletin document. phenomenonTime bounds the flood; effectiveTime bounds the bulletin. The two are independent axes: a bulletin may remain in force hours after the flood peak has passed. effectiveTime is not the bitemporal valid-time of ISO 19108, which pairs the period a fact is held true of the world with the period a system recorded it, and it is not a record-versioning axis.",
+  "type": "object",
+  "observedProperty": {
+    "reference": "https://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html#water_surface_height_above_reference_datum",
+    "kind": "cf-standard-name"
+  },
+  "properties": {
+    "bulletinId": {
+      "type": "uuid",
+      "description": "Unique identifier for this bulletin instance."
+    },
+    "gaugeStation": {
+      "type": "string",
+      "description": "Identifier of the river gauge station at which the flood condition was measured.",
+      "semanticRole": "featureOfInterest"
+    },
+    "floodPeakTime": {
+      "type": "datetime",
+      "description": "The instant at which the flood peak applied to the river at the gauge station. phenomenonTime is a temporal property of the flood event; it is independent of when the bulletin was produced or how long the bulletin remains in force.",
+      "semanticRole": "phenomenonTime"
+    },
+    "bulletinIssuedAt": {
+      "type": "datetime",
+      "description": "The instant at which the bulletin result became available and was ready for distribution. resultTime is never earlier than phenomenonTime.",
+      "semanticRole": "resultTime"
+    },
+    "bulletinInForce": {
+      "type": "object",
+      "description": "The period during which this bulletin is in force and its guidance is intended to be acted on. effectiveTime is carried on this containing object and bounds the bulletin, not the flood phenomenon. effectiveTime is not the bitemporal valid-time of ISO 19108 and is not a record-versioning axis.",
+      "semanticRole": "effectiveTime",
+      "properties": {
+        "start": {
+          "type": "datetime",
+          "description": "Start of the period during which the bulletin is in force, coinciding with issuance."
+        },
+        "end": {
+          "type": "datetime",
+          "description": "End of the period during which the bulletin is in force."
+        }
+      },
+      "required": ["start", "end"],
+      "additionalProperties": false
+    },
+    "observedStage": {
+      "type": "double",
+      "unit": "m",
+      "description": "Observed river stage at the flood peak, measured above the local gauge datum.",
+      "semanticRole": "observationValue"
+    },
+    "warningLevel": {
+      "type": "string",
+      "description": "Flood warning level assigned by the issuing authority.",
+      "enum": ["advisory", "watch", "warning", "emergency"],
+      "altenums": {
+        "lang:en": {
+          "advisory": "Advisory",
+          "watch": "Watch",
+          "warning": "Warning",
+          "emergency": "Emergency"
+        },
+        "description": {
+          "advisory": "Conditions are approaching the lowest action threshold; no action is required yet.",
+          "watch": "Conditions favour the hazard developing; responders prepare.",
+          "warning": "The hazard is occurring or is imminent; protective action is required.",
+          "emergency": "The hazard exceeds the highest planned threshold; life and property are at immediate risk."
+        }
+      }
+    }
+  },
+  "required": ["bulletinId", "gaugeStation", "floodPeakTime", "bulletinIssuedAt", "bulletinInForce", "observedStage", "warningLevel"],
+  "additionalProperties": false
+}

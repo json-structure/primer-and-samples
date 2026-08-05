@@ -1,0 +1,13 @@
+{
+  "$schema": "https://schemas.example.org/semantic-annotations/04-temporal-roles",
+  "bulletinId": "b7e2f3a1-4c8d-4e9f-a2b0-1c3d5e7f9a11",
+  "gaugeStation": "USGS-12472000",
+  "floodPeakTime": "2026-07-15T03:22:00Z",
+  "bulletinIssuedAt": "2026-07-15T03:35:00Z",
+  "bulletinInForce": {
+    "start": "2026-07-15T03:35:00Z",
+    "end": "2026-07-15T15:35:00Z"
+  },
+  "observedStage": 4.87,
+  "warningLevel": "warning"
+}

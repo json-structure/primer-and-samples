@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/25-sensor-community-noise",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureUnits"],
+  "name": "SensorCommunityNoiseReading",
+  "description": "One telemetry reading from a Sensor.Community citizen node that carries a noise sensor, transcribed from the io.sensor.community SensorReading event of the real-time-sources feeder. The sample exists because the three sound levels the node reports are all in decibels and all A-weighted, and a decibel figure means nothing until the weighting it was taken under and the reference it stands against are stated: an A-weighted level and an unweighted level over the same sound are different numbers, and a level relative to twenty micropascals and a level relative to digital full scale are different numbers again. It demonstrates `measurementConditioning` attaching to each acoustic value to carry the A-weighting and the sound-pressure reference the feed documents but the numbers do not, and it demonstrates that the keyword attaches only to the conditioned measurements: the particulate and temperature channels in the same record carry a unit and no conditioning, because there is nothing hidden in them to state. The feed names the weighting but not the time constant, so `timeWeighting` is omitted rather than guessed, and the two extrema are additionally marked as the `minimum` and `maximum` statistics they are.",
+  "type": "object",
+  "properties": {
+    "sensor_id": {
+      "type": "int32",
+      "description": "Stable integer identifier of the Sensor.Community node, from the `sensor_id` field. The node is the feature the reading is about.",
+      "semanticRole": "featureOfInterest"
+    },
+    "observed_at": {
+      "type": "string",
+      "description": "UTC timestamp the node published for the reading, from the `timestamp` field, in `YYYY-MM-DD HH:mm:ss` form.",
+      "semanticRole": "phenomenonTime"
+    },
+    "noise_laeq_db": {
+      "type": "double",
+      "unit": "dB",
+      "description": "Equivalent continuous sound level over the reporting interval, from the `noise_laeq_db` field. LAeq is A-weighted and energy-averaged, so it carries a frequency weighting but no single time constant.",
+      "semanticRole": "observationValue",
+      "measurementConditioning": {
+        "weighting": "a",
+        "levelReference": "soundPressure"
+      }
+    },
+    "noise_la_min_db": {
+      "type": "double",
+      "unit": "dB",
+      "description": "Minimum A-weighted sound level over the interval, from the `noise_la_min_db` field.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "minimum",
+      "measurementConditioning": {
+        "weighting": "a",
+        "levelReference": "soundPressure"
+      }
+    },
+    "noise_la_max_db": {
+      "type": "double",
+      "unit": "dB",
+      "description": "Maximum A-weighted sound level over the interval, from the `noise_la_max_db` field.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "maximum",
+      "measurementConditioning": {
+        "weighting": "a",
+        "levelReference": "soundPressure"
+      }
+    },
+    "pm2_5_ug_m3": {
+      "type": "double",
+      "unit": "ug/m3",
+      "description": "Particulate-matter mass concentration for PM2.5, from the `pm2_5_ug_m3` field. It carries a unit and no conditioning: unlike a sound level, the number is complete once the unit is known.",
+      "semanticRole": "observationValue"
+    },
+    "temperature_celsius": {
+      "type": "double",
+      "unit": "Cel",
+      "description": "Ambient temperature, from the `temperature_celsius` field. Carried here to show a value that needs no measurement conditioning beside the ones that do.",
+      "semanticRole": "observationValue"
+    }
+  },
+  "required": [
+    "sensor_id",
+    "observed_at",
+    "noise_laeq_db",
+    "noise_la_min_db",
+    "noise_la_max_db"
+  ],
+  "additionalProperties": false
+}

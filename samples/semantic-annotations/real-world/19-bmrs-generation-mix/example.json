@@ -1,0 +1,21 @@
+{
+  "settlement_period": 12,
+  "start_time": "2026-07-31T05:30:00Z",
+  "ccgt_mw": 9412.0,
+  "ocgt_mw": 0.0,
+  "coal_mw": 0.0,
+  "oil_mw": 0.0,
+  "nuclear_mw": 3908.0,
+  "wind_mw": 6231.0,
+  "biomass_mw": 2104.0,
+  "npshyd_mw": 318.0,
+  "ps_mw": 742.0,
+  "other_mw": 156.0,
+  "intfr_mw": 1980.0,
+  "intifa2_mw": 1010.0,
+  "intned_mw": 998.0,
+  "intnem_mw": -412.0,
+  "intelec_mw": -184.0,
+  "intnsl_mw": 1394.0,
+  "intvkl_mw": 802.0
+}

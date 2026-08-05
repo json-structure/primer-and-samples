@@ -1,0 +1,10 @@
+{
+  "$schema": "https://schemas.example.org/semantic-annotations/08-status-and-quality",
+  "recordId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "stationId": "USGS-09380000",
+  "observedAt": "2026-07-15T10:00:00Z",
+  "publishedAt": "2026-07-15T10:00:07Z",
+  "stage": 3.42,
+  "qualityGrade": "good",
+  "recordStatus": "verified"
+}

@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/08-status-and-quality",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureAlternateNames"],
+  "name": "HydrometricPublicationRecord",
+  "description": "A hydrometric publication record for a river stage measurement, demonstrating that status and resultQuality are distinct. The recordStatus field carries the publication standing of the record and may transition from 'provisional' to 'verified' as the value is reviewed; such a transition does not alter the measured stage or its quality grade. The qualityGrade field characterises the reliability of the measured value on a scale defined by an external quality vocabulary; a provisional record and a low-quality result are independent conditions and MUST NOT be read as one another.",
+  "type": "object",
+  "observedProperty": {
+    "reference": "https://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html#water_surface_height_above_reference_datum",
+    "kind": "cf-standard-name"
+  },
+  "properties": {
+    "recordId": {
+      "type": "uuid",
+      "description": "Unique identifier for this publication record."
+    },
+    "stationId": {
+      "type": "string",
+      "description": "Identifier of the gauging station.",
+      "semanticRole": "featureOfInterest"
+    },
+    "observedAt": {
+      "type": "datetime",
+      "description": "Instant at which the stage reading was taken.",
+      "semanticRole": "phenomenonTime"
+    },
+    "publishedAt": {
+      "type": "datetime",
+      "description": "Instant at which this record was first made available.",
+      "semanticRole": "resultTime"
+    },
+    "stage": {
+      "type": "double",
+      "unit": "m",
+      "description": "River stage above the station datum at the observation instant.",
+      "semanticRole": "observationValue",
+      "derivation": "measured",
+      "phenomenonTimeRelation": "instant"
+    },
+    "qualityGrade": {
+      "type": "string",
+      "description": "Quality classification of the measured stage value, drawn from the OGC WaterML2 Part 2 Interoperability Experiment quality vocabulary (http://www.opengis.net/def/waterml/2.0/quality/). Permitted values in that vocabulary include 'good', 'unchecked', 'suspect', 'poor', and 'missing'. This field characterises measurement reliability and is independent of the record's publication status.",
+      "semanticRole": "resultQuality"
+    },
+    "recordStatus": {
+      "type": "string",
+      "description": "Publication standing of this record. A status change does not alter the stage value or its quality grade.",
+      "enum": ["provisional", "verified", "superseded", "withdrawn"],
+      "altenums": {
+        "lang:en": {
+          "provisional": "Provisional",
+          "verified": "Verified",
+          "superseded": "Superseded",
+          "withdrawn": "Withdrawn"
+        },
+        "description": {
+          "provisional": "The value has not yet been reviewed.",
+          "verified": "Review is complete and the value is accepted.",
+          "superseded": "A later record replaces this one.",
+          "withdrawn": "The record has been retracted."
+        }
+      },
+      "semanticRole": "status"
+    }
+  },
+  "required": ["recordId", "stationId", "observedAt", "publishedAt", "stage", "qualityGrade", "recordStatus"],
+  "additionalProperties": false
+}

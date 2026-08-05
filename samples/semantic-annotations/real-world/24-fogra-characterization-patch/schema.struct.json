@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/24-fogra-characterization-patch",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureUnits"],
+  "name": "FograCharacterizationPatch",
+  "description": "One patch of a printing characterization dataset, transcribed from the FOGRA51 file published in the characterization data registry of the International Color Consortium. The sample exists because the record holds the same colour twice, once as the four ink amounts that were sent to the press and once as the three colorimetric values that were read back off the sheet, and neither triple nor quadruple means anything without the conditions of the measurement. The file states those conditions in a header line and the numbers carry them nowhere: a different illuminant or a different observer over the same sheet returns different numbers, and a different backing or filter over the same sheet returns different numbers again. It demonstrates colorSpaces carrying two spaces over one record, `channels` binding members in the order the space defines rather than the order the record stores them in, and `illuminant` and `observer` declared on the colorimetric space because the file states both and the values are unreadable without them.",
+  "type": "object",
+  "observedProperty": {
+    "reference": "https://catalog.example.org/observable-properties/printed-colour/v1",
+    "kind": "example-catalog"
+  },
+  "colorSpaces": [
+    {
+      "reference": "https://registry.color.org/cmyk-registry/fogra51",
+      "kind": "icc-registry",
+      "channels": ["cyan", "magenta", "yellow", "black"]
+    },
+    {
+      "reference": "https://cie.co.at/publications/colorimetry-part-4-cie-1976-lab-colour-space-1",
+      "kind": "cie",
+      "channels": ["l_star", "a_star", "b_star"],
+      "illuminant": "D50",
+      "observer": "cie-1931-2"
+    }
+  ],
+  "properties": {
+    "sample_id": {
+      "type": "int32",
+      "description": "Index of the patch within the target, from the `SAMPLE_ID` column. The target the file characterizes holds one thousand six hundred and seventeen patches and the index identifies the position of this one within it.",
+      "semanticRole": "featureOfInterest"
+    },
+    "cyan": {
+      "type": "double",
+      "ucumUnit": "%",
+      "description": "Cyan ink amount sent to the press, from the `CMYK_C` column, as a percentage of full coverage.",
+      "semanticRole": "observationValue"
+    },
+    "magenta": {
+      "type": "double",
+      "ucumUnit": "%",
+      "description": "Magenta ink amount sent to the press, from the `CMYK_M` column.",
+      "semanticRole": "observationValue"
+    },
+    "yellow": {
+      "type": "double",
+      "ucumUnit": "%",
+      "description": "Yellow ink amount sent to the press, from the `CMYK_Y` column.",
+      "semanticRole": "observationValue"
+    },
+    "black": {
+      "type": "double",
+      "ucumUnit": "%",
+      "description": "Black ink amount sent to the press, from the `CMYK_K` column. The channel is named for the printing term rather than for its initial, which is why the ordering of the channels has to be stated by the annotation and cannot be inferred from the member names.",
+      "semanticRole": "observationValue"
+    },
+    "l_star": {
+      "type": "double",
+      "description": "Lightness read off the printed patch, from the `LAB_L` column, on the perceptually near-uniform scale defined by the fourth part of the colorimetry standard. It runs from zero at black to one hundred at the diffuse white the illuminant and the measurement geometry establish.",
+      "semanticRole": "observationValue"
+    },
+    "a_star": {
+      "type": "double",
+      "description": "Red and green coordinate read off the printed patch, from the `LAB_A` column. It is positive towards red and negative towards green, and its zero is fixed by the illuminant rather than by anything in the sheet.",
+      "semanticRole": "observationValue"
+    },
+    "b_star": {
+      "type": "double",
+      "description": "Yellow and blue coordinate read off the printed patch, from the `LAB_B` column, positive towards yellow and negative towards blue.",
+      "semanticRole": "observationValue"
+    },
+    "instrumentation": {
+      "type": "string",
+      "description": "The measurement conditions the file states for every patch it holds, from its `INSTRUMENTATION` header line, carried here verbatim. The illuminant and observer it names are also declared on the colorimetric space so that a processor need not parse the sentence; the geometry, the filter, the backing and the standard the readings were taken under have no keyword of their own and are preserved as text.",
+      "semanticRole": "observingProcedure"
+    }
+  },
+  "required": [
+    "sample_id",
+    "cyan",
+    "magenta",
+    "yellow",
+    "black",
+    "l_star",
+    "a_star",
+    "b_star"
+  ],
+  "additionalProperties": false
+}

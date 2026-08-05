@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/26-vatsim-pilot-position",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureUnits"],
+  "name": "VatsimPilotPosition",
+  "description": "One pilot position report from the VATSIM network, transcribed from the net.vatsim.PilotPosition event of the real-time-sources feeder. The sample exists because three of its fields are short codes whose meaning lives in registers maintained by the International Civil Aviation Organization, and a code is not its meaning: `B77W` is an aircraft type only because Doc 8643 says so, and `EGLL` is an aerodrome only because Doc 7910 says so. It demonstrates `codedValues` binding each coded field to the list it draws from, and it demonstrates the division of labour between `reference` and `kind` that the keyword rests on. All three codes share the `kind` `icao`, because ICAO is the register model behind them, yet the aircraft type designator and the two location indicators are three entries in two different lists, and it is `reference` — not `kind` — that says which list each field draws from.",
+  "type": "object",
+  "properties": {
+    "callsign": {
+      "type": "string",
+      "description": "ATC-style callsign the pilot flies under this session, from the `callsign` field. It identifies the flight the report is about.",
+      "semanticRole": "featureOfInterest"
+    },
+    "cid": {
+      "type": "int32",
+      "description": "VATSIM Certificate Identifier of the pilot, from the `cid` field."
+    },
+    "aircraft_short": {
+      "type": "string",
+      "description": "ICAO aircraft type designator from the filed flight plan, from the `aircraft_short` field, such as `B77W` or `A320`.",
+      "codedValues": {
+        "reference": "https://www.icao.int/operational-safety/doc-8643-aircraft-type-designators",
+        "kind": "icao"
+      }
+    },
+    "departure": {
+      "type": "string",
+      "description": "ICAO location indicator of the departure aerodrome, from the `departure` field, such as `EGLL`.",
+      "codedValues": {
+        "reference": "https://store.icao.int/en/location-indicators-doc-7910",
+        "kind": "icao"
+      }
+    },
+    "arrival": {
+      "type": "string",
+      "description": "ICAO location indicator of the arrival aerodrome, from the `arrival` field. It draws from the same list as `departure`, so it carries the same `reference`.",
+      "codedValues": {
+        "reference": "https://store.icao.int/en/location-indicators-doc-7910",
+        "kind": "icao"
+      }
+    },
+    "latitude": {
+      "type": "double",
+      "unit": "deg",
+      "description": "Aircraft latitude in WGS-84 decimal degrees, from the `latitude` field.",
+      "semanticRole": "observationValue"
+    },
+    "longitude": {
+      "type": "double",
+      "unit": "deg",
+      "description": "Aircraft longitude in WGS-84 decimal degrees, from the `longitude` field.",
+      "semanticRole": "observationValue"
+    },
+    "altitude": {
+      "type": "int32",
+      "unit": "ft",
+      "description": "Indicated altitude above mean sea level, from the `altitude` field.",
+      "semanticRole": "observationValue"
+    },
+    "last_updated": {
+      "type": "string",
+      "description": "Time the network last refreshed this pilot's data, from the `last_updated` field.",
+      "semanticRole": "resultTime"
+    }
+  },
+  "required": [
+    "callsign",
+    "cid",
+    "latitude",
+    "longitude",
+    "altitude",
+    "last_updated"
+  ],
+  "additionalProperties": false
+}

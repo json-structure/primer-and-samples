@@ -1,0 +1,11 @@
+{
+  "sample_id": 73,
+  "cyan": 100.0,
+  "magenta": 0.0,
+  "yellow": 0.0,
+  "black": 0.0,
+  "l_star": 56.12,
+  "a_star": -34.9,
+  "b_star": -52.52,
+  "instrumentation": "D50, 2 degree, geometry 45/0, no polarisation filter, white backing, according to ISO 13655:2009 M1"
+}

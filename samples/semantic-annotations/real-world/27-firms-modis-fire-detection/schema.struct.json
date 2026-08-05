@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/27-firms-modis-fire-detection",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureUnits"],
+  "name": "FirmsModisFireDetection",
+  "description": "One active-fire pixel detection from a NASA FIRMS MODIS product, transcribed from the NASA.FIRMS.FireDetection event of the real-time-sources feeder for the case where the acquiring instrument is MODIS. The sample exists because the two temperatures the record carries are not one number twice: `brightness` is the pixel radiance expressed as a temperature in MODIS channel 21/22, near four micrometres, and `bright_t31` is the same in channel 31, near eleven micrometres, and the fire-detection algorithm works precisely by comparing the two bands. A bare pair of Kelvin values says neither which wavelength each was measured in nor that they are brightness temperatures rather than surface temperatures. It demonstrates `spectralBands` binding the two band values to the sensor's thermal-anomaly band set in the order that set declares them, with the specific two-band subset named by a fragment on the sensor's band specification, as the specification's own Landsat example names a sensor by fragment; and it demonstrates `calibration` stating that the values are brightness temperatures, an open calibration value, since the enumeration names digital numbers, radiance, and reflectance but not the thermal case. The nine-band Operational Land Imager example in the specification shows the fuller multiband form; this is the minimal real-feed case.",
+  "type": "object",
+  "spectralBands": [
+    {
+      "reference": "https://modis.gsfc.nasa.gov/about/specifications.php#thermal-anomaly-bands",
+      "kind": "sensor",
+      "bands": ["brightness", "bright_t31"],
+      "calibration": "brightnessTemperature"
+    }
+  ],
+  "properties": {
+    "source": {
+      "type": "string",
+      "description": "FIRMS product source identifier for the satellite and sensor, from the `source` field, such as `MODIS_NRT`. It identifies the product the detection came from."
+    },
+    "latitude": {
+      "type": "double",
+      "unit": "deg",
+      "description": "Latitude of the centre of the nominal one-kilometre fire pixel in WGS-84 decimal degrees, from the `latitude` field.",
+      "semanticRole": "observationValue"
+    },
+    "longitude": {
+      "type": "double",
+      "unit": "deg",
+      "description": "Longitude of the pixel centre in WGS-84 decimal degrees, from the `longitude` field.",
+      "semanticRole": "observationValue"
+    },
+    "brightness": {
+      "type": "double",
+      "unit": "K",
+      "description": "Brightness temperature of the fire pixel in MODIS channel 21/22, near four micrometres, from the `brightness` field. It is the first band of the pair the fire product resolves.",
+      "semanticRole": "observationValue"
+    },
+    "bright_t31": {
+      "type": "double",
+      "unit": "K",
+      "description": "Brightness temperature of the fire pixel in MODIS channel 31, near eleven micrometres, from the `bright_t31` field. Paired with `brightness` to screen false alarms and gauge fire intensity.",
+      "semanticRole": "observationValue"
+    },
+    "frp": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Fire radiative power in megawatts, from the `frp` field: the radiative energy release rate within the pixel.",
+      "semanticRole": "observationValue"
+    },
+    "acq_datetime": {
+      "type": "string",
+      "description": "UTC acquisition instant of the overpass, from the `acq_datetime` field, in ISO-8601 form.",
+      "semanticRole": "phenomenonTime"
+    },
+    "satellite": {
+      "type": "string",
+      "description": "Short platform code of the acquiring satellite, from the `satellite` field, such as `T` for Terra or `A` for Aqua.",
+      "semanticRole": "observingProcedure"
+    }
+  },
+  "required": [
+    "source",
+    "latitude",
+    "longitude",
+    "brightness",
+    "bright_t31",
+    "acq_datetime",
+    "satellite"
+  ],
+  "additionalProperties": false
+}

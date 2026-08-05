@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/21-gcmt-moment-tensor",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureAlternateNames"],
+  "name": "GcmtMomentTensor",
+  "description": "A centroid-moment-tensor solution as published in the Global CMT catalogue, transcribed from the fixed-column `ndk` record into a record with named members. The sample exists because the six members `mrr`, `mtt`, `mpp`, `mrt`, `mrp` and `mtp` are the independent components of one symmetric rank-2 tensor, and because the frame their letters refer to is stated nowhere in the data: the catalogue defines r as up, t as south and p as east in the document that describes the file format, while the Aki-Richards convention in wide use elsewhere is north, east, down. Reading the components against the wrong convention flips the signs of the off-diagonal terms and nothing in the payload objects. It demonstrates tensorReferenceFrames naming one frame at both index positions, `symmetry` of `symmetric` so that six members determine nine components, the indexed form of `components` so that no packing order has to be agreed, a frame written out as a meta-type because no register serves it, a frame-invariant scalar moment beside the frame-dependent components it is derived from, and a horizontal coordinate reference system over the centroid position. The tensor components are an inversion result rather than a reading, so every one of them carries derivation `calculated`.",
+  "type": "object",
+  "concepts": [
+    {
+      "reference": "http://purl.org/dc/dcmitype/Event",
+      "kind": "rdfs-class"
+    }
+  ],
+  "observedProperty": {
+    "reference": "https://catalog.example.org/observable-properties/seismic-moment-tensor/v1",
+    "kind": "example-catalog"
+  },
+  "coordinateReferenceSystem": {
+    "reference": "http://www.opengis.net/def/crs/EPSG/0/4326",
+    "kind": "ogc-crs",
+    "coordinates": ["centroid_latitude", "centroid_longitude"]
+  },
+  "tensorReferenceFrames": [
+    {
+      "frames": [
+        { "reference": { "$ref": "#/definitions/UpSouthEastFrame" }, "kind": "type" },
+        { "reference": { "$ref": "#/definitions/UpSouthEastFrame" }, "kind": "type" }
+      ],
+      "symmetry": "symmetric",
+      "components": [
+        { "index": [0, 0], "property": "mrr" },
+        { "index": [1, 1], "property": "mtt" },
+        { "index": [2, 2], "property": "mpp" },
+        { "index": [0, 1], "property": "mrt" },
+        { "index": [0, 2], "property": "mrp" },
+        { "index": [1, 2], "property": "mtp" }
+      ]
+    }
+  ],
+  "properties": {
+    "event_name": {
+      "type": "string",
+      "description": "CMT event name from the second line of the `ndk` record, for example `C200501010120A`. Current events use a fourteen-character name of the form XYYYYMMDDhhmmZ in which the leading letter records which data types entered the inversion: B for body waves only, S for surface waves only, M for mantle waves only, and C for a combination. The name is the catalogue's stable identifier for the solution.",
+      "concepts": [
+        {
+          "reference": "http://purl.org/dc/terms/identifier",
+          "kind": "dcterms-property"
+        }
+      ]
+    },
+    "centroid_time": {
+      "type": "datetime",
+      "description": "Centroid time, formed by adding the centroid time offset on the third line of the `ndk` record to the reference hypocentre time on the first line. The catalogue publishes the offset rather than the absolute instant, so this member is the result of that addition. It is the time about which the moment release is centred, not the time rupture began, and earthquakes are not scheduled, so successive values carry no period.",
+      "semanticRole": "phenomenonTime",
+      "derivation": "calculated",
+      "cadence": {
+        "kind": "irregular"
+      }
+    },
+    "centroid_latitude": {
+      "type": "double",
+      "unit": "deg",
+      "description": "Centroid latitude from the third line of the `ndk` record. It is an inversion result and differs from the hypocentre latitude reported on the first line, which comes from a separate location catalogue.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    },
+    "centroid_longitude": {
+      "type": "double",
+      "unit": "deg",
+      "description": "Centroid longitude from the third line of the `ndk` record, on the same basis as the latitude.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    },
+    "centroid_depth": {
+      "type": "double",
+      "ucumUnit": "km",
+      "minimum": 0,
+      "description": "Centroid depth from the third line of the `ndk` record, measured downwards from the surface. It is deliberately not bound by the coordinate reference system annotation on this record: EPSG:4326 is a two-dimensional system with no vertical axis, and depth increases in the opposite sense to the ellipsoidal height a three-dimensional system would supply.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    },
+    "depth_type": {
+      "type": "string",
+      "description": "How the centroid depth was arrived at, from the third line of the `ndk` record. It qualifies the depth rather than describing the earthquake, because a depth that was held fixed carries no information from this inversion.",
+      "enum": ["FREE", "FIX", "BDY"],
+      "altenums": {
+        "description": {
+          "FREE": "Depth was a result of the inversion.",
+          "FIX": "Depth was held fixed and not inverted for.",
+          "BDY": "Depth was fixed from modelling of broad-band P waveforms."
+        }
+      },
+      "semanticRole": "resultQuality"
+    },
+    "half_duration": {
+      "type": "double",
+      "ucumUnit": "s",
+      "minimum": 0,
+      "description": "Half the duration of the moment-rate function assumed in the inversion, from the second line of the `ndk` record. The catalogue assumes it from an empirical relationship with the scalar moment rather than deriving it from the analysis. Its presence is the reason the tensor members carry no phenomenon time relation of `instant`: the solution integrates moment release over a source duration.",
+      "semanticRole": "observationValue",
+      "derivation": "modeled"
+    },
+    "scalar_moment": {
+      "type": "double",
+      "ucumUnit": "dyn.cm",
+      "minimum": 0,
+      "description": "Scalar moment from the fifth line of the `ndk` record, published there scaled by the exponent given on the fourth. It is a function of the tensor and adds no independent information, but it is invariant under a change of frame where the six components are not, so it is the member to compare between catalogues that disagree about the frame.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    },
+    "mrr": {
+      "type": "double",
+      "ucumUnit": "dyn.cm",
+      "description": "Component of the moment tensor at the up axis in both index positions, from the fourth line of the `ndk` record, published there scaled by the exponent that opens that line. The catalogue reports an estimated standard error beside each component, which this record does not carry.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    },
+    "mtt": {
+      "type": "double",
+      "ucumUnit": "dyn.cm",
+      "description": "Component of the moment tensor at the south axis in both index positions. Under the zero-trace constraint the catalogue applies by default, this component and the other two on the diagonal sum to zero.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    },
+    "mpp": {
+      "type": "double",
+      "ucumUnit": "dyn.cm",
+      "description": "Component of the moment tensor at the east axis in both index positions.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    },
+    "mrt": {
+      "type": "double",
+      "ucumUnit": "dyn.cm",
+      "description": "Component of the moment tensor at the up axis and the south axis. The symmetry declared by the annotation puts the same value at the south axis and the up axis, which is why the catalogue publishes six values for a tensor with nine positions. For very shallow earthquakes this component is poorly constrained and the catalogue holds it at zero, marking that by a standard error of zero.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    },
+    "mrp": {
+      "type": "double",
+      "ucumUnit": "dyn.cm",
+      "description": "Component of the moment tensor at the up axis and the east axis, held at zero for very shallow earthquakes on the same basis as `mrt`.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    },
+    "mtp": {
+      "type": "double",
+      "ucumUnit": "dyn.cm",
+      "description": "Component of the moment tensor at the south axis and the east axis.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    }
+  },
+  "required": [
+    "event_name",
+    "centroid_time",
+    "centroid_latitude",
+    "centroid_longitude",
+    "centroid_depth",
+    "scalar_moment",
+    "mrr",
+    "mtt",
+    "mpp",
+    "mrt",
+    "mrp",
+    "mtp"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "UpSouthEastFrame": {
+      "name": "UpSouthEastFrame",
+      "type": "tuple",
+      "description": "The spherical frame the Global CMT catalogue resolves its moment tensors on. No register serves it, so it is written out here and cited by pointer. The axes are given in the order r, t, p, which is the order the component names on the fourth line of the `ndk` record are built from.",
+      "properties": {
+        "r": {
+          "type": "double",
+          "description": "Radially outward from the centre of the Earth, that is, up."
+        },
+        "t": {
+          "type": "double",
+          "description": "Along the direction of increasing colatitude, that is, south."
+        },
+        "p": {
+          "type": "double",
+          "description": "Along the direction of increasing longitude, that is, east."
+        }
+      },
+      "tuple": ["r", "t", "p"]
+    }
+  }
+}

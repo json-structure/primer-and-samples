@@ -1,0 +1,9 @@
+{
+  "sensor_id": 28483,
+  "observed_at": "2026-08-02 14:35:00",
+  "noise_laeq_db": 58.4,
+  "noise_la_min_db": 47.1,
+  "noise_la_max_db": 79.6,
+  "pm2_5_ug_m3": 12.3,
+  "temperature_celsius": 24.7
+}

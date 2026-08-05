@@ -1,0 +1,25 @@
+{
+  "icao_id": "KJFK",
+  "name": "New York/JF Kennedy Intl, NY, US",
+  "position": {
+    "latitude": 40.6386,
+    "longitude": -73.7622
+  },
+  "elevation": 3.4,
+  "obs_time": "2026-07-30T11:51:00Z",
+  "report_time": "2026-07-30T11:53:00Z",
+  "metar_type": "METAR",
+  "temp": 26.1,
+  "dewp": 22.2,
+  "wdir": 210,
+  "wspd": 12,
+  "wgst": 18,
+  "visib": "10+",
+  "altim": 1015.6,
+  "slp": 1015.4,
+  "wx_string": null,
+  "clouds": "[{\"cover\":\"FEW\",\"base\":4500},{\"cover\":\"SCT\",\"base\":25000}]",
+  "flt_cat": "VFR",
+  "qc_field": 2,
+  "raw_ob": "METAR KJFK 301151Z 21012G18KT 10SM FEW045 SCT250 26/22 A2999 RMK AO2 SLP154 T02610222"
+}

@@ -1,0 +1,12 @@
+{
+  "system_id": "velib",
+  "station_id": "213688169",
+  "num_bikes_available": 17,
+  "num_docks_available": 18,
+  "num_ebikes_available": 6,
+  "is_installed": true,
+  "is_renting": true,
+  "is_returning": true,
+  "last_reported": 1785412903,
+  "last_updated": 1785412920
+}

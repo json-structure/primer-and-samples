@@ -1,0 +1,21 @@
+{
+  "operator_ref": "FBRI",
+  "vehicle_ref": "FBRI-36148",
+  "line_ref": "72",
+  "direction_ref": "inbound",
+  "published_line_name": "72",
+  "vehicle_journey_ref": "VJ_1043",
+  "dated_vehicle_journey_ref": "2026-07-30:VJ_1043",
+  "origin_ref": "0100BRP90337",
+  "destination_ref": "0100BRA00434",
+  "destination_name": "Bristol Bus Station",
+  "longitude": -2.58791,
+  "latitude": 51.45447,
+  "bearing": 118,
+  "monitored": true,
+  "recorded_at_time": "2026-07-30T11:42:00Z",
+  "valid_until_time": "2026-07-30T11:47:00Z",
+  "origin_aimed_departure_time": "2026-07-30T11:20:00Z",
+  "destination_aimed_arrival_time": "2026-07-30T11:58:00Z",
+  "expected_arrival_time": "2026-07-30T12:04:30Z"
+}

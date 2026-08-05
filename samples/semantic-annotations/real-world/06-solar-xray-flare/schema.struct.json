@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/06-solar-xray-flare",
+  "$uses": ["JSONStructureSemanticAnnotations"],
+  "name": "XrayFlare",
+  "description": "Individual solar X-ray flare event detected by the GOES primary satellite XRS instrument, as reported by the SWPC goes/primary/xray-flares-7-day endpoint. Each record represents a discrete flare event with onset, peak, and end times plus X-ray classifications on the standard A/B/C/M/X logarithmic scale. The flare classification is based on peak 0.1-0.8 nm X-ray flux: C-class (1e-6 W/m^2), M-class (1e-5), X-class (1e-4). Derived from the noaa-goes feeder schema published in the xRegistry catalogue. The sample demonstrates that the semantic annotations are not Earth-bound: the feature of interest is the Sun, the observing procedure is the GOES spacecraft carrying the XRS instrument, no coordinate reference system applies because the feed carries no position, and the ISO-8601 timestamps are transported as plain strings and so state their temporal reference system explicitly. It also demonstrates the flattened interval roles phenomenonTimeStart and phenomenonTimeEnd on the flare onset and end, a phenomenonTime on the peak instant, derivation 'statistic' with statistic 'maximum' on the peak flux, phenomenonTimeRelation 'interval' on the time-integrated flux, and an irregular cadence because flares are not scheduled.",
+  "type": "object",
+  "concepts": [
+    {
+      "reference": "http://purl.org/dc/dcmitype/Event",
+      "kind": "rdfs-class"
+    }
+  ],
+  "observedProperty": {
+    "reference": "https://catalog.example.org/observable-properties/solar-soft-xray-flux/v1",
+    "kind": "example-catalog"
+  },
+  "properties": {
+    "time_tag": {
+      "type": "string",
+      "description": "UTC date-time when this flare record was reported/filed by SWPC, in ISO 8601 format. It is the instant at which the flare determination became available from the SWPC processing chain, not an instant in the flare itself.",
+      "semanticRole": "resultTime",
+      "temporalReferenceSystem": {
+        "reference": "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian",
+        "kind": "ogc-trs"
+      }
+    },
+    "satellite": {
+      "type": "integer",
+      "description": "GOES satellite number that detected this flare event (e.g., 18 for GOES-18, 19 for GOES-19). The number identifies the spacecraft and, through it, the XRS instrument and calibration that produced every result in this record.",
+      "semanticRole": "observingProcedure"
+    },
+    "begin_time": {
+      "type": "string",
+      "description": "UTC date-time of the flare onset (start of the X-ray flux rise above background), in ISO 8601 format. Used as part of the Kafka key to uniquely identify each flare event. Together with end_time it bounds the half-open phenomenon-time period of the flare. Flares are not scheduled, so successive onsets carry no period.",
+      "semanticRole": "phenomenonTimeStart",
+      "temporalReferenceSystem": {
+        "reference": "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian",
+        "kind": "ogc-trs"
+      },
+      "cadence": {
+        "kind": "irregular"
+      }
+    },
+    "begin_class": {
+      "type": ["string", "null"],
+      "description": "X-ray classification at flare onset, e.g., 'B6.9' or 'C1.0'. Format is a letter (A/B/C/M/X) followed by a decimal multiplier within that decade of flux. The letter and multiplier are computed from the 0.1-0.8 nm flux at onset rather than read off the instrument, and the value applies at the onset boundary rather than at the sibling peak instant.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    },
+    "max_time": {
+      "type": ["string", "null"],
+      "description": "UTC date-time of the peak X-ray flux during the flare, in ISO 8601 format. It is the instant within the flare period at which the point results of this record apply.",
+      "semanticRole": "phenomenonTime",
+      "temporalReferenceSystem": {
+        "reference": "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian",
+        "kind": "ogc-trs"
+      }
+    },
+    "max_class": {
+      "type": ["string", "null"],
+      "description": "X-ray classification at flare peak, e.g., 'C1.2', 'M5.3', 'X1.0'. This is the official flare magnitude used in space weather bulletins. The value is computed from max_xrlong by taking the decade letter and the multiplier within that decade, and it applies at the peak instant.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated",
+      "phenomenonTimeRelation": "instant"
+    },
+    "max_xrlong": {
+      "type": "double",
+      "description": "Peak X-ray flux in the 0.1-0.8 nm (long wavelength) band at the time of maximum. The value is the maximum function applied to the one-minute XRS long-channel samples taken across the flare period, and it applies at the peak instant carried by max_time. The member is omitted while the flare is still rising and no peak has been declared.",
+      "unit": "W/m^2",
+      "symbol": "W/m²",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "maximum",
+      "phenomenonTimeRelation": "instant",
+      "concepts": [
+        {
+          "reference": "http://qudt.org/vocab/quantitykind/PowerPerArea",
+          "kind": "skos-concept"
+        }
+      ]
+    },
+    "max_ratio": {
+      "type": ["double", "null"],
+      "description": "Ratio of 0.05-0.4 nm (short) to 0.1-0.8 nm (long) X-ray flux at flare maximum. Higher ratios indicate a spectrally harder (more energetic) flare, which correlates with stronger ionospheric effects. The value is the quotient of the two XRS channels at the peak instant, so it is calculated rather than measured.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated",
+      "phenomenonTimeRelation": "instant"
+    },
+    "current_int_xrlong": {
+      "type": "double",
+      "description": "Current time-integrated X-ray flux in the 0.1-0.8 nm band since flare onset, representing total X-ray energy delivered. The value characterizes the half-open phenomenon-time period bounded by begin_time and end_time rather than any single instant within it. The member is omitted when the integration is not reported.",
+      "unit": "J/m^2",
+      "symbol": "J/m²",
+      "semanticRole": "observationValue",
+      "derivation": "calculated",
+      "phenomenonTimeRelation": "interval",
+      "concepts": [
+        {
+          "reference": "http://qudt.org/vocab/quantitykind/EnergyPerArea",
+          "kind": "skos-concept"
+        }
+      ]
+    },
+    "end_time": {
+      "type": ["string", "null"],
+      "description": "UTC date-time when the flare X-ray flux returned to half the peak value above background, in ISO 8601 format. Null if the flare is still in progress. It closes the half-open phenomenon-time period opened by begin_time.",
+      "semanticRole": "phenomenonTimeEnd",
+      "temporalReferenceSystem": {
+        "reference": "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian",
+        "kind": "ogc-trs"
+      }
+    },
+    "end_class": {
+      "type": ["string", "null"],
+      "description": "X-ray classification at the declared end of the flare event. The value is computed from the 0.1-0.8 nm flux at the declared end and applies at the closing boundary rather than at the sibling peak instant.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    }
+  },
+  "required": ["time_tag", "satellite", "begin_time"],
+  "additionalProperties": false
+}

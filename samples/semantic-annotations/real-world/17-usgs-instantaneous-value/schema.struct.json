@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/17-usgs-instantaneous-value",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureAlternateNames"],
+  "name": "GageHeight",
+  "description": "One instantaneous value from the USGS National Water Information System, the gage-height series that the agency publishes for its surface-water monitoring sites. Derived from the usgs-iv feeder schema published in the xRegistry catalogue. The sample exists because the upstream record carries no statement of what was measured: the member is called `value`, and its meaning is supplied by the five-digit `parameter_cd` that a consumer must look up in the USGS parameter-code dictionary. Everything else that qualifies the number is also a code — a `timeseries_cd`, a list of one-letter `qualifiers`, and an `exception` drawn from a closed set of three-letter abbreviations. It demonstrates observedProperty carrying, in the schema, the meaning that the upstream feed defers to a code list, resultQuality over the qualifier letters that decide whether a value may be used in an analysis, and status over the exception codes that explain a missing reading.",
+  "type": "object",
+  "observedProperty": {
+    "reference": "https://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html#water_surface_height_above_reference_datum",
+    "kind": "cf-standard-name"
+  },
+  "definitions": {
+    "QualifierEnum": {
+      "name": "QualifierEnum",
+      "type": "string",
+      "enum": ["P", "A", "e", "<", ">", "&"],
+      "altenums": {
+        "lang:en": {
+          "P": "Provisional",
+          "A": "Approved",
+          "e": "Estimated",
+          "<": "Less Than",
+          ">": "Greater Than",
+          "&": "Affected by Other Condition"
+        },
+        "description": {
+          "P": "Provisional and subject to revision.",
+          "A": "Approved for publication after review.",
+          "e": "Estimated by the analyst rather than read from the instrument.",
+          "<": "The actual value is known to be less than the reported one.",
+          ">": "The actual value is known to be greater than the reported one.",
+          "&": "The value was affected by an unspecified condition."
+        }
+      },
+      "description": "USGS data-qualification letter. `P` and `A` are mutually exclusive; the remaining letters may accompany either."
+    },
+    "ExceptionEnum": {
+      "name": "ExceptionEnum",
+      "type": "string",
+      "enum": ["Ice", "Bkw", "Ssn", "Zfl", "Eqp", "Mnt", "Rat", "Dis", "Fld", "Pr", "***"],
+      "altenums": {
+        "lang:en": {
+          "Ice": "Ice Affected",
+          "Bkw": "Backwater Affected",
+          "Ssn": "Outside Season",
+          "Zfl": "Zero Flow",
+          "Eqp": "Equipment Malfunction",
+          "Mnt": "Under Maintenance",
+          "Rat": "Rating Under Development",
+          "Dis": "Record Discontinued",
+          "Fld": "Flood Affected",
+          "Pr": "Partial-Record Site",
+          "***": "Temporarily Unavailable"
+        },
+        "description": {
+          "Ice": "The reading was affected by ice at the site.",
+          "Bkw": "The reading was affected by backwater.",
+          "Ssn": "The instant falls outside the seasonal period of record for this series.",
+          "Zfl": "There was no flow at the site.",
+          "Eqp": "The instrument malfunctioned.",
+          "Mnt": "The gage was under maintenance.",
+          "Rat": "The rating for this site is still being developed.",
+          "Dis": "The series has been discontinued.",
+          "Fld": "The reading was affected by flooding.",
+          "Pr": "The site is a partial-record site and does not publish a continuous series.",
+          "***": "The value is temporarily unavailable for an unstated reason."
+        }
+      },
+      "description": "USGS exception code explaining why no value is reported. The codes are not interchangeable: `Ice` and `Bkw` describe a physical condition at the site, `Eqp` and `Mnt` describe the instrument, and `Ssn`, `Dis` and `Pr` describe the operating regime of the series."
+    }
+  },
+  "properties": {
+    "site_no": {
+      "type": "string",
+      "description": "USGS site number identifying the monitoring location, from the `site_no` field. It is unique only within the publishing agency, so a stable join key is the pair of agency code and site number. The site is the location whose water surface this record describes.",
+      "semanticRole": "featureOfInterest",
+      "concepts": [
+        {
+          "reference": "http://purl.org/dc/terms/identifier",
+          "kind": "dcterms-property"
+        }
+      ]
+    },
+    "datetime": {
+      "type": "datetime",
+      "description": "Instant at which the gage sampled the water surface, from the `datetime` field. The upstream feed reports it in the site's local standard time with an offset; the publisher normalises it to a UTC-aware timestamp. Sites report on a fixed interval, most commonly every fifteen minutes, so a gap in the series is detectable rather than inferred.",
+      "semanticRole": "phenomenonTime",
+      "cadence": {
+        "kind": "fixed",
+        "period": "PT15M"
+      }
+    },
+    "value": {
+      "type": "double",
+      "unit": "[ft_i]",
+      "description": "Gage height in feet, from the `value` field. It is the height of the water surface above the local gage datum established for this site, not an elevation above a national vertical datum, so values from two sites are not comparable without the datum offsets published in the site file. The member is absent when `exception` explains why no reading exists.",
+      "semanticRole": "observationValue",
+      "derivation": "measured",
+      "phenomenonTimeRelation": "instant"
+    },
+    "qualifiers": {
+      "type": "array",
+      "items": {
+        "type": {
+          "$ref": "#/definitions/QualifierEnum"
+        }
+      },
+      "description": "Qualification letters attached to the reading, from the `qualifiers` field. The list decides whether the value may be used in an analysis: a value carrying `P` has not been reviewed and will change, a value carrying `A` has been approved and will not, and a value carrying `e` was estimated rather than read from the instrument.",
+      "semanticRole": "resultQuality"
+    },
+    "exception": {
+      "type": {
+        "$ref": "#/definitions/ExceptionEnum"
+      },
+      "description": "Exception code explaining the absence of `value`, from the `exception` field. It is present exactly when `value` is absent, and it distinguishes a reading the site could not take from a reading the site did not attempt.",
+      "semanticRole": "status"
+    },
+    "parameter_cd": {
+      "type": "string",
+      "const": "00065",
+      "description": "USGS parameter code for the series, from the `parameter_cd` field. Upstream this code is the only statement of what the number means: `00065` is gage height in feet, `00060` is discharge in cubic feet per second, `00010` is water temperature in degrees Celsius, and a consumer that does not resolve it against the USGS parameter-code dictionary cannot interpret `value` at all. The `observedProperty` annotation on this record states the same fact in the schema, so a consumer no longer has to.",
+      "concepts": [
+        {
+          "reference": "http://purl.org/dc/terms/identifier",
+          "kind": "dcterms-property"
+        }
+      ]
+    },
+    "timeseries_cd": {
+      "type": "string",
+      "description": "USGS time-series identifier, from the `timeseries_cd` field. A site may publish several series for one parameter code — a primary sensor and a backup, or sensors at different points on the structure — and this code is what separates them. It carries no meaning of its own and is not resolvable against a published dictionary."
+    }
+  },
+  "required": ["site_no", "datetime", "qualifiers", "parameter_cd", "timeseries_cd"],
+  "additionalProperties": false
+}

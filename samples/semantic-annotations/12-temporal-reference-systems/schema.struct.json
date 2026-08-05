@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/12-temporal-reference-systems",
+  "$uses": ["JSONStructureSemanticAnnotations"],
+  "name": "BeamIntensityObservation",
+  "description": "Particle-accelerator beam intensity observation demonstrating two temporalReferenceSystem bindings in one record. archive_time_s is an int64 UTC coordinate bound to the OGC UnixTime TemporalCRS (kind ogc-temporal-crs). beam_clock is an object carrying a non-civil accelerator run clock bound to a local meta-type (kind type); the position member of the annotation names the fixed-width ordinal member within the object. The two clocks operate independently: mapping the beam clock to UTC requires an authoritative synchronisation relation that this specification does not supply.",
+  "type": "object",
+  "observedProperty": {
+    "reference": "http://qudt.org/vocab/quantitykind/ElectricCurrent",
+    "kind": "qudt-quantity-kind"
+  },
+  "properties": {
+    "observation_id": {
+      "type": "uuid",
+      "description": "Unique identifier for this observation record."
+    },
+    "facility_id": {
+      "type": "string",
+      "description": "Identifier of the accelerator facility and ring segment where the measurement was taken.",
+      "semanticRole": "featureOfInterest"
+    },
+    "archive_time_s": {
+      "type": "int64",
+      "unit": "s",
+      "description": "UTC wall-clock time at which the data-acquisition system recorded this measurement, expressed as a count of SI seconds elapsed since the Unix epoch 1970-01-01T00:00:00Z. Bound to the OGC UnixTime TemporalCRS; the axis unit is seconds and positions sort in forward (increasing) order. This is the result time of the DAQ system, not the beam-physics phenomenon time.",
+      "semanticRole": "resultTime",
+      "temporalReferenceSystem": {
+        "kind": "ogc-temporal-crs",
+        "reference": "http://www.opengis.net/def/crs/OGC/0/UnixTime"
+      }
+    },
+    "beam_clock": {
+      "type": "object",
+      "description": "Beam-physics phenomenon time expressed in accelerator run-clock coordinates. The regime is defined by the BeamClockPosition meta-type: a position is located by run, fill within a run, and revolution turn within a fill. The position member of the temporalReferenceSystem annotation maps the ordinal property of this object to the clockPosition member (referenceRole position) of BeamClockPosition. Positions within one fill sort lexically on ordinal; positions from different runs are not comparable. Mapping this clock to UTC requires an authoritative synchronisation relation; this specification does not supply one.",
+      "semanticRole": "phenomenonTime",
+      "temporalReferenceSystem": {
+        "kind": "type",
+        "reference": { "$ref": "#/definitions/BeamClockPosition" },
+        "position": "ordinal"
+      },
+      "properties": {
+        "ordinal": {
+          "type": "string",
+          "description": "Clock position rendered at fixed width with most-significant component first so that positions sort correctly under lexical ordering: R<run4>/F<fill4>/T<turn12>. Example: R0042/F0007/T000000012345."
+        },
+        "run": {
+          "type": "uint32",
+          "description": "Experiment run number. A new run resets fill and turn counters."
+        },
+        "fill": {
+          "type": "uint32",
+          "description": "Beam fill number within the current run. Each injection of beam into the ring begins a new fill."
+        },
+        "turn": {
+          "type": "uint64",
+          "description": "Revolution number of the beam bunch within the current fill, counted from injection."
+        }
+      },
+      "required": ["ordinal", "run", "fill", "turn"],
+      "additionalProperties": false
+    },
+    "beam_intensity": {
+      "type": "double",
+      "unit": "A",
+      "description": "Beam current measured by the wall-current monitor at the beam_clock position.",
+      "semanticRole": "observationValue",
+      "derivation": "measured",
+      "phenomenonTimeRelation": "instant"
+    }
+  },
+  "required": [
+    "observation_id",
+    "facility_id",
+    "archive_time_s",
+    "beam_clock",
+    "beam_intensity"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "BeamClockPosition": {
+      "name": "BeamClockPosition",
+      "type": "object",
+      "description": "Meta-type for the accelerator beam run clock. A position is located by run number, fill number within the run, and revolution turn number within the fill. Stint and lap are not applicable; turn count resets at the start of each fill and run numbers are globally monotonic for the facility. Positions from different runs are not comparable under this regime alone; equal turn values in different fills or runs denote different physics instants. A string ordinal renders all three components at fixed width, most-significant first, so that positions within one fill sort correctly under lexical order without implementing this definition. Mapping any beam-clock position to civil UTC requires an authoritative synchronisation record maintained by the facility timing system; this meta-type does not supply that relation.",
+      "properties": {
+        "clockPosition": {
+          "type": "string",
+          "description": "Components rendered at fixed width, most-significant first: R<run4>/F<fill4>/T<turn12>. Positions sort lexically within one fill; cross-fill and cross-run comparison is not defined by this meta-type.",
+          "referenceRole": "position"
+        },
+        "run": {
+          "type": "uint32",
+          "description": "Experiment run number component."
+        },
+        "fill": {
+          "type": "uint32",
+          "description": "Beam fill number component within the run."
+        },
+        "turn": {
+          "type": "uint64",
+          "description": "Revolution turn number component within the fill."
+        }
+      },
+      "required": ["clockPosition"],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/23-kitti-sensor-alignment",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureUnits"],
+  "name": "KittiSensorAlignment",
+  "description": "The rigid alignment between the rotating laser scanner and the reference camera of the KITTI autonomous driving dataset, transcribed from the `calib_velo_to_cam.txt` file of a recording day. The sample exists because the file carries twelve numbers, a calibration timestamp and nothing else: nine numbers that are a rotation and three that are an offset, with no statement of whether the nine are rows or columns, no statement of which frame the offset is resolved on, and the direction of the transformation carried only by the name of the file. The two readings of the nine numbers are transposes of one another and both are valid rotations, so no arithmetic check distinguishes them; only knowing how the sensors are bolted to the vehicle does. It demonstrates frameTransforms carrying a rotation matrix in the nested form, where the outer index is the row and no row-major or column-major convention has to be agreed, `translation` naming three members resolved on the axes of the target frame, and both sensor frames written out as meta-types because no register serves a frame bolted to one research vehicle.",
+  "type": "object",
+  "observedProperty": {
+    "reference": "https://catalog.example.org/observable-properties/sensor-alignment/v1",
+    "kind": "example-catalog"
+  },
+  "frameTransforms": [
+    {
+      "from": { "reference": { "$ref": "#/definitions/LaserScannerFrame" }, "kind": "type" },
+      "to": { "reference": { "$ref": "#/definitions/ReferenceCameraFrame" }, "kind": "type" },
+      "encoding": "rotationMatrix",
+      "components": "rotation",
+      "translation": ["tx", "ty", "tz"]
+    }
+  ],
+  "properties": {
+    "calibration_time": {
+      "type": "datetime",
+      "description": "Time the calibration was performed, from the `calib_time` field of the file. It is not the time of any recording the calibration applies to, and it commonly predates them by months, which is the point of publishing it once per recording day rather than once per frame.",
+      "semanticRole": "resultTime"
+    },
+    "rotation": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": { "type": "double" }
+      },
+      "description": "The rotation carrying coordinates in the laser scanner frame into coordinates in the reference camera frame, as three inner arrays each holding one row. The file prints the same nine values on a single line with no statement of their arrangement; the developer kit for one of the dataset's benchmarks states that its matrices are stored row-major, and this file carries no such statement. Nesting them removes the question, because the outer index is the row by the rule the annotation cites and not by convention.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    },
+    "tx": {
+      "type": "double",
+      "ucumUnit": "m",
+      "description": "First component of the offset from the origin of the laser scanner frame to the origin of the reference camera frame, resolved on the first axis of the camera frame. The file gives the three offsets on a line of their own and does not say which frame they are resolved on.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    },
+    "ty": {
+      "type": "double",
+      "ucumUnit": "m",
+      "description": "Second component of that offset, resolved on the second axis of the camera frame.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    },
+    "tz": {
+      "type": "double",
+      "ucumUnit": "m",
+      "description": "Third component of that offset, resolved on the third axis of the camera frame.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated"
+    }
+  },
+  "required": ["calibration_time", "rotation", "tx", "ty", "tz"],
+  "additionalProperties": false,
+  "definitions": {
+    "LaserScannerFrame": {
+      "name": "LaserScannerFrame",
+      "type": "tuple",
+      "description": "The frame of the rotating laser scanner mounted on the roof of the vehicle. Its axes follow the convention common to mobile robotics, in which the first axis runs forward along the platform, the second to its left, and the third up. The dataset does not state this in the calibration file, and the schema states it here so that the components of the rotation have an order to be indexed in.",
+      "properties": {
+        "x": {
+          "type": "double",
+          "description": "Forward along the vehicle."
+        },
+        "y": {
+          "type": "double",
+          "description": "To the left of the vehicle."
+        },
+        "z": {
+          "type": "double",
+          "description": "Up."
+        }
+      },
+      "tuple": ["x", "y", "z"]
+    },
+    "ReferenceCameraFrame": {
+      "name": "ReferenceCameraFrame",
+      "type": "tuple",
+      "description": "The frame of the reference camera, the leftmost grayscale camera of the rig. Its axes follow the convention of the computer vision library the dataset states its parameters are compatible with, in which the first axis runs right across the image, the second down it, and the third along the optical axis away from the camera. That this differs from the laser frame by very nearly a permutation of axes is what makes the rotation matrix of this record close to a signed permutation matrix rather than close to the identity.",
+      "properties": {
+        "x": {
+          "type": "double",
+          "description": "To the right across the image."
+        },
+        "y": {
+          "type": "double",
+          "description": "Down the image."
+        },
+        "z": {
+          "type": "double",
+          "description": "Along the optical axis, away from the camera."
+        }
+      },
+      "tuple": ["x", "y", "z"]
+    }
+  }
+}

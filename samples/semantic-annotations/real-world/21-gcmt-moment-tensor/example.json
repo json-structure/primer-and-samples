@@ -1,0 +1,16 @@
+{
+  "event_name": "C200501010120A",
+  "centroid_time": "2005-01-01T01:20:05.1Z",
+  "centroid_latitude": 13.76,
+  "centroid_longitude": -89.08,
+  "centroid_depth": 162.8,
+  "depth_type": "FREE",
+  "half_duration": 0.6,
+  "scalar_moment": 1.312e23,
+  "mrr": 0.838e23,
+  "mtt": -0.005e23,
+  "mpp": -0.833e23,
+  "mrt": 1.050e23,
+  "mrp": -0.369e23,
+  "mtp": 0.044e23
+}

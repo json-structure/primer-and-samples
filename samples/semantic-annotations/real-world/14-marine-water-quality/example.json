@@ -1,0 +1,23 @@
+{
+  "station_id": "kingcounty-marine-pointwells",
+  "station_name": "Point Wells Marine Monitoring Mooring",
+  "sampled_depth_m": 1.0,
+  "basin": "Puget Sound - Main Basin",
+  "sonde": "http://vocab.nerc.ac.uk/collection/L22/current/TOOL0872/",
+  "observation_time": "2026-07-27T19:15:00Z",
+  "published_time": "2026-07-27T19:38:41Z",
+  "qc_flag": "pass",
+  "water_temperature_c": 13.842,
+  "conductivity_s_m": 3.1274,
+  "specific_conductivity_s_m": 4.0186,
+  "pressure_dbar": 1.04,
+  "salinity_psu": 28.913,
+  "dissolved_oxygen_mg_l": 8.42,
+  "dissolved_oxygen_saturation_pct": 96.7,
+  "ph": 7.86,
+  "chlorophyll_ug_l": 4.31,
+  "chlorophyll_stddev_ug_l": 0.62,
+  "turbidity_ntu": 1.94,
+  "turbidity_stddev_ntu": 0.28,
+  "nitrate_umol": 12.7
+}

@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/18-mode-s-aircraft-report",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureAlternateNames"],
+  "name": "ModeSRecord",
+  "description": "A decoded Mode-S or ADS-B downlink message from a ground receiver, as forwarded by the mode-s feeder. Derived from the mode-s feeder schema published in the xRegistry catalogue. The sample exists because the record is a union of several unrelated message formats behind three-letter member names — `df`, `tc`, `sq`, `cs`, `spd`, `ang`, `vr` — and which members are populated depends on `df` and `tc`, which are numbers defined by ICAO Annex 10 and are not resolvable from the payload. It demonstrates a record that carries no phenomenon time at all: the only timestamp is the instant the ground station decoded the transmission, so `ts` is a resultTime and the instant the aircraft sampled its own state is not transmitted. It also demonstrates observingProcedure on the receiver rather than on an instrument, resultQuality over a received signal level, a barometric altitude that is a calculated pressure surface rather than a measured height, and a heading member whose meaning changes with the message subtype.",
+  "type": "object",
+  "observedProperty": {
+    "reference": "https://catalog.example.org/observable-properties/aircraft-position-and-motion/v1",
+    "kind": "example-catalog"
+  },
+  "coordinateReferenceSystem": {
+    "reference": "http://www.opengis.net/def/crs/EPSG/0/4326",
+    "kind": "ogc-crs",
+    "coordinates": ["lat", "lon"]
+  },
+  "definitions": {
+    "PosixMillisecondEpoch": {
+      "name": "PosixMillisecondEpoch",
+      "type": "int64",
+      "description": "Meta-type for the reception clock of the receiver network. A position is a count of milliseconds since 1970-01-01T00:00:00Z that ignores leap seconds, so it is a POSIX time scaled by a thousand and not a UTC instant: a position taken during an inserted leap second repeats the previous one. Positions increase with time, so the ordering is forward. The regime is declared because the value is a bare integer whose scale differs by three orders of magnitude from the POSIX second counts that most feeds transmit, and nothing in the payload distinguishes the two."
+    },
+    "MessageTypeEnum": {
+      "name": "MessageTypeEnum",
+      "type": "string",
+      "enum": ["df17-adsb", "df4-altitude", "df5-identity", "df11-acquisition", "df20-comm-b", "df21-comm-b"],
+      "altenums": {
+        "lang:en": {
+          "df17-adsb": "ADS-B Extended Squitter (DF17)",
+          "df4-altitude": "Surveillance Altitude Reply (DF4)",
+          "df5-identity": "Surveillance Identity Reply (DF5)",
+          "df11-acquisition": "All-Call Reply (DF11)",
+          "df20-comm-b": "Comm-B Altitude Reply (DF20)",
+          "df21-comm-b": "Comm-B Identity Reply (DF21)"
+        },
+        "description": {
+          "df17-adsb": "Extended squitter broadcast by the aircraft without interrogation. The only format that carries position and velocity.",
+          "df4-altitude": "Surveillance reply to a ground interrogation, carrying barometric altitude.",
+          "df5-identity": "Surveillance reply to a ground interrogation, carrying the squawk code.",
+          "df11-acquisition": "All-call reply by which a ground station acquires the aircraft; it carries only the address.",
+          "df20-comm-b": "Comm-B reply carrying barometric altitude together with a 56-bit BDS register.",
+          "df21-comm-b": "Comm-B reply carrying the squawk code together with a 56-bit BDS register."
+        }
+      },
+      "description": "Downlink-format family of the decoded message, synthesised by the feeder from `df` and `tc`. It determines which members of this record are populated."
+    }
+  },
+  "properties": {
+    "icao24": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{6}$",
+      "description": "ICAO 24-bit aircraft address in lower-case hexadecimal, from the `icao24` field. It is assigned to the airframe by the state of registry and is the only identifier present in every message format, so it is the identity of the aircraft whose state this record reports.",
+      "semanticRole": "featureOfInterest"
+    },
+    "receiver_id": {
+      "type": "string",
+      "description": "Stable identifier of the ground station that decoded this transmission, from the `receiver_id` field. It is the procedure that produced every value in this record: the same transmission decoded by two stations yields two records that differ in `rssi`, in `ts`, and occasionally in the decoded position, because a position derived from a pair of CPR-encoded messages depends on which pair the station happened to receive.",
+      "semanticRole": "observingProcedure"
+    },
+    "msg_type": {
+      "type": {
+        "$ref": "#/definitions/MessageTypeEnum"
+      },
+      "description": "Kebab-case downlink-format family literal synthesised by the feeder from `df` and `tc`, from the `msg_type` field. It exists because the numeric `df` and `tc` values are unreadable without ICAO Annex 10."
+    },
+    "df": {
+      "type": "int32",
+      "minimum": 0,
+      "maximum": 24,
+      "description": "Downlink Format, the first five bits of the Mode-S transmission, from the `df` field. It selects the frame layout: 4 and 20 are altitude replies, 5 and 21 are identity replies, 11 is an all-call reply, and 17 is an extended squitter carrying ADS-B."
+    },
+    "tc": {
+      "type": "int32",
+      "minimum": 0,
+      "maximum": 31,
+      "description": "Type Code, the first five bits of the ADS-B payload, from the `tc` field. It is present only when `df` is 17 and it selects the meaning of the remaining bits: 1 to 4 carry identification, 9 to 18 airborne position against a barometric altitude, 19 velocity, and 20 to 22 airborne position against a geometric altitude."
+    },
+    "bcode": {
+      "type": "string",
+      "description": "BDS register code of a Comm-B reply, from the `bcode` field, present only when `df` is 20 or 21. The register number determines what the 56-bit payload contains, and it is not transmitted: a decoder infers it from the bit pattern and can infer it wrongly."
+    },
+    "ts": {
+      "type": "int64",
+      "unit": "ms",
+      "description": "Instant at which the ground station decoded this transmission, from the `ts` field, as a count of milliseconds since the POSIX epoch. It is not the instant the reported state was true aboard the aircraft: Mode-S transmissions carry no timestamp, so the sampling instant is unavailable and can only be bounded by the transmission interval of the format concerned.",
+      "semanticRole": "resultTime",
+      "temporalReferenceSystem": {
+        "reference": { "$ref": "#/definitions/PosixMillisecondEpoch" },
+        "kind": "type",
+        "sortOrder": "forward"
+      }
+    },
+    "cs": {
+      "type": "string",
+      "description": "Aircraft callsign as broadcast in the identification message, from the `cs` field. It is entered by the crew and is padded to eight characters; it is the flight identity rather than the airframe, so it changes between legs and is frequently wrong or blank."
+    },
+    "sq": {
+      "type": "string",
+      "pattern": "^[0-7]{4}$",
+      "description": "Mode-A squawk code assigned by air traffic control, from the `sq` field, in octal. Three values are reserved and carry a meaning that overrides the assignment: 7500 unlawful interference, 7600 radio failure, 7700 general emergency.",
+      "semanticRole": "status"
+    },
+    "alt": {
+      "type": "int32",
+      "unit": "[ft_i]",
+      "description": "Barometric altitude in feet, from the `alt` field. It is not a height above the ground or above the ellipsoid: it is the altitude the aircraft's air data computer derives from static pressure referenced to the standard pressure setting of 1013.25 hPa, so two aircraft reporting the same value are on the same pressure surface and not at the same geometric height. The offset from geometric height varies with the state of the atmosphere and is not transmitted.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated",
+      "phenomenonTimeRelation": "instant",
+      "observedProperty": {
+        "reference": "https://catalog.example.org/observable-properties/pressure-altitude-1013-25-hpa/v1",
+        "kind": "example-catalog"
+      }
+    },
+    "lat": {
+      "type": "double",
+      "unit": "deg",
+      "minimum": -90,
+      "maximum": 90,
+      "description": "WGS84 latitude in decimal degrees, from the `lat` field. ADS-B transmits position in a compact encoding that is ambiguous in isolation, so the decoder resolves it from a pair of consecutive messages or against a known receiver position; the value is therefore a solution rather than a reading.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated",
+      "phenomenonTimeRelation": "instant"
+    },
+    "lon": {
+      "type": "double",
+      "unit": "deg",
+      "minimum": -180,
+      "maximum": 180,
+      "description": "WGS84 longitude in decimal degrees, from the `lon` field, resolved by the same decoding as `lat`.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated",
+      "phenomenonTimeRelation": "instant"
+    },
+    "spd": {
+      "type": "double",
+      "unit": "[kn_i]",
+      "description": "Speed in knots, from the `spd` field, present only in a velocity message. The velocity message reports either ground speed or airspeed depending on a subtype bit that the feeder does not forward, so a consumer cannot tell from this record which of the two it received.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated",
+      "phenomenonTimeRelation": "instant",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Speed",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "ang": {
+      "type": "double",
+      "unit": "deg",
+      "minimum": 0,
+      "maximum": 360,
+      "description": "Angle in degrees, from the `ang` field, present only in a velocity message. It is the track over the ground when the message reports ground speed and the magnetic heading when it reports airspeed, and the two differ by the drift angle and by magnetic variation. As with `spd`, the subtype that decides which one it is has been discarded.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated",
+      "phenomenonTimeRelation": "instant",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Angle",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "vr": {
+      "type": "int32",
+      "unit": "[ft_i]/min",
+      "description": "Vertical rate in feet per minute, from the `vr` field, positive upward. The velocity message states whether the rate was computed from the barometric or the geometric altitude source, and that bit is not forwarded either, so the value cannot be reconciled with `alt` without assuming which source produced it.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated",
+      "phenomenonTimeRelation": "instant",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Speed",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "rssi": {
+      "type": "double",
+      "description": "Received signal level reported by the decoder in decibels relative to the full scale of the receiver's analogue-to-digital converter, from the `rssi` field. The scale is receiver-specific and the values of two stations are not comparable, but within one station a low level marks a message decoded near the noise floor, which is where bit errors that survive the parity check originate.",
+      "semanticRole": "resultQuality"
+    }
+  },
+  "required": ["icao24", "receiver_id", "msg_type", "df", "ts"],
+  "additionalProperties": false
+}

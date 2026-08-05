@@ -1,0 +1,326 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/19-bmrs-generation-mix",
+  "$uses": ["JSONStructureSemanticAnnotations"],
+  "name": "GenerationMix",
+  "description": "The half-hourly generation outturn summary for the GB transmission system, published by Elexon on the Balancing Mechanism Reporting Service. Derived from the elexon-bmrs feeder schema published in the xRegistry catalogue. The sample exists because the member names are BMRS fuel-type codes: `ccgt_mw` and `ocgt_mw` name two kinds of gas turbine, `npshyd_mw` and `ps_mw` name two kinds of hydro that a naive consumer would add together, and the seven `int*_mw` members are not fuels at all but named subsea cables whose values are signed net flows. It demonstrates a record with no feature-of-interest member, because the feature is the GB transmission system and never varies, so nothing in the payload identifies it; a phenomenonTimeStart with no matching end, because the settlement period is closed by the fixed cadence rather than by a second timestamp; and a mean over the settlement period on every value, because the feed reports average power and not instantaneous power, so summing the members and multiplying by half an hour yields energy while summing them across periods does not.",
+  "type": "object",
+  "observedProperty": {
+    "reference": "https://catalog.example.org/observable-properties/transmission-system-generation-mix/v1",
+    "kind": "example-catalog"
+  },
+  "properties": {
+    "settlement_period": {
+      "type": "int32",
+      "minimum": 1,
+      "maximum": 50,
+      "description": "GB settlement period number within the settlement day, from the `settlement_period` field. Periods are half an hour long and are numbered from 1 at midnight UTC. The count per day is not constant: a settlement day has 48 periods normally, 46 on the spring clock change and 50 on the autumn one, so the period number does not map to a fixed clock time and arithmetic on it across a clock change is wrong.",
+      "concepts": [
+        {
+          "reference": "http://purl.org/dc/terms/identifier",
+          "kind": "dcterms-property"
+        }
+      ]
+    },
+    "start_time": {
+      "type": "datetime",
+      "description": "UTC instant at which the settlement period begins, from the `start_time` field. The feed carries no end instant. The period is half an hour long and half-open, and each value member states that length in its own `supportPeriod` anchored on this position; the cadence declared here says what the publisher is expected to do next and does not bound the period any value applies to.",
+      "semanticRole": "phenomenonTimeStart",
+      "cadence": {
+        "kind": "fixed",
+        "period": "PT30M"
+      }
+    },
+    "ccgt_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean output of combined-cycle gas turbine plant over the settlement period. CCGT units burn gas in a turbine and raise steam from the exhaust; they are the bulk gas fleet and are dispatched for energy.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "ocgt_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean output of open-cycle gas turbine plant over the settlement period. OCGT units burn the same fuel as CCGT but recover no exhaust heat; they run for minutes at a time as reserve, so a value here and a value in `ccgt_mw` describe operationally unrelated fleets.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "coal_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean output of coal-fired plant over the settlement period.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "oil_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean output of oil-fired plant over the settlement period.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "nuclear_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean output of nuclear plant over the settlement period.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "wind_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean output of wind farms over the settlement period, onshore and offshore combined. It covers only the units that are metered in the Balancing Mechanism, so wind connected to distribution networks is absent and the value understates GB wind generation.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "biomass_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean output of biomass-fuelled plant over the settlement period, including units converted from coal.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "npshyd_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean output of non-pumped-storage hydroelectric plant over the settlement period: run-of-river and reservoir schemes that generate from natural inflow. It is disjoint from `ps_mw`, and the two are separated because only one of them is a store.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "ps_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean output of pumped-storage hydroelectric plant over the settlement period. The units both generate and consume, and the pumping load does not appear here as a negative value; it is metered as demand elsewhere in the settlement data, so this member is not a net position.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "other_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean output over the settlement period of metered plant whose fuel type BMRS does not report separately.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "intfr_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean net flow over the settlement period on the IFA interconnector to France. This is a cable and not a fuel: the value is signed, positive when GB is importing and negative when it is exporting, so it may not be summed with the generation members without deciding how exports are to be treated.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "intifa2_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean net flow over the settlement period on the IFA2 interconnector to France, signed positive for import to GB. IFA and IFA2 are separate cables with separate capacities and are reported separately.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "intned_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean net flow over the settlement period on the BritNed interconnector to the Netherlands, signed positive for import to GB.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "intnem_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean net flow over the settlement period on the Nemo Link interconnector to Belgium, signed positive for import to GB.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "intelec_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean net flow over the settlement period on the East-West interconnector to Ireland, signed positive for import to GB. The code reads as an abbreviation of electricity and names a specific cable.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "intnsl_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean net flow over the settlement period on the North Sea Link interconnector to Norway, signed positive for import to GB.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "intvkl_mw": {
+      "type": "double",
+      "unit": "MW",
+      "description": "Mean net flow over the settlement period on the Viking Link interconnector to Denmark, signed positive for import to GB.",
+      "semanticRole": "observationValue",
+      "derivation": "statistic",
+      "statistic": "mean",
+      "phenomenonTimeRelation": "interval",
+      "supportPeriod": {
+        "length": "PT30M",
+        "anchor": "start"
+      },
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/Power",
+        "kind": "qudt-quantity-kind"
+      }
+    }
+  },
+  "required": ["settlement_period", "start_time"],
+  "additionalProperties": false
+}

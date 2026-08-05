@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.example.org/semantic-annotations/10-phenomenon-time-relation",
+  "station_id": "WMO-10637",
+  "observed_at": "2026-07-30T14:00:00Z",
+  "window_start": "2026-07-30T13:00:00Z",
+  "window_end": "2026-07-30T14:00:00Z",
+  "result_time": "2026-07-30T14:00:04Z",
+  "air_pressure": 1013.2,
+  "air_temperature": 22.4,
+  "wind_speed_mean": 4.7,
+  "precipitation_total": 0.2
+}

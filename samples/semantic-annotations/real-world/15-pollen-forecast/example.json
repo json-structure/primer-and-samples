@@ -1,0 +1,50 @@
+{
+  "region_id": "41",
+  "region_name": "Rhein.-Westfäl. Tiefland",
+  "sender": "Deutscher Wetterdienst - Medizin-Meteorologie",
+  "last_update": "2026-07-27T09:00:00Z",
+  "next_update": "2026-07-28T09:00:00Z",
+  "valid_from": "2026-07-27T09:00:00Z",
+  "valid_until": "2026-07-28T09:00:00Z",
+  "forecasts": [
+    {
+      "lead_duration": "P0D",
+      "day_start": "2026-07-27T00:00:00+02:00",
+      "day_end": "2026-07-28T00:00:00+02:00",
+      "hazel": "0",
+      "alder": "0",
+      "birch": "0",
+      "ash": "0",
+      "grasses": "2",
+      "rye": "0-1",
+      "mugwort": "1-2",
+      "ragweed": "0"
+    },
+    {
+      "lead_duration": "P1D",
+      "day_start": "2026-07-28T00:00:00+02:00",
+      "day_end": "2026-07-29T00:00:00+02:00",
+      "hazel": "0",
+      "alder": "0",
+      "birch": "0",
+      "ash": "0",
+      "grasses": "1-2",
+      "rye": "0",
+      "mugwort": "2",
+      "ragweed": "0-1"
+    },
+    {
+      "lead_duration": "P2D",
+      "day_start": "2026-07-29T00:00:00+02:00",
+      "day_end": "2026-07-30T00:00:00+02:00",
+      "hazel": "0",
+      "alder": "0",
+      "birch": "0",
+      "ash": "0",
+      "grasses": "1",
+      "rye": "0",
+      "mugwort": "2",
+      "ragweed": "0-1"
+    }
+  ]
+}

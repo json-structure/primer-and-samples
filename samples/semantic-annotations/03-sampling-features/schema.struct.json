@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/03-sampling-features",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureAlternateNames"],
+  "name": "LaboratoryWaterQualityResult",
+  "description": "A nitrate-nitrogen concentration result from laboratory analysis of a river water sample. Demonstrates how featureOfInterest, proximateFeatureOfInterest, and ultimateFeatureOfInterest coexist as three independent, non-equivalent declarations: the monitoring station is the programme-level feature of interest, the collected sample bottle is the proximate feature directly involved in the measurement act, and the classified river reach is the ultimate feature for which the result is environmentally interpreted.",
+  "type": "object",
+  "observedProperty": {
+    "reference": "https://catalog.example.org/observable-properties/nitrate-n-concentration-freshwater/v1",
+    "kind": "example-catalog"
+  },
+  "properties": {
+    "monitoringStation": {
+      "type": "string",
+      "description": "Identifier of the fixed monitoring station at which the water sample was collected. The station is the programme-level feature of interest and is distinct from the sample bottle and from the water body.",
+      "semanticRole": "featureOfInterest"
+    },
+    "waterSampleId": {
+      "type": "string",
+      "description": "Identifier of the water sample bottle submitted to the laboratory. The sample is the proximate feature of interest: it is the physical entity directly subjected to the analytical procedure.",
+      "semanticRole": "proximateFeatureOfInterest"
+    },
+    "riverReach": {
+      "type": "string",
+      "description": "Identifier of the river reach or classified water body for which the measurement is ultimately interpreted under the monitoring programme. The water body is the ultimate feature of interest and is not inferred from the station or the sample.",
+      "semanticRole": "ultimateFeatureOfInterest"
+    },
+    "analyticalMethod": {
+      "type": "string",
+      "description": "Code or name of the standard analytical method used to determine nitrate-nitrogen concentration in the laboratory.",
+      "semanticRole": "observingProcedure"
+    },
+    "nitrateN": {
+      "type": "double",
+      "description": "Dissolved inorganic nitrate-nitrogen concentration determined in the water sample.",
+      "unit": "mg/L",
+      "semanticRole": "observationValue"
+    },
+    "qualityFlag": {
+      "type": "string",
+      "description": "Quality flag assigned by the laboratory to this analytical result.",
+      "enum": ["good", "suspect", "bad", "missing"],
+      "altenums": {
+        "lang:en": {
+          "good": "Good",
+          "suspect": "Suspect",
+          "bad": "Bad",
+          "missing": "Missing"
+        },
+        "description": {
+          "good": "Passed every laboratory control check and may be used without reservation.",
+          "suspect": "Analysed successfully but failed a control check; use only after review.",
+          "bad": "Failed analysis or a control check and must not be used.",
+          "missing": "No result was produced for this determinand."
+        }
+      },
+      "semanticRole": "resultQuality"
+    },
+    "samplingTime": {
+      "type": "datetime",
+      "description": "Time at which the water sample was collected at the monitoring station.",
+      "semanticRole": "phenomenonTime"
+    },
+    "analysisCompletedAt": {
+      "type": "datetime",
+      "description": "Time at which the laboratory completed and reported the analytical result.",
+      "semanticRole": "resultTime"
+    }
+  },
+  "required": ["monitoringStation", "waterSampleId", "riverReach", "analyticalMethod", "nitrateN", "qualityFlag", "samplingTime", "analysisCompletedAt"],
+  "additionalProperties": false
+}

@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/real-world/20-goes-magnetometer",
+  "$uses": ["JSONStructureSemanticAnnotations"],
+  "name": "GoesMagnetometer",
+  "description": "One-minute averaged magnetometer readings from a GOES spacecraft, published by the NOAA Space Weather Prediction Center. Derived from the noaa-goes feeder schema published in the xRegistry catalogue. The sample exists because `hp`, `he` and `hn` are the three components of one vector quantity resolved in a spacecraft-local frame that no register serves, and because the letters invite exactly the wrong reading: `hp` is northward, `he` is earthward, and `hn` is eastward. It demonstrates vectorReferenceFrames binding the three components to a frame written out as a meta-type, a calculated magnitude alongside the measured components it is computed from, observingProcedure on the spacecraft rather than on a site, and resultQuality carried by a boolean that marks the readings as contaminated by the spacecraft's own thrusters. The frame binds the members that give the components of a vector, where the coordinate reference system annotation would bind the members that give a position.",
+  "type": "object",
+  "observedProperty": {
+    "reference": "https://catalog.example.org/observable-properties/geomagnetic-field-vector-at-spacecraft/v1",
+    "kind": "example-catalog"
+  },
+  "vectorReferenceFrames": [
+    {
+      "reference": { "$ref": "#/definitions/GoesEpnFrame" },
+      "kind": "type",
+      "components": ["hp", "he", "hn"]
+    }
+  ],
+  "properties": {
+    "time_tag": {
+      "type": "datetime",
+      "description": "UTC instant labelling the one-minute averaging window, from the `time_tag` field. The feed publishes one record per minute per spacecraft.",
+      "semanticRole": "phenomenonTime",
+      "cadence": {
+        "kind": "fixed",
+        "period": "PT1M"
+      }
+    },
+    "satellite": {
+      "type": "int32",
+      "description": "GOES spacecraft number, from the `satellite` field, for example 19. It identifies the instrument and, with it, the frame the components are resolved in and the longitude the spacecraft is stationed at, so records from two satellites are not interchangeable even when their timestamps agree.",
+      "semanticRole": "observingProcedure"
+    },
+    "hp": {
+      "type": "double",
+      "unit": "nT",
+      "description": "Component of the magnetic field perpendicular to the satellite orbital plane, positive northward, from the `hp` field. For a zero-inclination orbit that axis is parallel to the Earth's spin axis. It is the component the operational indices are built from, and under quiet conditions at geostationary altitude it sits between roughly 80 and 120 nT; a sharp drop marks the compression of the magnetopause by a solar wind pressure increase.",
+      "semanticRole": "observationValue",
+      "derivation": "measured",
+      "phenomenonTimeRelation": "instant",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/MagneticFluxDensity",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "hn": {
+      "type": "double",
+      "unit": "nT",
+      "description": "Component of the magnetic field perpendicular to `hp` and `he`, positive eastward, from the `hn` field. The letter stands for normal, not for north.",
+      "semanticRole": "observationValue",
+      "derivation": "measured",
+      "phenomenonTimeRelation": "instant",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/MagneticFluxDensity",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "he": {
+      "type": "double",
+      "unit": "nT",
+      "description": "Component of the magnetic field perpendicular to `hp`, positive earthward, from the `he` field. The letter is not a chemical symbol and does not stand for east; it names the earthward member of the triad.",
+      "semanticRole": "observationValue",
+      "derivation": "measured",
+      "phenomenonTimeRelation": "instant",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/MagneticFluxDensity",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "total": {
+      "type": "double",
+      "unit": "nT",
+      "minimum": 0,
+      "description": "Magnitude of the field vector, from the `total` field, computed by the publisher as the root of the sum of the squares of `hp`, `he` and `hn`. It is not an independent reading and adds no information to the three components, but it is frame-invariant where they are not, so it is the member to compare across spacecraft. Quiet-time values at geostationary altitude lie between roughly 100 and 120 nT.",
+      "semanticRole": "observationValue",
+      "derivation": "calculated",
+      "phenomenonTimeRelation": "instant",
+      "observedProperty": {
+        "reference": "http://qudt.org/vocab/quantitykind/MagneticFluxDensity",
+        "kind": "qudt-quantity-kind"
+      }
+    },
+    "arcjet_flag": {
+      "type": "boolean",
+      "description": "True when the spacecraft's electric propulsion thrusters were firing during the averaging window, from the `arcjet_flag` field. A firing thruster generates a magnetic field at the sensor that is indistinguishable from a geophysical signal, so a flagged record reports the instrument's environment rather than the magnetosphere and must be excluded from analysis rather than corrected.",
+      "semanticRole": "resultQuality"
+    }
+  },
+  "required": ["time_tag", "satellite", "arcjet_flag"],
+  "additionalProperties": false,
+  "definitions": {
+    "GoesEpnFrame": {
+      "name": "GoesEpnFrame",
+      "type": "tuple",
+      "description": "The spacecraft-local PEN frame the GOES magnetometers report in. No register serves this frame, so it is written out here and cited by pointer. The axes are given in the order P, E, N, which is the order the instrument documentation names them in.",
+      "properties": {
+        "p": {
+          "type": "double",
+          "description": "Perpendicular to the satellite orbital plane, positive northward. For a zero-inclination orbit this axis is parallel to the Earth's spin axis."
+        },
+        "e": {
+          "type": "double",
+          "description": "Perpendicular to p, positive earthward, that is, directed towards the centre of the Earth."
+        },
+        "n": {
+          "type": "double",
+          "description": "Perpendicular to p and e, positive eastward. The name is normal, not north."
+        }
+      },
+      "tuple": ["p", "e", "n"]
+    }
+  }
+}

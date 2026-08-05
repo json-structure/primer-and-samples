@@ -1,0 +1,20 @@
+{
+  "measurement_site_id": "NL.NDW.AVG.RWS01_MONIBAS_0101hrl0356ra",
+  "name": "A10 Zuid rechts: Amstel - RAI",
+  "measurement_site_type": "floatingCar",
+  "road_name": "A10",
+  "carriageway_direction": "positive",
+  "start_offset": 35600.0,
+  "end_offset": 38350.0,
+  "length_metres": 2750.0,
+  "period": 60,
+  "period_start": "2026-07-30T11:41:00Z",
+  "period_end": "2026-07-30T11:42:00Z",
+  "measurement_time": "2026-07-30T11:42:00Z",
+  "duration": 148.0,
+  "reference_duration": 99.0,
+  "free_flow_ratio": 1.4949,
+  "accuracy": 92.0,
+  "data_quality": 87.5,
+  "number_of_input_values": 34
+}

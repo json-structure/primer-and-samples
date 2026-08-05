@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-structure.org/meta/semantic-annotations/v0/#",
+  "$id": "https://schemas.example.org/semantic-annotations/15-station-network-telemetry",
+  "$uses": ["JSONStructureSemanticAnnotations", "JSONStructureAlternateNames"],
+  "name": "MonitoringNetworkBatch",
+  "description": "An hourly batch of environmental monitoring readings delivered by a regional air-quality and meteorology network. Each reading combines multiple observed properties from one station: an hourly mean air temperature and hourly mean PM2.5 mass concentration (both interval statistics over the aggregation period), accumulated precipitation (an accumulation statistic), and an instantaneous wind speed snapshot taken at the end of the hour. A reusable StationPosition type in definitions carries the CRS84 coordinate binding. This document demonstrates observedProperty, a range of semanticRole values, derivation with statistic, phenomenonTimeRelation including interval, accumulation, and instant, cadence, coordinateReferenceSystem, concepts, and status.",
+  "type": "object",
+  "concepts": [
+    {
+      "reference": "http://www.w3.org/ns/sosa/ObservationCollection",
+      "kind": "owl-class"
+    }
+  ],
+  "properties": {
+    "networkId": {
+      "type": "string",
+      "description": "Identifier of the monitoring network that produced this batch"
+    },
+    "batchIssueTime": {
+      "type": "datetime",
+      "description": "RFC 3339 date-time when the network processor assembled and issued this batch",
+      "semanticRole": "resultTime"
+    },
+    "readings": {
+      "type": "array",
+      "description": "Ordered list of hourly station readings in this batch",
+      "items": {
+        "type": {
+          "$ref": "#/definitions/StationReading"
+        }
+      }
+    }
+  },
+  "required": ["networkId", "batchIssueTime", "readings"],
+  "additionalProperties": false,
+  "definitions": {
+    "StationPosition": {
+      "name": "StationPosition",
+      "type": "object",
+      "description": "Geographic position of a monitoring station encoded in OGC CRS84. Axis 1 is longitude (degrees East) and axis 2 is latitude (degrees North).",
+      "coordinateReferenceSystem": {
+        "reference": "http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+        "kind": "ogc-crs",
+        "coordinates": ["lon", "lat"]
+      },
+      "properties": {
+        "lon": {
+          "type": "double",
+          "unit": "deg",
+          "description": "Geodetic longitude in decimal degrees, positive East of the prime meridian"
+        },
+        "lat": {
+          "type": "double",
+          "unit": "deg",
+          "description": "Geodetic latitude in decimal degrees, positive North of the equator"
+        }
+      },
+      "required": ["lon", "lat"],
+      "additionalProperties": false
+    },
+    "StationReading": {
+      "name": "StationReading",
+      "type": "object",
+      "description": "One complete hourly reading from a monitoring station. periodStart and periodEnd bound the one-hour aggregation period for interval and accumulation results. observedAt is the instant at which the windSpeedInstant snapshot was taken; it is the phenomenonTime referenced by the phenomenonTimeRelation instant on that property.",
+      "concepts": [
+        {
+          "reference": "http://www.w3.org/ns/sosa/Observation",
+          "kind": "owl-class"
+        }
+      ],
+      "properties": {
+        "stationId": {
+          "type": "string",
+          "description": "Identifier of the monitoring station that produced this reading",
+          "semanticRole": "featureOfInterest"
+        },
+        "periodStart": {
+          "type": "datetime",
+          "description": "Start of the one-hour aggregation period (inclusive boundary)",
+          "semanticRole": "phenomenonTimeStart",
+          "cadence": {
+            "kind": "fixed",
+            "period": "PT1H"
+          }
+        },
+        "periodEnd": {
+          "type": "datetime",
+          "description": "End of the one-hour aggregation period (exclusive boundary)",
+          "semanticRole": "phenomenonTimeEnd"
+        },
+        "observedAt": {
+          "type": "datetime",
+          "description": "Instant at which the wind speed snapshot was captured; serves as the phenomenonTime for the windSpeedInstant property",
+          "semanticRole": "phenomenonTime"
+        },
+        "producedAt": {
+          "type": "datetime",
+          "description": "Instant at which this reading was produced by the station processor",
+          "semanticRole": "resultTime"
+        },
+        "position": {
+          "type": {
+            "$ref": "#/definitions/StationPosition"
+          },
+          "description": "Geographic position of the monitoring station in OGC CRS84"
+        },
+        "observingSystem": {
+          "type": "string",
+          "description": "Identifier of the instrument suite or sampler that produced this reading",
+          "semanticRole": "observingProcedure"
+        },
+        "airTemperatureMean": {
+          "type": "double",
+          "unit": "Cel",
+          "description": "Arithmetic mean of air temperature samples collected over the aggregation period bounded by periodStart and periodEnd",
+          "semanticRole": "observationValue",
+          "derivation": "statistic",
+          "statistic": "mean",
+          "phenomenonTimeRelation": "interval",
+          "observedProperty": {
+            "reference": "https://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html#air_temperature",
+            "kind": "cf-standard-name"
+          }
+        },
+        "pm25HourlyMean": {
+          "type": "double",
+          "unit": "ug/m3",
+          "description": "Hourly mean mass concentration of PM2.5 particulate matter in ambient air, computed over the aggregation period",
+          "semanticRole": "observationValue",
+          "derivation": "statistic",
+          "statistic": "mean",
+          "phenomenonTimeRelation": "interval",
+          "observedProperty": {
+            "reference": "https://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html#mass_concentration_of_pm2p5_ambient_aerosol_particles_in_air",
+            "kind": "cf-standard-name"
+          }
+        },
+        "precipitationAccumulation": {
+          "type": "double",
+          "unit": "mm",
+          "description": "Total liquid-equivalent precipitation accumulated over the aggregation period bounded by periodStart and periodEnd",
+          "semanticRole": "observationValue",
+          "derivation": "statistic",
+          "statistic": "sum",
+          "phenomenonTimeRelation": "accumulation",
+          "observedProperty": {
+            "reference": "https://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html#precipitation_amount",
+            "kind": "cf-standard-name"
+          }
+        },
+        "windSpeedInstant": {
+          "type": "double",
+          "unit": "m/s",
+          "description": "Wind speed measured at the instant identified by the sibling observedAt property",
+          "semanticRole": "observationValue",
+          "derivation": "measured",
+          "phenomenonTimeRelation": "instant",
+          "observedProperty": {
+            "reference": "https://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html#wind_speed",
+            "kind": "cf-standard-name"
+          }
+        },
+        "dataQuality": {
+          "type": "string",
+          "description": "Quality flag for the results in this reading as assessed by the station quality-control procedure",
+          "enum": ["good", "suspect", "bad", "missing"],
+          "altenums": {
+            "lang:en": {
+              "good": "Good",
+              "suspect": "Suspect",
+              "bad": "Bad",
+              "missing": "Missing"
+            },
+            "description": {
+              "good": "Passed every automated quality-control test at the station.",
+              "suspect": "Failed a soft test such as a rate-of-change limit; usable after review.",
+              "bad": "Failed a hard test such as a gross range limit; not usable.",
+              "missing": "The channel produced no reading for this timestamp."
+            }
+          },
+          "semanticRole": "resultQuality"
+        },
+        "recordStatus": {
+          "type": "string",
+          "description": "Standing of this reading in the publication lifecycle",
+          "enum": ["provisional", "verified", "superseded", "withdrawn"],
+          "altenums": {
+            "lang:en": {
+              "provisional": "Provisional",
+              "verified": "Verified",
+              "superseded": "Superseded",
+              "withdrawn": "Withdrawn"
+            },
+            "description": {
+              "provisional": "The value has not yet been reviewed.",
+              "verified": "Review is complete and the value is accepted.",
+              "superseded": "A later record replaces this one.",
+              "withdrawn": "The record has been retracted."
+            }
+          },
+          "semanticRole": "status"
+        }
+      },
+      "required": ["stationId", "periodStart", "periodEnd", "observedAt", "producedAt", "position", "observingSystem", "airTemperatureMean", "pm25HourlyMean", "precipitationAccumulation", "windSpeedInstant", "dataQuality", "recordStatus"],
+      "additionalProperties": false
+    }
+  }
+}

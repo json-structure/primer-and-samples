@@ -1,0 +1,10 @@
+{
+  "source": "MODIS_NRT",
+  "latitude": -13.2456,
+  "longitude": 27.8891,
+  "brightness": 331.7,
+  "bright_t31": 295.4,
+  "frp": 84.6,
+  "acq_datetime": "2026-08-02T11:42:00Z",
+  "satellite": "A"
+}
