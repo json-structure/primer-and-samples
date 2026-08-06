@@ -3,7 +3,7 @@
   "$id": "https://schemas.example.org/semantic-annotations/13-coordinate-reference-systems",
   "$uses": ["JSONStructureSemanticAnnotations"],
   "name": "MonitoringStationRecord",
-  "description": "A hydrological monitoring station record demonstrating three coordinate reference system bindings. Two nested objects carry the same horizontal position under two different encodings — OGC CRS84 (longitude-first axis order) and EPSG:4326 (latitude-first axis order) — so that the axis-order contrast is explicit in each coordinates array. The enclosing record carries the EPSG:5703 NAVD88 vertical CRS binding for the station benchmark elevation. Because an object or tuple may carry at most one coordinateReferenceSystem annotation, any second coordinate binding must be modelled as a nested object; both horizontal position objects are nested here for exactly that reason.",
+  "description": "A hydrological monitoring station record demonstrating three coordinate reference system bindings. Two nested tuples carry the same horizontal position under two different encodings \u2014 OGC CRS84 (longitude-first axis order) and EPSG:4326 (latitude-first axis order). Both tuples are encoded as JSON arrays of two doubles named c1 and c2, so no member name carries any hint of which ordinate is which; the coordinates array of each coordinateReferenceSystem annotation is the sole record of that mapping. The enclosing record carries the EPSG:5703 NAVD88 vertical CRS binding for the station benchmark elevation. Because an object or tuple may carry at most one coordinateReferenceSystem annotation, any second coordinate binding must be modelled as a nested type; both horizontal position tuples are nested here for exactly that reason.",
   "type": "object",
   "coordinateReferenceSystem": {
     "reference": "http://www.opengis.net/def/crs/EPSG/0/5703",
@@ -29,50 +29,48 @@
       "description": "Station benchmark elevation in metres. The axis direction and datum origin are established by the referenced EPSG:5703 definition; this annotation identifies the binding and does not authorize comparison with heights in other vertical datums."
     },
     "crs84Position": {
-      "type": "object",
-      "description": "Horizontal position encoded in OGC CRS84. Axis 1 of CRS84 is longitude (degrees East) and axis 2 is latitude (degrees North), so the coordinates array maps lon to axis 1 and lat to axis 2. The numeric values in an instance are identical to those in epsg4326Position; the coordinates array is the sole record of which property supplies which axis.",
+      "type": "tuple",
+      "description": "Horizontal position encoded in OGC CRS84, serialized as a two-element JSON array. Axis 1 of CRS84 is longitude (degrees East) and axis 2 is latitude (degrees North). The members are named c1 and c2 and carry no indication of which ordinate they hold; the coordinates array is the sole record that c1 supplies axis 1 and c2 supplies axis 2. The numeric values in an instance are the same two numbers as in epsg4326Position, in the opposite order.",
       "coordinateReferenceSystem": {
         "reference": "http://www.opengis.net/def/crs/OGC/1.3/CRS84",
         "kind": "ogc-crs",
-        "coordinates": ["lon", "lat"]
+        "coordinates": ["c1", "c2"]
       },
       "properties": {
-        "lon": {
+        "c1": {
           "type": "double",
           "unit": "deg",
-          "description": "Geodetic longitude in decimal degrees, positive East of the prime meridian"
+          "description": "First ordinate, in decimal degrees. Which geodetic quantity this is follows from the referenced CRS definition, not from this member."
         },
-        "lat": {
+        "c2": {
           "type": "double",
           "unit": "deg",
-          "description": "Geodetic latitude in decimal degrees, positive North of the equator"
+          "description": "Second ordinate, in decimal degrees. Which geodetic quantity this is follows from the referenced CRS definition, not from this member."
         }
       },
-      "required": ["lon", "lat"],
-      "additionalProperties": false
+      "tuple": ["c1", "c2"]
     },
     "epsg4326Position": {
-      "type": "object",
-      "description": "The same physical point encoded in EPSG:4326. Axis 1 of EPSG:4326 is latitude (degrees North) and axis 2 is longitude (degrees East), which is the reverse of CRS84. The coordinates array therefore maps lat to axis 1 and lon to axis 2. The numeric values of lat and lon are the same as in crs84Position; only the axis assignment stated by coordinates differs.",
+      "type": "tuple",
+      "description": "The same physical point encoded in EPSG:4326, serialized as a two-element JSON array. Axis 1 of EPSG:4326 is latitude (degrees North) and axis 2 is longitude (degrees East), which is the reverse of CRS84. The members are again named c1 and c2, so the array here holds the same two numbers as crs84Position in the opposite order, and only the referenced CRS distinguishes the two.",
       "coordinateReferenceSystem": {
         "reference": "http://www.opengis.net/def/crs/EPSG/0/4326",
         "kind": "ogc-crs",
-        "coordinates": ["lat", "lon"]
+        "coordinates": ["c1", "c2"]
       },
       "properties": {
-        "lat": {
+        "c1": {
           "type": "double",
           "unit": "deg",
-          "description": "Geodetic latitude in decimal degrees, positive North of the equator"
+          "description": "First ordinate, in decimal degrees. Which geodetic quantity this is follows from the referenced CRS definition, not from this member."
         },
-        "lon": {
+        "c2": {
           "type": "double",
           "unit": "deg",
-          "description": "Geodetic longitude in decimal degrees, positive East of the prime meridian"
+          "description": "Second ordinate, in decimal degrees. Which geodetic quantity this is follows from the referenced CRS definition, not from this member."
         }
       },
-      "required": ["lat", "lon"],
-      "additionalProperties": false
+      "tuple": ["c1", "c2"]
     }
   },
   "required": [

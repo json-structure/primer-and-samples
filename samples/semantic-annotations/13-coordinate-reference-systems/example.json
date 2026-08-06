@@ -4,12 +4,6 @@
   "stationName": "Skykomish River near Index, WA",
   "reportedAt": "2026-07-28T14:00:00Z",
   "benchmarkElevation": 137.4,
-  "crs84Position": {
-    "lon": -121.5498,
-    "lat": 47.8232
-  },
-  "epsg4326Position": {
-    "lat": 47.8232,
-    "lon": -121.5498
-  }
+  "crs84Position": [-121.5498, 47.8232],
+  "epsg4326Position": [47.8232, -121.5498]
 }
