@@ -1,4 +1,5 @@
 {
+  "$schema": "urn:example:schema",
   "make": "Terrafugia",
   "model": "Transition",
   "year": 2024,
